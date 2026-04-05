@@ -528,75 +528,96 @@
 </body>
 <script>
     // ==========================================
-    // CONFIGURATION & GLOBAL VARIABLES
+    // 1. CONFIGURATION & GLOBAL CONSTANTS
     // ==========================================
+    // Google Apps Script Web App URL
     const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
     
-    // Prime Square, Omaxe City 1 exact coordinates for silent arrival fare
+    // Prime Square, Omaxe City 1 - Base Location for Arrival Fare
     const PRIME_SQUARE_COORDS = L.latLng(22.7628, 75.9234); 
+    
+    // Default Map Center (Indore)
     const indoreCoords = [22.7196, 75.8577];
 
+    // Global State Variables
     let map;
     let pickupMarker;
     let dropMarker;
     let currentSeason = 'All';
     let currentCategory = 'All';
     let allToursData = [];
-    let selectedPackageBasePrice = 0; // Globally stores tour base price
+    let selectedPackageBasePrice = 0; 
     let searchTimeout;
 
     // ==========================================
-    // INITIALIZATION & ROUTING
+    // 2. INITIALIZATION (ON LOAD)
     // ==========================================
     window.onload = function() {
-        // Set Default Date
+        console.log("EasyGo Cabs - System Initializing...");
+
+        // Set Default Booking Date
         document.getElementById('date').valueAsDate = new Date();
         
-        // Set Default Time (Current + 15 mins)
+        // Set Default Booking Time (Now + 15 Minutes)
         let d = new Date(); 
         d.setMinutes(d.getMinutes() + 15);
         document.getElementById('time').value = d.toTimeString().substring(0,5);
 
-        // Session Management: Check if user is already logged in
+        // User Session Recovery
         let storedUser = localStorage.getItem('easygo_user');
         let storedName = localStorage.getItem('easygo_name');
         if(storedUser && storedName) { 
+            console.log("Session recovered for: " + storedName);
             loginUI(storedUser, storedName); 
         }
 
+        // Initialize Components
         checkActiveRide();
         initMap();
         loadDynamicReviews(); 
     };
 
+    // ==========================================
+    // 3. ROUTING & SECTION MANAGEMENT
+    // ==========================================
     function showPage(pageId) {
-        // Hide all sections
-        document.querySelectorAll('.page-section').forEach(section => {
+        console.log("Navigating to: " + pageId);
+        
+        // Deactivate all sections
+        const sections = document.querySelectorAll('.page-section');
+        sections.forEach(section => {
             section.classList.remove('active');
         });
         
-        // Show target section
-        document.getElementById(pageId).classList.add('active');
+        // Activate target section
+        const target = document.getElementById(pageId);
+        if(target) {
+            target.classList.add('active');
+        }
         
-        // Reset scroll to top
+        // Scroll to Top for better UX
         window.scrollTo(0, 0);
         
-        // Trigger tour loading if moving to tours page and data is empty
+        // Lazy Load Tours Data
         if(pageId === 'tours' && allToursData.length === 0) {
             loadDynamicTours();
         }
     }
 
     // ==========================================
-    // MAP & GPS LOGIC (Silent Arrival Integrated)
+    // 4. MAPS & GEOLOCATION LOGIC
     // ==========================================
     function initMap() {
+        // Initialize Leaflet Map
         map = L.map('map').setView(indoreCoords, 12);
         
+        // OpenStreetMap Layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
         }).addTo(map);
         
+        // Custom Markers
         const greenIcon = L.icon({ 
             iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', 
             iconSize: [30, 50], 
@@ -609,24 +630,24 @@
             iconAnchor: [15, 50] 
         });
 
-        // Initialize Markers
-        pickupMarker = L.marker(indoreCoords, {icon: greenIcon, draggable: true}).addTo(map).bindPopup("<b>PICKUP LOCATION</b>").openPopup();
-        dropMarker = L.marker([22.75, 75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("<b>DROP LOCATION</b>");
+        // Setup Pickup and Drop Markers
+        pickupMarker = L.marker(indoreCoords, {icon: greenIcon, draggable: true}).addTo(map).bindPopup("<b>PICKUP HERE</b>").openPopup();
+        dropMarker = L.marker([22.75, 75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("<b>DROP HERE</b>");
         
-        // Initial Links for Hidden Inputs
+        // Set Initial Map Links for Database
         updateMapLinks(indoreCoords[0], indoreCoords[1], 'pickup'); 
         updateMapLinks(22.75, 75.89, 'drop');
 
-        // Drag Event: Pickup Marker
+        // Event Listener: Dragging Pickup
         pickupMarker.on('dragend', function(e) { 
             let ll = e.target.getLatLng(); 
             reverseGeocode(ll, 'pickup'); 
             calculateMapDistance(); 
             updateMapLinks(ll.lat, ll.lng, 'pickup');
-            updateLiveEstimate(); // Silent Update
+            updateLiveEstimate(); // Live Price Sync
         });
 
-        // Drag Event: Drop Marker
+        // Event Listener: Dragging Drop
         dropMarker.on('dragend', function(e) { 
             let ll = e.target.getLatLng(); 
             reverseGeocode(ll, 'drop'); 
@@ -640,63 +661,62 @@
     function calculateMapDistance() {
         if (!pickupMarker || !dropMarker) return;
         
-        let pickupLatLng = pickupMarker.getLatLng();
-        let dropLatLng = dropMarker.getLatLng();
+        let p = pickupMarker.getLatLng();
+        let d = dropMarker.getLatLng();
         
-        // Straight line distance to road estimation
-        let distanceMeters = pickupLatLng.distanceTo(dropLatLng);
+        // Calculate Distance
+        let distanceMeters = p.distanceTo(d);
         let roadKm = (distanceMeters * 1.3 / 1000).toFixed(1);          
         
-        // Update UI displays
+        // UI Updates
         document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM";
         document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm));
         
-        // Trigger live estimate for tour packages
+        // Trigger Fare Estimate Logic
         if (typeof updateLiveEstimate === "function") {
             updateLiveEstimate();
         }
     }
 
     function updateLiveEstimate() {
-        // Condition: Only show if a package is selected
+        // Ensure valid state
         if (!selectedPackageBasePrice || selectedPackageBasePrice === 0 || !pickupMarker) return;
         
-        let pickupLatLng = pickupMarker.getLatLng();
+        let p = pickupMarker.getLatLng();
         
-        // Calculate Arrival Fare from Prime Square (Silent Logic)
-        let arrivalDistMeters = PRIME_SQUARE_COORDS.distanceTo(pickupLatLng);
-        let arrivalKm = arrivalDistMeters / 1000;
-        
+        // SILENT LOGIC: Distance from Prime Square to Pickup
+        let arrivalDist = (PRIME_SQUARE_COORDS.distanceTo(p) / 1000);
         let arrivalFare = 0;
-        if(arrivalKm > 3) {
-            arrivalFare = (arrivalKm - 3) * 10; // ₹10 per km above 3km
+        
+        if(arrivalDist > 3) {
+            arrivalFare = (arrivalDist - 3) * 10; 
         }
         
-        // Calculate Estimated Total
+        // Total Fare Calculation
         let estimatedTotal = selectedPackageBasePrice + arrivalFare;
-        let gstAmount = estimatedTotal * 0.05;
-        let finalWithGst = Math.round(estimatedTotal + gstAmount);
+        let gst = estimatedTotal * 0.05;
+        let finalWithGst = Math.round(estimatedTotal + gst);
 
-        // Handle UI Injection of Estimate Box
-        let estimateDiv = document.getElementById('liveEstimateBox');
-        if(!estimateDiv) {
-            estimateDiv = document.createElement('div');
-            estimateDiv.id = 'liveEstimateBox';
-            const form = document.getElementById('bookingForm');
-            // Insert before the submit button
-            form.insertBefore(estimateDiv, document.getElementById('submitBtn'));
+        // Check if box exists or create new
+        let box = document.getElementById('liveEstimateBox');
+        if(!box) {
+            box = document.createElement('div');
+            box.id = 'liveEstimateBox';
+            const f = document.getElementById('bookingForm');
+            f.insertBefore(box, document.getElementById('submitBtn'));
         }
 
-        estimateDiv.innerHTML = `
-            <div class="bg-blue-900 text-white p-5 rounded-2xl mb-6 border-b-8 border-yellow-400 shadow-2xl transition-all animate-pulse">
+        // Render HTML for Estimate Box
+        box.innerHTML = `
+            <div class="bg-blue-900 text-white p-5 rounded-2xl mb-6 border-b-8 border-yellow-400 shadow-2xl animate-pulse transition-all">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Live Package Estimate</span>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Live Fare Calculation</span>
                     <i class="fas fa-calculator text-yellow-400"></i>
                 </div>
                 <div class="flex justify-between items-end">
                     <div>
                         <p class="text-4xl font-black text-white">₹${finalWithGst}*</p>
-                        <p class="text-[9px] font-bold text-blue-200 mt-1">*Final amount including 5% GST</p>
+                        <p class="text-[9px] font-bold text-blue-200 mt-1">*Includes 5% GST & Arrival Charges</p>
                     </div>
                     <div class="text-right text-[11px] font-bold text-slate-300">
                         <p>Base: ₹${selectedPackageBasePrice}</p>
@@ -707,29 +727,29 @@
     }
 
     // ==========================================
-    // TOUR FILTERING & RENDERING
+    // 5. TOURS, PACKAGES & FILTERS
     // ==========================================
-    function filterByCategory(category, btnElement) {
+    function filterByCategory(category, btn) {
+        console.log("Filtering Category: " + category);
         currentCategory = category;
         
-        // UI Reset
-        document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.classList.remove('active', 'bg-slate-900', 'text-white');
-            btn.classList.add('bg-white', 'text-slate-700');
+        // Update Button UI
+        document.querySelectorAll('.cat-btn').forEach(b => {
+            b.classList.remove('active', 'bg-slate-900', 'text-white');
+            b.classList.add('bg-white', 'text-slate-700');
         });
-        
-        // Set Active
-        btnElement.classList.add('active', 'bg-slate-900', 'text-white');
+        btn.classList.add('active', 'bg-slate-900', 'text-white');
         
         applyDualFilter();
     }
 
     function filterTours(season) {
+        console.log("Filtering Season: " + season);
         currentSeason = season;
         
-        // Update Season Buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.remove('active');
+        // Update Season UI
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active');
         });
         event.currentTarget.classList.add('active');
         
@@ -737,118 +757,107 @@
     }
 
     function applyDualFilter() {
-        if (!allToursData || allToursData.length === 0) return;
+        if (allToursData.length === 0) return;
 
         let filtered = allToursData.filter(t => {
-            const desc = (t.Description || "").toLowerCase();
-            const dest = (t.Destination || "").toLowerCase();
-            const tourSeason = (t.Season || "").toLowerCase();
+            let dsc = (t.Description || "").toLowerCase();
+            let dst = (t.Destination || "").toLowerCase();
+            let sea = (t.Season || "").toLowerCase();
             
-            // 1. Match Season
-            const matchSeason = (currentSeason === 'All' || 
-                                 tourSeason.includes(currentSeason.toLowerCase()) || 
-                                 tourSeason === 'all seasons');
+            // Season Check
+            const sMatch = (currentSeason === 'All' || sea.includes(currentSeason.toLowerCase()) || sea === 'all seasons');
             
-            // 2. Match Category (Keyword Intelligence)
-            let matchCategory = false;
+            // Category Check
+            let cMatch = false;
             if (currentCategory === 'All') {
-                matchCategory = true;
+                cMatch = true;
             } else if (currentCategory === 'Nature') {
-                matchCategory = desc.includes('fall') || desc.includes('lake') || desc.includes('nature') || desc.includes('valley') || desc.includes('scenic') || desc.includes('river');
+                cMatch = dsc.includes('fall') || dsc.includes('lake') || dsc.includes('nature') || dsc.includes('river');
             } else if (currentCategory === 'Religious') {
-                matchCategory = desc.includes('temple') || desc.includes('spiritual') || desc.includes('mandir') || desc.includes('jyotirlinga') || dest.includes('mandir');
+                cMatch = dsc.includes('temple') || dsc.includes('spiritual') || dsc.includes('mandir') || dst.includes('mandir');
             } else if (currentCategory === 'Adventure') {
-                matchCategory = desc.includes('mall') || desc.includes('adventure') || desc.includes('zoo') || desc.includes('park') || desc.includes('dining') || desc.includes('food');
+                cMatch = dsc.includes('mall') || dsc.includes('adventure') || dsc.includes('zoo') || dsc.includes('park');
             } else if (currentCategory === 'Heritage') {
-                matchCategory = desc.includes('palace') || desc.includes('fort') || desc.includes('history') || desc.includes('heritage') || desc.includes('museum') || desc.includes('hall');
+                cMatch = dsc.includes('palace') || dsc.includes('fort') || dsc.includes('history') || dsc.includes('heritage');
             }
             
-            return matchSeason && matchCategory;
+            return sMatch && cMatch;
         });
         
         renderTours(filtered);
     }
 
-    function renderTours(toursList) {
+    function renderTours(list) {
         const container = document.getElementById('dynamic-tours-container');
         container.innerHTML = '';
         
-        if(toursList.length === 0) {
-            container.innerHTML = '<p class="col-span-full text-center text-xl font-bold text-slate-500 mt-10">No packages found for this selection.</p>';
+        if(list.length === 0) {
+            container.innerHTML = '<div class="col-span-full text-center py-10"><p class="text-xl font-bold text-slate-400">No packages found for this selection.</p></div>';
             return;
         }
 
-        toursList.forEach(t => {
-            let seasonBadge = 'bg-slate-800 text-white';
+        list.forEach(t => {
+            let badge = 'bg-slate-800 text-white';
             let s = t.Season.toLowerCase();
-            if(s.includes('monsoon')) seasonBadge = 'bg-blue-500 text-white';
-            if(s.includes('winter')) seasonBadge = 'bg-cyan-500 text-slate-900';
-            if(s.includes('summer')) seasonBadge = 'bg-yellow-400 text-slate-900';
+            if(s.includes('monsoon')) badge = 'bg-blue-500 text-white';
+            if(s.includes('winter')) badge = 'bg-cyan-500 text-slate-900';
+            if(s.includes('summer')) badge = 'bg-yellow-400 text-slate-900';
 
-            let div = document.createElement('div');
-            div.className = 'bg-white rounded-[2rem] overflow-hidden shadow-2xl border-2 border-slate-100 group flex flex-col transition-all hover:shadow-blue-200/50';
+            let card = document.createElement('div');
+            card.className = 'bg-white rounded-[2rem] overflow-hidden shadow-2xl border-2 border-slate-100 flex flex-col transition-all hover:shadow-blue-200/50';
             
-            div.innerHTML = `
+            card.innerHTML = `
                 <div class="h-64 overflow-hidden relative bg-slate-800">
-                    <img src="${t.ImageURL}" alt="${t.Destination}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=800&auto=format&fit=crop'">
-                    <div class="absolute top-4 right-4 ${seasonBadge} text-xs font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                    <img src="${t.ImageURL}" alt="${t.Destination}" class="w-full h-full object-cover opacity-80 transition-transform duration-1000 hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=800&auto=format&fit=crop'">
+                    <div class="absolute top-4 right-4 ${badge} text-xs font-black px-4 py-2 rounded-full uppercase shadow-lg">
                         ${t.Season}
                     </div>
                 </div>
                 <div class="p-8 bg-white flex-grow flex flex-col">
-                    <h3 class="text-3xl font-black text-slate-900 tracking-wide uppercase mb-3">${t.Destination}</h3>
-                    <p class="text-slate-600 text-base font-bold leading-relaxed mb-6 flex-grow">${t.Description}</p>
+                    <h3 class="text-3xl font-black text-slate-900 uppercase mb-3">${t.Destination}</h3>
+                    <p class="text-slate-600 text-base font-bold mb-6 flex-grow">${t.Description}</p>
                     
                     <div class="bg-slate-50 p-4 rounded-2xl mb-6 border-l-4 border-blue-600">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimated Base Package</p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase">Expected Base Price</p>
                         <div class="flex items-baseline">
                             <span class="text-3xl font-black text-blue-700">₹${t.Price}</span>
-                            <span class="text-[10px] font-bold text-slate-500 ml-2">*Price varies by pickup</span>
+                            <span class="text-[10px] font-bold text-slate-500 ml-2">*Final fare varies by location</span>
                         </div>
                     </div>
 
                     <div class="flex justify-between items-center mt-auto">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] font-black text-red-500 uppercase tracking-tighter italic">Live Tracking</span>
-                            <span class="text-[10px] font-bold text-slate-400">Available via App</span>
+                        <div class="flex flex-col text-[10px] font-bold">
+                            <span class="text-red-500 italic">LIVE GPS ENABLED</span>
+                            <span class="text-slate-400">Citroen C3 Comfort</span>
                         </div>
-                        <button onclick="bookTourPackage('${t.Destination}', '${t.Price}')" class="bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase transition-all shadow-lg border-b-4 border-black hover:border-blue-900 active:transform active:scale-95">
+                        <button onclick="bookTourPackage('${t.Destination}', '${t.Price}')" class="bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase transition-all shadow-lg border-b-4 border-black hover:border-blue-900 active:scale-95">
                             Book Now <i class="fas fa-chevron-right ml-2"></i>
                         </button>
                     </div>
                 </div>`;
-            container.appendChild(div);
+            container.appendChild(card);
         });
     }
 
-    function bookTourPackage(destination, basePrice) {
-        // Store selected price
-        selectedPackageBasePrice = parseFloat(basePrice) || 0;
-        
-        // Navigation
+    function bookTourPackage(dest, price) {
+        selectedPackageBasePrice = parseFloat(price) || 0;
         showPage('home');
         
-        // Auto-Fill Form
-        document.getElementById('drop').value = destination + ", Madhya Pradesh";
+        document.getElementById('drop').value = dest + ", Madhya Pradesh";
+        showToast("Tour selected! Checking arrival fare from base...", "success");
         
-        // Notification
-        showToast("Tour selected! Fill pickup to see arrival fare.", "success");
+        searchLocation(dest, 'drop');
         
-        // Trigger Destination Search for Map
-        searchLocation(destination, 'drop');
-        
-        // Scroll to form
         window.scrollTo({
             top: document.getElementById('bookingForm').offsetTop - 100,
             behavior: 'smooth'
         });
         
-        // Trigger live price display
         updateLiveEstimate();
     }
 
     // ==========================================
-    // BILLING & END RIDE PROCESS (Silent Logic)
+    // 6. BILLING, GST & RIDE COMPLETION
     // ==========================================
     function endRideProcess() { 
         document.getElementById('billModal').classList.add('active'); 
@@ -859,21 +868,17 @@
     }
 
     function calculateFinalBill() {
+        // Core Inputs
         let dropKM = parseFloat(document.getElementById('inputActualKM').value) || 0;
         let waitMins = parseFloat(document.getElementById('inputWaitTime').value) || 0;
         let tip = parseFloat(document.getElementById('inputTip').value) || 0;
 
-        // 1. Silent Arrival Logic
-        let pickupLatLng = pickupMarker.getLatLng(); 
-        let arrivalDistMeters = PRIME_SQUARE_COORDS.distanceTo(pickupLatLng);
-        let arrivalKm = arrivalDistMeters / 1000;
-        
-        let arrivalFare = 0;
-        if(arrivalKm > 3) {
-            arrivalFare = (arrivalKm - 3) * 10;
-        }
+        // SILENT ARRIVAL CALCULATION
+        let p = pickupMarker.getLatLng(); 
+        let arrivalDist = (PRIME_SQUARE_COORDS.distanceTo(p) / 1000);
+        let arrivalFare = arrivalDist > 3 ? (arrivalDist - 3) * 10 : 0;
 
-        // 2. Main Slab Logic
+        // MAIN SLAB LOGIC
         let baseSlab = 0; 
         let extraKms = 0; 
         let extraCost = 0;
@@ -887,14 +892,14 @@
             extraCost = extraKms * 16; 
         }
 
-        // 3. Totals
+        // CALCULATE TOTALS
         let waitCost = waitMins * 2;
         let subtotal = baseSlab + extraCost + waitCost + arrivalFare; 
         let gst = subtotal * 0.05;
         let grandTotal = subtotal + gst + tip;
 
-        // 4. Update Bill UI (Hide Arrival in Base Slab)
-        document.getElementById('billDate').innerText = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
+        // INJECT INTO INVOICE UI
+        document.getElementById('billDate').innerText = new Date().toLocaleString();
         document.getElementById('billId').innerText = "INV-" + Math.floor(100000 + Math.random() * 900000);
         
         document.getElementById('billBaseSlab').innerText = (baseSlab + arrivalFare).toFixed(2);
@@ -907,27 +912,28 @@
         document.getElementById('billTipVal').innerText = tip.toFixed(2);
         document.getElementById('billGrandTotal').innerText = grandTotal.toFixed(2);
 
-        // Toggle Views
+        // UI NAVIGATION
         document.getElementById('billInputSection').classList.add('hidden');
         document.getElementById('billDisplaySection').classList.remove('hidden');
         
-        showToast("Bill Generated with 5% GST.", "success");
+        showToast("Invoice ready with 5% GST.", "success");
     }
 
     function processPaymentAndReview() {
-        showToast("Payment Success! Ending Ride...", "success");
+        console.log("Ride completed. Collecting payment...");
+        showToast("Payment Successful!", "success");
         closeEndRideModal();
         
-        // Clean session
+        // Remove active state
         localStorage.removeItem('active_ride'); 
         checkActiveRide();
         
-        // Show review modal after slight delay
+        // Trigger Review Step
         setTimeout(() => { 
             document.getElementById('reviewModal').classList.add('active'); 
         }, 500);
         
-        // Reset Bill Modal for next use
+        // Reset Modal view for next ride
         setTimeout(() => { 
             document.getElementById('billInputSection').classList.remove('hidden'); 
             document.getElementById('billDisplaySection').classList.add('hidden'); 
@@ -935,157 +941,81 @@
     }
 
     // ==========================================
-    // DATA FETCHING & SYNC (GOOGLE SHEET)
+    // 7. DATABASE SYNC (GET/POST)
     // ==========================================
     function loadDynamicTours() {
-        let cacheBuster = new Date().getTime();
-        fetch(scriptURL + "?action=getTours&t=" + cacheBuster)
+        let ts = new Date().getTime();
+        fetch(scriptURL + "?action=getTours&t=" + ts)
             .then(res => res.json())
             .then(data => {
                 if(data.result === 'success' && data.tours) {
+                    console.log("Tours loaded from DB");
                     allToursData = data.tours;
                     renderTours(allToursData);
                 }
-            }).catch(err => console.error("Tours Error:", err));
+            }).catch(err => console.error("Database fetch error (Tours)"));
     }
 
     function loadDynamicReviews() {
-        let cacheBuster = new Date().getTime();
-        fetch(scriptURL + "?action=getReviews&t=" + cacheBuster)
+        let ts = new Date().getTime();
+        fetch(scriptURL + "?action=getReviews&t=" + ts)
             .then(res => res.json())
             .then(data => {
-                const container = document.getElementById('dynamic-reviews-container');
-                if(data.result === 'success' && data.reviews && data.reviews.length > 0) {
-                    container.innerHTML = ''; 
+                const con = document.getElementById('dynamic-reviews-container');
+                if(data.result === 'success' && data.reviews) {
+                    con.innerHTML = ''; 
                     data.reviews.reverse().forEach(r => {
-                        let starsHtml = '';
+                        let stars = '';
                         for(let i=0; i<5; i++) { 
-                            starsHtml += i < r.Rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>'; 
+                            stars += i < r.Rating ? '<i class="fas fa-star text-yellow-400"></i>' : '<i class="far fa-star text-slate-300"></i>'; 
                         }
                         
                         let div = document.createElement('div');
-                        div.className = 'bg-white p-8 rounded-[2rem] shadow-xl border-2 border-slate-100 relative overflow-hidden transition-transform hover:-translate-y-2';
+                        div.className = 'bg-white p-8 rounded-[2rem] shadow-xl border-2 border-slate-100 relative transition-transform hover:-translate-y-2';
                         div.innerHTML = `
-                            <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-black px-4 py-2 rounded-bl-xl uppercase tracking-widest">Verified</div>
-                            <div class="flex text-yellow-400 text-2xl mb-4">${starsHtml}</div>
+                            <div class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-black px-4 py-2 rounded-bl-xl uppercase">Verified Ride</div>
+                            <div class="flex mb-4 space-x-1">${stars}</div>
                             <p class="text-slate-800 font-bold text-lg leading-relaxed mb-6">"${r.Comment}"</p>
-                            <p class="text-sm font-black text-blue-700 uppercase">— ${r.Name} <span class="text-xs text-slate-400 ml-2 font-bold">${r.Date}</span></p>`;
-                        container.appendChild(div);
+                            <p class="text-sm font-black text-blue-700 uppercase">— ${r.Name} <span class="text-slate-400 text-xs ml-2">${r.Date}</span></p>`;
+                        con.appendChild(div);
                     });
                 }
-            }).catch(err => console.error("Reviews Error:", err));
+            }).catch(err => console.log("Database fetch error (Reviews)"));
     }
 
     function submitReview() {
-        let name = localStorage.getItem('easygo_name') || "Verified Rider";
-        let rating = document.getElementById('ratingValue').value;
-        let comment = document.getElementById('reviewText').value;
-        let btn = document.getElementById('submitReviewBtn');
+        let n = localStorage.getItem('easygo_name') || "Customer";
+        let r = document.getElementById('ratingValue').value;
+        let c = document.getElementById('reviewText').value;
+        let b = document.getElementById('submitReviewBtn');
 
-        if(!comment) { showToast("Please write a comment!", "error"); return; }
+        if(!c) { showToast("Say something about your ride!", "warning"); return; }
         
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Publishing...';
-        btn.disabled = true;
+        b.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> PUBLISHING...';
+        b.disabled = true;
 
-        let formData = new FormData();
-        formData.append('action', 'addReview');
-        formData.append('Name', name);
-        formData.append('Rating', rating);
-        formData.append('Comment', comment);
-        formData.append('Date', new Date().toLocaleDateString());
+        let fd = new FormData();
+        fd.append('action', 'addReview');
+        fd.append('Name', n);
+        fd.append('Rating', r);
+        fd.append('Comment', c);
+        fd.append('Date', new Date().toLocaleDateString());
 
-        fetch(scriptURL, { method: 'POST', body: formData })
+        fetch(scriptURL, { method: 'POST', body: fd })
             .then(() => {
-                showToast("Review published Live!", "success");
-                btn.innerHTML = 'Publish Review';
-                btn.disabled = false;
+                showToast("Your review is now live!", "success");
+                b.innerHTML = 'Publish Review';
+                b.disabled = false;
                 document.getElementById('reviewModal').classList.remove('active');
                 loadDynamicReviews(); 
             }).catch(e => {
-                showToast("Failed to connect to sheet.", "error");
-                btn.innerHTML = 'Publish Review';
-                btn.disabled = false;
+                showToast("Unable to sync review.", "error");
+                b.disabled = false;
             });
     }
 
     // ==========================================
-    // AUTHENTICATION & SECURITY
-    // ==========================================
-    function openLoginModal() { 
-        document.getElementById('loginModal').classList.add('active'); 
-    }
-    
-    function closeLoginModal() { 
-        document.getElementById('loginModal').classList.remove('active'); 
-        document.getElementById('step1').classList.remove('hidden'); 
-        document.getElementById('step2').classList.add('hidden'); 
-    }
-
-    function sendOTP() {
-        let name = document.getElementById('nameInput').value;
-        let mobile = document.getElementById('mobileInput').value;
-        
-        if(!name || mobile.length < 10) { 
-            showToast("Enter Full Name & 10-digit Phone!", "error"); 
-            return; 
-        }
-        
-        document.getElementById('displayMobile').innerText = "+91 " + mobile;
-        document.getElementById('step1').classList.add('hidden');
-        document.getElementById('step2').classList.remove('hidden');
-        
-        let fakeOTP = Math.floor(1000 + Math.random() * 9000).toString();
-        let boxes = document.querySelectorAll('.otp-box');
-        
-        setTimeout(() => { boxes[0].value = fakeOTP[0]; 
-            setTimeout(() => { boxes[1].value = fakeOTP[1]; 
-                setTimeout(() => { boxes[2].value = fakeOTP[2]; 
-                    setTimeout(() => { boxes[3].value = fakeOTP[3]; 
-                        document.getElementById('otpLoader').classList.remove('hidden');
-                        syncUserToDB(name, mobile);
-                    }, 200); 
-                }, 200); 
-            }, 200); 
-        }, 800);
-    }
-
-    function syncUserToDB(name, phone) {
-        let formData = new FormData();
-        formData.append('action', 'registerUser'); 
-        formData.append('Name', name); 
-        formData.append('Phone', phone);
-        
-        fetch(scriptURL, { method: 'POST', body: formData })
-            .then(() => verifyOTPComplete(name, phone))
-            .catch(() => verifyOTPComplete(name, phone));
-    }
-
-    function verifyOTPComplete(name, phone) {
-        localStorage.setItem('easygo_user', phone);
-        localStorage.setItem('easygo_name', name);
-        loginUI(phone, name);
-        closeLoginModal();
-        document.getElementById('otpLoader').classList.add('hidden');
-        document.querySelectorAll('.otp-box').forEach(b => b.value = '');
-        showToast(`Welcome ${name.toUpperCase()}!`, "success");
-    }
-
-    function loginUI(mobile, name) {
-        document.getElementById('loginBtn').classList.add('hidden');
-        document.getElementById('userMenu').classList.remove('hidden');
-        document.getElementById('displayUserName').innerText = name.toUpperCase();
-        document.getElementById('customerPhone').value = mobile;
-        document.getElementById('customerNameField').value = name;
-    }
-
-    function logout() {
-        localStorage.clear();
-        showToast("Logging out...", "warning");
-        setTimeout(() => { location.reload(); }, 1000);
-    }
-
-    // ==========================================
-    // SEARCH & GEOCODING HELPERS
+    // 8. SEARCH & GEOCODING ENGINE
     // ==========================================
     function searchLocation(query, type) {
         clearTimeout(searchTimeout);
@@ -1128,7 +1058,7 @@
 
     function useCurrentLocation(type) {
         if ("geolocation" in navigator) {
-            document.getElementById(type).value = "Locating GPS...";
+            document.getElementById(type).value = "Locating...";
             navigator.geolocation.getCurrentPosition(position => {
                 const latlng = [position.coords.latitude, position.coords.longitude];
                 if(type === 'pickup') { 
@@ -1163,97 +1093,127 @@
     }
 
     // ==========================================
-    // BOOKING SUBMISSION & STATE
+    // 9. AUTHENTICATION & BOOKING SUBMISSION
     // ==========================================
+    function sendOTP() {
+        let name = document.getElementById('nameInput').value;
+        let mobile = document.getElementById('mobileInput').value;
+        
+        if(!name || mobile.length < 10) { 
+            showToast("Details Missing!", "error"); 
+            return; 
+        }
+        
+        document.getElementById('displayMobile').innerText = "+91 " + mobile;
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+        
+        let otp = Math.floor(1000 + Math.random() * 9000).toString();
+        let boxes = document.querySelectorAll('.otp-box');
+        
+        // Animated Entry
+        setTimeout(() => { boxes[0].value = otp[0]; 
+            setTimeout(() => { boxes[1].value = otp[1]; 
+                setTimeout(() => { boxes[2].value = otp[2]; 
+                    setTimeout(() => { boxes[3].value = otp[3]; 
+                        document.getElementById('otpLoader').classList.remove('hidden');
+                        syncUserToDB(name, mobile);
+                    }, 200); 
+                }, 200); 
+            }, 200); 
+        }, 800);
+    }
+
+    function syncUserToDB(n, p) {
+        let fd = new FormData();
+        fd.append('action', 'registerUser'); 
+        fd.append('Name', n); 
+        fd.append('Phone', p);
+        
+        fetch(scriptURL, { method: 'POST', body: fd })
+            .then(() => verifyOTPComplete(n, p))
+            .catch(() => verifyOTPComplete(n, p));
+    }
+
+    function verifyOTPComplete(n, p) {
+        localStorage.setItem('easygo_user', p);
+        localStorage.setItem('easygo_name', n);
+        loginUI(p, n);
+        closeLoginModal();
+        document.getElementById('otpLoader').classList.add('hidden');
+        showToast(`Welcome ${n}!`, "success");
+    }
+
     function handleBooking(e) {
         e.preventDefault();
         if(!localStorage.getItem('easygo_user')) { 
-            showToast("SECURITY: Please Login to book.", "error"); 
+            showToast("Please Login to book.", "error"); 
             openLoginModal(); 
             return; 
         }
 
-        const submitBtn = document.getElementById('submitBtn');
+        const sub = document.getElementById('submitBtn');
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         document.getElementById('bookingOTP').value = otp;
 
-        submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-3"></i> ENCRYPTING...';
-        submitBtn.disabled = true;
+        sub.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i> ENCRYPTING...';
+        sub.disabled = true;
 
-        let formData = new FormData(document.getElementById('bookingForm'));
-        formData.append('action', 'bookRide');
+        let fd = new FormData(document.getElementById('bookingForm'));
+        fd.append('action', 'bookRide');
 
-        fetch(scriptURL, { method: 'POST', body: formData })
+        fetch(scriptURL, { method: 'POST', body: fd })
             .then(() => {
-                showToast("Booking Secured!", "success");
-                
-                // Store Active Ride locally
-                const data = {
+                showToast("Ride Booked!", "success");
+                const d = {
                     name: localStorage.getItem('easygo_name'),
                     pickup: document.getElementById('pickup').value,
                     drop: document.getElementById('drop').value,
                     otp: otp
                 };
-                localStorage.setItem('active_ride', JSON.stringify(data));
+                localStorage.setItem('active_ride', JSON.stringify(d));
                 checkActiveRide();
+                sub.innerHTML = 'BOOK NOW !! <i class="fas fa-arrow-right ml-3"></i>';
+                sub.disabled = false;
                 
-                // Reset UI
-                submitBtn.innerHTML = 'BOOK NOW !! <i class="fas fa-arrow-right ml-3"></i>';
-                submitBtn.disabled = false;
-                
-                // WhatsApp Trigger
-                let msg = `[EASYGO NEW BOOKING]\n\nCustomer: ${data.name}\nPickup: ${data.pickup}\nDrop: ${data.drop}\nOTP: ${otp}\n\nNote: Please ask OTP to start the ride.`;
+                let msg = `[NEW RIDE]\nCustomer: ${d.name}\nPickup: ${d.pickup}\nDrop: ${d.drop}\nOTP: ${otp}`;
                 window.open(`https://wa.me/917651837322?text=${encodeURIComponent(msg)}`, '_blank');
             });
     }
 
+    // ==========================================
+    // 10. SYSTEM HELPERS
+    // ==========================================
     function checkActiveRide() {
-        let activeRide = localStorage.getItem('active_ride');
-        if(activeRide) {
-            let data = JSON.parse(activeRide);
+        let active = localStorage.getItem('active_ride');
+        if(active) {
+            let d = JSON.parse(active);
             document.getElementById('activeRideBanner').classList.remove('hidden');
-            document.getElementById('activeRideRoute').innerText = `${data.pickup.substring(0,25)}... TO ${data.drop.substring(0,25)}...`;
-            document.getElementById('activeRideOTP').innerText = data.otp;
+            document.getElementById('activeRideRoute').innerText = `${d.pickup.substring(0,25)}... TO ${d.drop.substring(0,25)}...`;
+            document.getElementById('activeRideOTP').innerText = d.otp;
         } else {
             document.getElementById('activeRideBanner').classList.add('hidden');
         }
     }
 
-    function toggleFaq(element) {
-        let parent = element.parentElement;
-        if(parent.classList.contains('active')) {
-            parent.classList.remove('active');
-        } else {
-            document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
-            parent.classList.add('active');
-        }
+    function loginUI(mob, n) {
+        document.getElementById('loginBtn').classList.add('hidden');
+        document.getElementById('userMenu').classList.remove('hidden');
+        document.getElementById('displayUserName').innerText = n.toUpperCase();
+        document.getElementById('customerPhone').value = mob;
+        document.getElementById('customerNameField').value = n;
     }
 
-    function locateMeOnMap() {
-        if ("geolocation" in navigator) {
-            showToast("Acquiring GPS Signal...", "warning");
-            navigator.geolocation.getCurrentPosition(position => {
-                const latlng = [position.coords.latitude, position.coords.longitude];
-                pickupMarker.setLatLng(latlng);
-                map.setView(latlng, 15);
-                reverseGeocode({lat: latlng[0], lng: latlng[1]}, 'pickup');
-                calculateMapDistance();
-                showToast("GPS Lock Successful!", "success");
-            });
-        }
+    function logout() {
+        localStorage.clear();
+        location.reload();
     }
 
-    function setRating(val) {
-        document.getElementById('ratingValue').value = val;
-        let stars = document.getElementById('starContainer').children;
+    function setRating(v) {
+        document.getElementById('ratingValue').value = v;
+        let s = document.getElementById('starContainer').children;
         for(let i=0; i<5; i++) {
-            if(i < val) {
-                stars[i].classList.add('active', 'fas');
-                stars[i].classList.remove('far');
-            } else {
-                stars[i].classList.remove('active', 'fas');
-                stars[i].classList.add('far');
-            }
+            s[i].className = i < v ? 'fas fa-star active' : 'far fa-star text-slate-300';
         }
     }
 </script>
