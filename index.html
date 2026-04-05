@@ -45,8 +45,18 @@
         
         .receipt-dashed { border-top: 2px dashed #cbd5e1; border-bottom: 2px dashed #cbd5e1; }
 
-        /* Season Filter Buttons Active State */
+        /* --- Season Filter Buttons (Bina badlaav ke) --- */
         .filter-btn.active { background-color: #1e3a8a !important; color: white !important; border-color: #1e3a8a !important; }
+        
+        /* --- NAYA: Category Filter Buttons Styling (Active State Fix) --- */
+        .cat-btn { transition: all 0.3s ease; border: 2px solid #e2e8f0; cursor: pointer; }
+        .cat-btn.active { 
+            background-color: #0f172a !important; 
+            color: white !important; 
+            border-color: #0f172a !important;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+        }
         
         /* FAQ Accordion styling */
         .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
@@ -233,13 +243,21 @@
                 <button onclick="filterTours('Summer')" class="filter-btn bg-white text-slate-700 border-2 border-slate-300 font-black px-8 py-3 rounded-full hover:bg-slate-100 transition-colors uppercase tracking-widest shadow-md"><i class="fas fa-sun text-yellow-500 mr-2"></i> Summer</button>
             </div>
 
-            <div class="flex flex-wrap justify-center gap-3 mb-6">
-                <span class="w-full text-center font-black text-slate-500 uppercase tracking-widest text-xs mb-2">Filter by Category</span>
-                <button onclick="filterByCategory('All')" class="cat-btn active bg-slate-200 px-6 py-2 rounded-full font-bold text-sm shadow-sm">All Places</button>
-                <button onclick="filterByCategory('Nature')" class="cat-btn bg-white border px-6 py-2 rounded-full font-bold text-sm shadow-sm">Nature & Falls</button>
-                <button onclick="filterByCategory('Religious')" class="cat-btn bg-white border px-6 py-2 rounded-full font-bold text-sm shadow-sm">Religious</button>
-                <button onclick="filterByCategory('Adventure')" class="cat-btn bg-white border px-6 py-2 rounded-full font-bold text-sm shadow-sm">Adventure & Malls</button>
-                <button onclick="filterByCategory('Heritage')" class="cat-btn bg-white border px-6 py-2 rounded-full font-bold text-sm shadow-sm">Heritage</button>
+            <div class="flex flex-wrap justify-center gap-3 mb-8 bg-slate-50 p-6 rounded-[2rem] border-2 border-dashed border-slate-200">
+                <span class="w-full text-center font-black text-slate-400 uppercase tracking-widest text-[10px] mb-2">Explore by Category</span>
+                <button onclick="filterByCategory('All', this)" class="cat-btn active bg-white text-slate-700 px-6 py-2 rounded-full font-bold text-sm shadow-sm">All Places</button>
+                <button onclick="filterByCategory('Nature', this)" class="cat-btn bg-white text-slate-700 px-6 py-2 rounded-full font-bold text-sm shadow-sm">
+                    <i class="fas fa-leaf text-green-500 mr-2"></i> Nature & Falls
+                </button>                
+                <button onclick="filterByCategory('Religious', this)" class="cat-btn bg-white text-slate-700 px-6 py-2 rounded-full font-bold text-sm shadow-sm">
+                    <i class="fas fa-om text-orange-500 mr-2"></i> Religious
+                </button>                
+                <button onclick="filterByCategory('Adventure', this)" class="cat-btn bg-white text-slate-700 px-6 py-2 rounded-full font-bold text-sm shadow-sm">
+                    <i class="fas fa-utensils text-blue-500 mr-2"></i> Adventure & Food
+                </button>                
+                <button onclick="filterByCategory('Heritage', this)" class="cat-btn bg-white text-slate-700 px-6 py-2 rounded-full font-bold text-sm shadow-sm">
+                    <i class="fas fa-fort-awesome text-amber-700 mr-2"></i> Heritage
+                </button>
             </div>
             
             <div id="dynamic-tours-container" class="tours-container">
@@ -508,14 +526,6 @@
         let currentSeason = 'All';
         let currentCategory = 'All';
         
-        function filterTours(season) {
-            currentSeason = season;
-            // UI Update for Season Buttons
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            applyDualFilter();
-        }
-        
         function filterByCategory(category) {
             currentCategory = category;
             // UI Update for Category Buttons
@@ -523,23 +533,41 @@
                 btn.classList.remove('active', 'bg-slate-900', 'text-white');
                 btn.classList.add('bg-white', 'text-slate-700');
             });
+            // Jis button pe click kiya use dark kar do
             event.currentTarget.classList.add('active', 'bg-slate-900', 'text-white');
             applyDualFilter();
         }
         
         function applyDualFilter() {
             let filtered = allToursData.filter(t => {
-                // Season Check
+                const desc = t.Description.toLowerCase();
+                const dest = t.Destination.toLowerCase();
+                
+                // 1. Season Match
                 const matchSeason = (currentSeason === 'All' || t.Season.toLowerCase().includes(currentSeason.toLowerCase()) || t.Season.toLowerCase() === 'all seasons');
                 
-                // Category Check (Hum Description mein category search karenge)
-                const matchCategory = (currentCategory === 'All' || t.Description.toLowerCase().includes(currentCategory.toLowerCase()) || t.Destination.toLowerCase().includes(currentCategory.toLowerCase()));
-                
+                // 2. Category Match (Smart Keyword Search)
+                let matchCategory = false;
+                if (currentCategory === 'All') {
+                    matchCategory = true;
+                } else if (currentCategory === 'Nature') {
+                    // Waterfalls, Lakes, Nature keywords
+                    matchCategory = desc.includes('fall') || desc.includes('lake') || desc.includes('nature') || desc.includes('valley') || desc.includes('scenic');
+                } else if (currentCategory === 'Religious') {
+                    // Temple, Jyotirlinga, Spiritual keywords
+                    matchCategory = desc.includes('temple') || desc.includes('jyotirlinga') || desc.includes('spiritual') || desc.includes('mandir') || dest.includes('mandir');
+                } else if (currentCategory === 'Adventure') {
+                    // Mall, Adventure, Zoo, Fun keywords
+                    matchCategory = desc.includes('mall') || desc.includes('adventure') || desc.includes('zoo') || desc.includes('park') || desc.includes('dining');
+                } else if (currentCategory === 'Heritage') {
+                    // Palace, Fort, History keywords
+                    matchCategory = desc.includes('palace') || desc.includes('fort') || desc.includes('history') || desc.includes('heritage') || desc.includes('museum');
+                }
+        
                 return matchSeason && matchCategory;
             });
             renderTours(filtered);
         }
-
         // Custom Toasts
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
