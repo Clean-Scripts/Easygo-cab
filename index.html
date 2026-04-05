@@ -582,8 +582,26 @@
 
         function syncUserToDB(name, phone) {
             let formData = new FormData();
-            formData.append('action', 'registerUser'); formData.append('Name', name); formData.append('Phone', phone);
-            fetch(scriptURL, { method: 'POST', body: formData }).then(res => res.json()).then(data => verifyOTPComplete(name, phone)).catch(err => verifyOTPComplete(name, phone));
+            formData.append('action', 'registerUser'); 
+            formData.append('Name', name); 
+            formData.append('Phone', phone);
+            
+            fetch(scriptURL, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === 'success') {
+                    verifyOTPComplete(name, phone);
+                } else {
+                    // Agar sheet me tab nahi hai ya koi error hai, toh screen pe dikhayega
+                    showToast("Sheet Error: " + data.message, "error");
+                    document.getElementById('otpLoader').classList.add('hidden');
+                }
+            })
+            .catch(err => {
+                // Agar URL galat hai ya khali chhod diya hai
+                showToast("Backend link missing ya URL galat hai!", "error");
+                document.getElementById('otpLoader').classList.add('hidden');
+            });
         }
 
         function verifyOTPComplete(name, phone) {
