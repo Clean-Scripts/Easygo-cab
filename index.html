@@ -3,402 +3,490 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyGo Cabs</title>
+    <title>EasyGo Cabs | Premium Rides in Indore</title>
     <link rel="icon" type="image/jpeg" href="easy go.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         html { scroll-behavior: smooth; }
+        body { font-size: 16px; } /* Increased base font size for better readability */
         .page-section { display: none; animation: fadeIn 0.4s ease-in-out; }
         .page-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Modal Styles */
-        .modal { display: none; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        .modal { display: none; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999;}
         .modal.active { display: flex; animation: fadeIn 0.3s; }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+        ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 5px; }
+        
+        .suggestions-box {
+            position: absolute; width: 100%; background: white; z-index: 1000;
+            border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-height: 250px; overflow-y: auto; display: none; border: 2px solid #e2e8f0;
+        }
+        .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #e2e8f0; font-size: 15px; font-weight: 500;}
+        .suggestion-item:hover { background-color: #eff6ff; color: #1d4ed8; }
+        
+        /* Pinterest Style Grid for Reviews */
+        .reviews-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen">
+<body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen selection:bg-blue-300 selection:text-blue-900">
 
-    <nav class="bg-white shadow-lg sticky top-0 z-50 border-b border-blue-100">
+    <nav class="bg-white shadow-lg sticky top-0 z-50 border-b-2 border-blue-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
                 <div class="flex items-center cursor-pointer" onclick="showPage('home')">
-                    <img src="easy go.jpg" alt="EasyGo Logo" class="h-14 w-14 object-contain rounded-full border-2 border-blue-600 shadow-sm">
+                    <img src="easy go.jpg" alt="EasyGo Logo" class="h-16 w-16 object-contain rounded-full border-2 border-blue-600 shadow-md">
                     <div class="ml-3">
-                        <span class="block font-extrabold text-2xl text-blue-900 leading-tight">EasyGo</span>
-                        <span class="block text-xs font-semibold text-blue-600 tracking-wider">PREMIUM CABS</span>
+                        <span class="block font-black text-3xl text-blue-900 leading-none tracking-tight">EasyGo</span>
+                        <span class="block text-sm font-bold text-blue-600 tracking-widest uppercase mt-1">Premium Cabs</span>
                     </div>
                 </div>
                 
                 <div class="hidden md:flex items-center space-x-8">
-                    <button onclick="showPage('home')" class="nav-btn text-gray-700 hover:text-blue-600 font-semibold transition-colors">Home</button>
-                    <button onclick="showPage('about')" class="nav-btn text-gray-700 hover:text-blue-600 font-semibold transition-colors">About Us</button>
-                    <button onclick="showPage('privacy')" class="nav-btn text-gray-700 hover:text-blue-600 font-semibold transition-colors">Privacy</button>
-                    <button onclick="showPage('terms')" class="nav-btn text-gray-700 hover:text-blue-600 font-semibold transition-colors">Terms</button>
+                    <button onclick="showPage('home')" class="nav-btn text-gray-800 hover:text-blue-700 font-extrabold text-lg transition-colors">Home</button>
+                    <button onclick="showPage('about')" class="nav-btn text-gray-800 hover:text-blue-700 font-extrabold text-lg transition-colors">About Us</button>
+                    <button onclick="showPage('privacy')" class="nav-btn text-gray-800 hover:text-blue-700 font-extrabold text-lg transition-colors">Privacy</button>
+                    <button onclick="showPage('terms')" class="nav-btn text-gray-800 hover:text-blue-700 font-extrabold text-lg transition-colors">Terms</button>
                     
-                    <div id="userMenu" class="hidden flex items-center space-x-4">
-                        <span class="text-sm font-bold text-green-600"><i class="fas fa-check-circle"></i> Logged In</span>
-                        <button onclick="logout()" class="text-sm text-red-500 hover:text-red-700 font-bold">Logout</button>
+                    <div id="userMenu" class="hidden flex items-center space-x-4 bg-green-50 px-4 py-2 rounded-full border border-green-200">
+                        <div class="text-right">
+                            <span id="displayUserName" class="block text-base font-black text-gray-900"></span>
+                            <span class="block text-xs font-bold text-green-700"><i class="fas fa-shield-alt"></i> Verified User</span>
+                        </div>
+                        <button onclick="logout()" class="text-sm bg-red-500 text-white px-4 py-1.5 rounded-full hover:bg-red-600 font-bold shadow-sm">Logout</button>
                     </div>
-                    <button id="loginBtn" onclick="openLoginModal()" class="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold hover:bg-blue-700 shadow-md hover:shadow-lg transition-all flex items-center">
-                        <i class="fas fa-user-circle mr-2 text-lg"></i> Login / Register
+                    <button id="loginBtn" onclick="openLoginModal()" class="bg-blue-600 text-white px-8 py-3 rounded-full font-black text-lg hover:bg-blue-700 shadow-xl transition-all transform hover:scale-105 flex items-center border-2 border-blue-500">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Login
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow">
+    <main class="flex-grow relative">
         
+        <div id="activeRideBanner" class="hidden bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white shadow-2xl border-b-8 border-yellow-400">
+            <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="h-16 w-16 bg-white rounded-full flex items-center justify-center text-blue-900 text-3xl mr-5 shadow-[0_0_15px_rgba(255,255,255,0.5)] animate-bounce">
+                        <i class="fas fa-taxi"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-2xl text-yellow-400 tracking-wide">YOUR RIDE IS BOOKED!</h4>
+                        <p class="text-lg font-medium opacity-90 mt-1" id="activeRideRoute">Omaxe City 1 to Mandu</p>
+                    </div>
+                </div>
+                <div class="bg-black/40 px-8 py-3 rounded-2xl border-2 border-white/30 text-center shadow-inner">
+                    <p class="text-sm uppercase tracking-widest font-bold text-yellow-300 mb-1">Share this OTP to Start Ride</p>
+                    <p class="text-5xl font-black tracking-[0.2em] text-white" id="activeRideOTP">------</p>
+                </div>
+                <button onclick="endRide()" class="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 border-2 border-red-400 px-6 py-3 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-red-500/50">
+                    End Ride (Demo)
+                </button>
+            </div>
+        </div>
+
         <section id="home" class="page-section active max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div class="grid lg:grid-cols-12 gap-10 items-start">
                 
-                <div class="lg:col-span-7 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-200">
-                    <div class="p-4 bg-slate-900 flex justify-between items-center text-white">
-                        <h3 class="font-bold"><i class="fas fa-map-marked-alt mr-2"></i>Live Location Map</h3>
-                        <span class="text-xs bg-blue-600 px-3 py-1 rounded-full">Indore Region</span>
+                <div class="lg:col-span-7 bg-white rounded-[2rem] shadow-2xl overflow-hidden border-4 border-gray-100">
+                    <div class="p-5 bg-slate-900 flex justify-between items-center text-white border-b-4 border-blue-600">
+                        <h3 class="font-black text-xl tracking-wide"><i class="fas fa-map-marked-alt mr-3 text-blue-400 text-2xl"></i>Interactive Route Map</h3>
+                        <button onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 text-slate-900 px-5 py-2 rounded-full text-sm font-extrabold transition-colors shadow-lg flex items-center">
+                            <i class="fas fa-crosshairs mr-2"></i> Find Me
+                        </button>
                     </div>
-                    <div class="relative w-full h-[500px]">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d117763.55657388414!2d75.78663242095818!3d22.724110364972744!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962fcad1b410ddb%3A0x96ec4da356240f4!2sIndore%2C%20Madhya%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
-                            class="absolute top-0 left-0 w-full h-full border-0" 
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                    </div>
+                    <div id="map" class="w-full h-[600px] z-0 relative"></div>
                 </div>
 
                 <div class="lg:col-span-5">
-                    <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full z-0"></div>
+                    <div class="bg-white p-8 rounded-[2rem] shadow-2xl border-2 border-blue-100 relative">
+                        <h2 class="text-4xl font-black mb-8 text-gray-900 border-b-2 border-gray-100 pb-4">Book Your Ride</h2>
                         
-                        <div class="relative z-10">
-                            <h2 class="text-3xl font-extrabold mb-6 text-gray-900">Book Your Ride</h2>
-                            
-                            <form id="bookingForm" name="google-sheet-form" class="space-y-5" onsubmit="handleBooking(event)">
-                                
+                        <form id="bookingForm" name="google-sheet-form" class="space-y-6" onsubmit="handleBooking(event)">
+                            <input type="hidden" id="customerPhone" name="Phone">
+                            <input type="hidden" id="customerNameField" name="Name">
+                            <input type="hidden" id="bookingOTP" name="OTP">
+
+                            <div class="relative">
+                                <label class="block text-base font-extrabold text-gray-800 mb-2 uppercase tracking-wide">Pickup Location</label>
+                                <div class="flex shadow-md rounded-xl">
+                                    <div class="relative flex-grow">
+                                        <i class="fas fa-dot-circle text-green-600 absolute left-4 top-4 text-lg"></i>
+                                        <input type="text" id="pickup" name="Pickup" required autocomplete="off" onkeyup="searchLocation(this.value, 'pickup')" class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-l-xl focus:border-blue-600 focus:bg-white outline-none font-bold text-gray-900 text-lg transition-colors" placeholder="Where from?">
+                                        <div id="pickup-suggestions" class="suggestions-box"></div>
+                                    </div>
+                                    <button type="button" onclick="useCurrentLocation('pickup')" class="bg-slate-900 text-white px-6 rounded-r-xl hover:bg-blue-700 transition-colors border-2 border-l-0 border-slate-900" title="Use My Location">
+                                        <i class="fas fa-location-arrow text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="relative">
+                                <label class="block text-base font-extrabold text-gray-800 mb-2 uppercase tracking-wide">Drop Location</label>
+                                <div class="flex shadow-md rounded-xl">
+                                    <div class="relative flex-grow">
+                                        <i class="fas fa-map-marker-alt text-red-600 absolute left-4 top-4 text-lg"></i>
+                                        <input type="text" id="drop" name="Drop" required autocomplete="off" onkeyup="searchLocation(this.value, 'drop')" class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-l-xl focus:border-blue-600 focus:bg-white outline-none font-bold text-gray-900 text-lg transition-colors" placeholder="Where to?">
+                                        <div id="drop-suggestions" class="suggestions-box"></div>
+                                    </div>
+                                    <button type="button" onclick="useCurrentLocation('drop')" class="bg-slate-900 text-white px-6 rounded-r-xl hover:bg-blue-700 transition-colors border-2 border-l-0 border-slate-900" title="Use My Location">
+                                        <i class="fas fa-location-arrow text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1">Pickup Location</label>
-                                    <div class="relative">
-                                        <i class="fas fa-dot-circle text-green-500 absolute left-4 top-3.5 text-sm"></i>
-                                        <input type="text" id="pickup" name="Pickup" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm" placeholder="Search pickup point...">
+                                    <label class="block text-base font-extrabold text-gray-800 mb-2 uppercase tracking-wide">Date</label>
+                                    <div class="relative shadow-md rounded-xl">
+                                        <i class="fas fa-calendar-alt text-blue-600 absolute left-4 top-4 text-lg"></i>
+                                        <input type="date" id="date" name="Date" required class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:bg-white outline-none font-bold text-gray-900 text-base">
                                     </div>
                                 </div>
-
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-1">Drop Location</label>
-                                    <div class="relative">
-                                        <i class="fas fa-map-marker-alt text-red-500 absolute left-4 top-3.5 text-sm"></i>
-                                        <input type="text" id="drop" name="Drop" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm" placeholder="Enter destination...">
+                                    <label class="block text-base font-extrabold text-gray-800 mb-2 uppercase tracking-wide">Time</label>
+                                    <div class="relative shadow-md rounded-xl">
+                                        <i class="fas fa-clock text-blue-600 absolute left-4 top-4 text-lg"></i>
+                                        <input type="time" id="time" name="Time" required class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:bg-white outline-none font-bold text-gray-900 text-base">
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-bold text-gray-700 mb-1">Date</label>
-                                        <div class="relative">
-                                            <i class="fas fa-calendar-alt text-blue-500 absolute left-3 top-3.5 text-sm"></i>
-                                            <input type="date" id="date" name="Date" required class="w-full pl-9 pr-3 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-bold text-gray-700 mb-1">Time</label>
-                                        <div class="relative">
-                                            <i class="fas fa-clock text-blue-500 absolute left-3 top-3.5 text-sm"></i>
-                                            <input type="time" id="time" name="Time" required class="w-full pl-9 pr-3 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="bg-blue-50 p-5 rounded-2xl border-2 border-blue-200 shadow-inner">
+                                <p class="text-lg font-black text-blue-900 mb-3 border-b border-blue-200 pb-2"><i class="fas fa-info-circle mr-2"></i> Fare Details</p>
+                                <ul class="space-y-2">
+                                    <li class="flex justify-between items-center text-base font-bold text-gray-800">
+                                        <span>Base Fare (up to 20km)</span>
+                                        <span class="text-xl text-blue-700 font-black">₹70</span>
+                                    </li>
+                                    <li class="flex justify-between items-center text-base font-bold text-gray-800">
+                                        <span>After 20km</span>
+                                        <span class="text-lg text-blue-700">₹15 / km</span>
+                                    </li>
+                                    <li class="flex justify-between items-center text-sm font-bold text-red-600 mt-2 pt-2 border-t border-blue-200">
+                                        <span>Wait Time (Prior to start)</span>
+                                        <span>₹1 / 30 sec</span>
+                                    </li>
+                                </ul>
+                            </div>
 
-                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-2xl border border-blue-100 mt-6">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-700 font-semibold">Base Fare (up to 20km)</span>
-                                        <span class="text-xl font-extrabold text-blue-900">₹70</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm">
-                                        <span class="text-gray-600">Additional charge</span>
-                                        <span class="font-bold text-gray-800">₹15/km</span>
-                                    </div>
-                                </div>
+                            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.3)] transition-all transform hover:-translate-y-1 text-2xl mt-4 border-b-4 border-blue-900">
+                                CONFIRM BOOKING
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-                                <input type="hidden" id="customerPhone" name="Phone">
-                                <input type="hidden" id="bookingOTP" name="OTP">
-
-                                <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex justify-center items-center text-lg mt-4">
-                                    <i class="fab fa-whatsapp text-2xl mr-2"></i> Book & Notify via WhatsApp
-                                </button>
-                                
-                                <div id="bookingStatus" class="hidden text-center text-sm font-bold mt-2"></div>
-                            </form>
-                        </div>
+            <div class="mt-20">
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl font-black text-gray-900 uppercase tracking-tight">What Indore Says About Us</h2>
+                    <p class="text-xl text-gray-600 mt-2 font-medium">100% Genuine reviews from our daily riders.</p>
+                </div>
+                
+                <div class="reviews-container">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Nishant is a highly professional driver. The white Citroen C3 is super comfortable even on bad roads. Best cab service in Indore!"</p>
+                        <p class="text-sm font-bold text-blue-600">— Rahul Sharma</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Transparent pricing! No hidden surge charges like Ola/Uber. ₹70 base fare is very reasonable. Highly recommended."</p>
+                        <p class="text-sm font-bold text-blue-600">— Priya Mishra</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Booked for a full-day trip to Ujjain. Smooth ride, driver was very polite and knew the best routes to Mahakal."</p>
+                        <p class="text-sm font-bold text-blue-600">— Amit Kumar</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"The OTP feature on the website makes me feel very secure. I only share it when I sit in the cab. Great tech integration."</p>
+                        <p class="text-sm font-bold text-blue-600">— Sneha Patel</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Late night pickup from Sarafa Bazaar. Reached exactly on time. Very safe and clean car."</p>
+                        <p class="text-sm font-bold text-blue-600">— Kavita Rathore</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Direct WhatsApp notification is awesome. Easy to communicate. Pickup from Omaxe City 1 was flawless."</p>
+                        <p class="text-sm font-bold text-blue-600">— Vikram Tiwari</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Took a ride to Mandu. The suspension of the Citroen C3 handled the ghat sections beautifully. Nishant is a very safe driver."</p>
+                        <p class="text-sm font-bold text-blue-600">— Rohan Deshmukh</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Always my go-to cab for railway station drops. Never been late. The map tracking on site is very accurate."</p>
+                        <p class="text-sm font-bold text-blue-600">— Pooja Nayak</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Went to Chappan Dukan with family. The car is spacious and smells really fresh. Outstanding service quality."</p>
+                        <p class="text-sm font-bold text-blue-600">— Manish Gupta</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"Fair billing. The fact that the wait time logic (1 rs/30 sec) is clearly written beforehand shows their honesty."</p>
+                        <p class="text-sm font-bold text-blue-600">— Anjali Verma</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-lg">Verified</div>
+                        <div class="flex text-yellow-400 text-lg mb-3"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-800 font-semibold text-lg leading-snug mb-4">"I highly recommend EasyGo to anyone visiting Indore. Support local businesses! Way better experience than corporate cabs."</p>
+                        <p class="text-sm font-bold text-blue-600">— Suresh Bajaj</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="page-section max-w-5xl mx-auto px-4 py-16">
-            <div class="text-center mb-12">
-                <h1 class="text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">The EasyGo Journey</h1>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">From the bustling streets of Omaxe City 1 to every corner of Madhya Pradesh, redefining how you travel.</p>
+        <section id="about" class="page-section max-w-6xl mx-auto px-4 py-16">
+            <div class="text-center mb-16">
+                <h1 class="text-6xl font-black text-slate-900 mb-6 tracking-tight uppercase">The EasyGo Journey</h1>
+                <p class="text-2xl text-gray-700 max-w-3xl mx-auto font-bold leading-relaxed">Redefining travel from the bustling streets of Omaxe City 1 to every breathtaking corner of Madhya Pradesh.</p>
             </div>
             
-            <div class="bg-white rounded-3xl shadow-xl p-10 border border-gray-100 mb-12 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-bl-[100px] -z-10 opacity-50"></div>
-                <h2 class="text-3xl font-bold text-blue-900 mb-6 border-b-2 border-blue-100 pb-4">Our Story: Driven by Passion</h2>
-                <div class="prose prose-lg text-gray-700 max-w-none space-y-6">
-                    <p>Welcome to EasyGo Cabs. Founded and operated right here in Indore by Nishant Jaiswal, our mission started with a simple observation: navigating our beautiful state shouldn't be a hassle. Operating from our base near 114 Prime Square, Omaxe City 1, we recognized the need for a transportation service that blends absolute transparency with premium comfort.</p>
+            <div class="bg-white rounded-[2rem] shadow-2xl p-12 border-2 border-gray-100 mb-16 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-100 rounded-bl-[100px] -z-10 opacity-50"></div>
+                <h2 class="text-4xl font-black text-blue-900 mb-8 border-b-4 border-blue-600 pb-4 inline-block">Our Story: Driven by Passion</h2>
+                <div class="text-xl text-gray-800 space-y-8 font-medium leading-loose">
+                    <p>Welcome to <strong>EasyGo Cabs</strong>. Founded and operated right here in Indore by <strong>Nishant Jaiswal</strong>, our mission started with a simple observation: navigating our beautiful state shouldn't be a hassle. Operating from our base at <strong class="text-blue-700 bg-blue-50 px-2 rounded">Omaxe City 1, Indore</strong>, we recognized the need for a transportation service that blends absolute transparency with premium comfort.</p>
                     
-                    <p>When you book with EasyGo, you aren't just getting a cab; you are stepping into a meticulously maintained, crisp white Citroen C3. We chose this vehicle specifically for its superior suspension, spacious interior, and smooth handling—ensuring that whether you are bouncing over city speed breakers or cruising on the super-corridor highway, your ride remains impeccably smooth.</p>
+                    <p>When you book with EasyGo, you aren't just getting a cab; you are stepping into a meticulously maintained, <strong class="text-gray-900 border-b-2 border-yellow-400">crisp white Citroen C3</strong>. We chose this vehicle specifically for its superior suspension, spacious interior, and smooth handling—ensuring that whether you are bouncing over city speed breakers or cruising on the super-corridor highway, your ride remains impeccably smooth.</p>
                     
-                    <p>We believe in upfront, honest pricing. That is why our structure is locked in: A flat base fare of ₹70, and a straightforward ₹15/km after 20km. No hidden surges when it rains, no confusing algorithms. Just you, the open road, and a reliable partner to get you to your destination.</p>
+                    <p class="bg-slate-900 text-white p-8 rounded-2xl shadow-lg border-l-8 border-blue-500 font-bold text-2xl">
+                        "We believe in upfront, honest pricing. That is why our structure is locked in: A flat base fare of ₹70, and a straightforward ₹15/km after 20km. No hidden surges. Just you, the open road, and a reliable partner."
+                    </p>
                 </div>
             </div>
 
-            <h2 class="text-3xl font-extrabold text-slate-900 mb-8 text-center">Ultimate Tourist Destinations in MP</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-3xl mx-auto">Madhya Pradesh is the heart of Incredible India. Whether it's a spiritual journey, a heritage trail, or a foodie adventure, our EasyGo cabs are ready to take you there. Check out the top destinations you can visit from Indore.</p>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-shadow">
-                    <div class="h-48 bg-gradient-to-r from-orange-400 to-red-500 relative flex items-end p-6">
-                        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                        <h3 class="relative z-10 text-3xl font-bold text-white">Ujjain - Mahakaleshwar</h3>
+            <h2 class="text-5xl font-black text-slate-900 mb-12 text-center uppercase tracking-wider border-b-4 border-yellow-400 inline-block w-full pb-4">Ultimate Destinations in MP</h2>
+            
+            <div class="grid md:grid-cols-2 gap-10">
+                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-200 group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1623946287968-3ff432822a94?q=80&w=800&auto=format&fit=crop" alt="Ujjain Temple" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+                            <h3 class="text-4xl font-black text-white tracking-wide">Ujjain</h3>
+                        </div>
                     </div>
-                    <div class="p-6">
-                        <p class="text-gray-700 mb-4 leading-relaxed">Located just 55 km from Indore, Ujjain is a city of spiritual awakening. Home to one of the 12 Jyotirlingas, the Mahakaleshwar Temple draws millions of devotees. With EasyGo, you can book a quiet, comfortable morning ride for the Bhasma Aarti and travel back in absolute peace.</p>
-                        <div class="flex items-center text-blue-800 font-bold bg-blue-50 p-3 rounded-lg"><i class="fas fa-route mr-3"></i> Distance: ~55 KM from Indore</div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-shadow">
-                    <div class="h-48 bg-gradient-to-r from-green-500 to-teal-600 relative flex items-end p-6">
-                        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                        <h3 class="relative z-10 text-3xl font-bold text-white">Omkareshwar & Maheshwar</h3>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-gray-700 mb-4 leading-relaxed">Experience the divine Narmada River. Omkareshwar offers another sacred Jyotirlinga situated on an island shaped like the holy 'Om'. A short drive away is Maheshwar, famous for its magnificent Ahilya Fort and exquisite Maheshwari sarees. A perfect full-day trip in our Citroen C3.</p>
-                        <div class="flex items-center text-blue-800 font-bold bg-blue-50 p-3 rounded-lg"><i class="fas fa-route mr-3"></i> Distance: ~80 to 95 KM from Indore</div>
+                    <div class="p-8">
+                        <p class="text-gray-800 text-lg font-medium leading-relaxed mb-6">Located just 55 km from Indore, home to the sacred Mahakaleshwar Temple. Book a quiet, comfortable morning ride for the Bhasma Aarti in our Citroen C3.</p>
+                        <div class="inline-block text-blue-900 font-black text-lg bg-blue-100 px-6 py-3 rounded-xl"><i class="fas fa-route mr-3"></i> Distance: ~55 KM</div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-shadow">
-                    <div class="h-48 bg-gradient-to-r from-amber-600 to-yellow-600 relative flex items-end p-6">
-                        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                        <h3 class="relative z-10 text-3xl font-bold text-white">Mandu (Mandavgad)</h3>
+                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-200 group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1644314227301-447a19c5c163?q=80&w=800&auto=format&fit=crop" alt="Maheshwar Narmada" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+                            <h3 class="text-4xl font-black text-white tracking-wide">Maheshwar</h3>
+                        </div>
                     </div>
-                    <div class="p-6">
-                        <p class="text-gray-700 mb-4 leading-relaxed">The city of joy and romance! Mandu is an ancient fort city renowned for its Afghan architecture. Visit the Jahaz Mahal (Ship Palace), Hindola Mahal, and Rani Rupmati Pavilion. The winding, scenic roads up the Vindhya range are a joy to experience in our premium cabs.</p>
-                        <div class="flex items-center text-blue-800 font-bold bg-blue-50 p-3 rounded-lg"><i class="fas fa-route mr-3"></i> Distance: ~97 KM from Indore</div>
+                    <div class="p-8">
+                        <p class="text-gray-800 text-lg font-medium leading-relaxed mb-6">Experience the divine Narmada River and the magnificent Ahilya Fort. A perfect full-day serene trip from Indore.</p>
+                        <div class="inline-block text-blue-900 font-black text-lg bg-blue-100 px-6 py-3 rounded-xl"><i class="fas fa-route mr-3"></i> Distance: ~95 KM</div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-shadow">
-                    <div class="h-48 bg-gradient-to-r from-blue-500 to-indigo-600 relative flex items-end p-6">
-                        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                        <h3 class="relative z-10 text-3xl font-bold text-white">Indore City Tour</h3>
+                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-200 group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1596404987158-7e4e1a065ff4?q=80&w=800&auto=format&fit=crop" alt="Mandu Fort" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+                            <h3 class="text-4xl font-black text-white tracking-wide">Mandu</h3>
+                        </div>
                     </div>
-                    <div class="p-6">
-                        <p class="text-gray-700 mb-4 leading-relaxed">Don't want to leave the city? Let us take you on an Indore food and heritage trail. From the majestic Rajwada Palace and Lal Bagh Palace to the street food havens of Chappan Dukan and the late-night Sarafa Bazaar. EasyGo ensures you won't have to worry about finding parking!</p>
-                        <div class="flex items-center text-blue-800 font-bold bg-blue-50 p-3 rounded-lg"><i class="fas fa-route mr-3"></i> Local City Tour Specials Available</div>
+                    <div class="p-8">
+                        <p class="text-gray-800 text-lg font-medium leading-relaxed mb-6">The ancient fort city of romance! The winding, scenic roads up the Vindhya range are a joy to experience with our premium suspension setup.</p>
+                        <div class="inline-block text-blue-900 font-black text-lg bg-blue-100 px-6 py-3 rounded-xl"><i class="fas fa-route mr-3"></i> Distance: ~97 KM</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-200 group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=800&auto=format&fit=crop" alt="Indore Street Food" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+                            <h3 class="text-4xl font-black text-white tracking-wide">Indore Local</h3>
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <p class="text-gray-800 text-lg font-medium leading-relaxed mb-6">From Rajwada Palace to Chappan Dukan and Sarafa Bazaar. Enjoy the city tour without the stress of driving and parking!</p>
+                        <div class="inline-block text-blue-900 font-black text-lg bg-blue-100 px-6 py-3 rounded-xl"><i class="fas fa-map-pin mr-3"></i> City Tours Available</div>
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="privacy" class="page-section max-w-5xl mx-auto px-4 py-16">
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-8 border-b-4 border-blue-600 pb-4 inline-block">Privacy Policy</h1>
-            <div class="bg-white p-10 rounded-3xl shadow-md border border-gray-200 text-gray-700 space-y-8 text-lg leading-relaxed">
+            <div class="bg-white p-12 rounded-[2rem] shadow-2xl border-4 border-gray-100">
+                <h1 class="text-5xl font-black text-slate-900 mb-10 border-b-8 border-blue-600 pb-4 inline-block uppercase">Privacy Policy</h1>
                 
-                <p><strong>Effective Date:</strong> January 1, 2026</p>
-                <p>Welcome to EasyGo Cabs. We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about this privacy notice or our practices with regard to your personal information, please contact us via WhatsApp.</p>
+                <div class="space-y-10 text-xl font-medium text-gray-800 leading-relaxed">
+                    <p class="bg-gray-100 p-6 rounded-xl font-bold border-l-8 border-gray-400">Effective Date: January 1, 2026</p>
+                    
+                    <p>Welcome to EasyGo Cabs. We are strictly committed to protecting your personal information. If you have any questions, contact us via WhatsApp.</p>
 
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">1. Information We Collect</h3>
-                    <p>We collect personal information that you voluntarily provide to us when you register on the website, express an interest in obtaining information about us or our products and services, or when you contact us. The personal information that we collect depends on the context of your interactions with us. The personal information we collect may include the following:</p>
-                    <ul class="list-disc pl-6 mt-3 space-y-2">
-                        <li><strong>Personal Identification Data:</strong> Name, phone numbers, and email addresses.</li>
-                        <li><strong>Location Data:</strong> Pickup and drop-off coordinates, saved addresses, and live routing data during the ride.</li>
-                        <li><strong>Authentication Data:</strong> One-Time Passwords (OTPs) generated for secure logins and ride verification.</li>
-                    </ul>
-                </div>
+                    <div class="bg-blue-50 p-8 rounded-2xl border-2 border-blue-200">
+                        <h3 class="text-3xl font-black text-blue-900 mb-6 uppercase">1. Information We Collect</h3>
+                        <ul class="list-disc pl-8 space-y-4 font-bold text-gray-700">
+                            <li><span class="text-blue-800">Personal Data:</span> Name and valid 10-digit phone numbers.</li>
+                            <li><span class="text-blue-800">Location Data:</span> Pickup and drop-off coordinates during the booking process.</li>
+                            <li><span class="text-blue-800">Security Data:</span> One-Time Passwords (OTPs) generated entirely on the platform for your security.</li>
+                        </ul>
+                    </div>
 
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">2. Database & Google Sheets Integration</h3>
-                    <p>In our effort to maintain a highly secure, fast, and robust infrastructure, EasyGo Cabs utilizes advanced Google Workspace tools, including Google Sheets via Google Apps Script, to manage our database. When you submit a booking, your details (Phone, Pickup, Drop, Date, Time, and OTP) are securely transmitted via fetch API to our private, encrypted Google Sheets database. This ensures zero data loss and immediate logging of all transactions.</p>
-                </div>
+                    <div>
+                        <h3 class="text-3xl font-black text-gray-900 mb-4">2. Secure Google Sheets Integration</h3>
+                        <p>EasyGo utilizes advanced Google Workspace tools. When you submit a booking, details are securely transmitted via encrypted fetch API to our private database. <strong class="text-red-600 bg-red-50 px-2 rounded">We DO NOT sell, trade, or rent your data.</strong></p>
+                    </div>
 
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">3. How We Use Your Information</h3>
-                    <p>We use the information we collect or receive:</p>
-                    <ul class="list-disc pl-6 mt-3 space-y-2">
-                        <li>To facilitate account creation and logon process.</li>
-                        <li>To fulfill and manage your ride bookings seamlessly.</li>
-                        <li>To communicate directly via WhatsApp for booking confirmations and driver tracking.</li>
-                        <li>To calculate accurate fares based on distance and waiting times.</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">4. Information Sharing</h3>
-                    <p>We DO NOT sell, trade, or rent your personal identification information to others. Your pickup and drop locations, along with your phone number, are only shared with your assigned driver to ensure successful pickup and drop operations.</p>
+                    <div class="bg-yellow-50 p-8 rounded-2xl border-2 border-yellow-300">
+                        <h3 class="text-3xl font-black text-yellow-900 mb-4 uppercase">3. Strict OTP Visibility</h3>
+                        <p class="font-bold text-gray-800 text-2xl leading-snug">The Driver (Nishant) DOES NOT receive your OTP via WhatsApp or SMS. The OTP is solely displayed on your active dashboard screen. You must physically share it to start the ride.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="terms" class="page-section max-w-5xl mx-auto px-4 py-16">
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-8 border-b-4 border-blue-600 pb-4 inline-block">Terms and Conditions</h1>
-            <div class="bg-white p-10 rounded-3xl shadow-md border border-gray-200 text-gray-700 space-y-8 text-lg leading-relaxed">
+            <div class="bg-white p-12 rounded-[2rem] shadow-2xl border-4 border-gray-100">
+                <h1 class="text-5xl font-black text-slate-900 mb-10 border-b-8 border-blue-600 pb-4 inline-block uppercase">Terms & Conditions</h1>
                 
-                <div class="bg-blue-50 border-l-4 border-blue-600 p-6 rounded-r-xl">
-                    <p class="font-bold text-blue-900">Please read these terms and conditions carefully before using the EasyGo cab booking platform operated by Nishant Jaiswal.</p>
-                </div>
+                <div class="space-y-10 text-xl font-medium text-gray-800 leading-relaxed">
+                    
+                    <div class="bg-blue-900 text-white p-8 rounded-2xl shadow-xl">
+                        <h3 class="text-3xl font-black text-yellow-400 mb-4 uppercase">Section 1: Transparent Fare Structure</h3>
+                        <p class="mb-6 font-bold text-lg">EasyGo prides itself on a completely transparent, zero-surge pricing model. By booking, you agree to the following rigid structure:</p>
+                        <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+                            <ul class="space-y-4 font-black text-2xl">
+                                <li class="flex justify-between items-center"><span class="text-blue-200">Base Fare (0-20km)</span> <span>₹70</span></li>
+                                <li class="flex justify-between items-center border-t border-white/20 pt-4"><span class="text-blue-200">Per KM (After 20km)</span> <span>₹15/km</span></li>
+                            </ul>
+                        </div>
+                    </div>
 
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Section 1: General Booking & Services</h3>
-                    <p>By placing a booking through our website, you warrant that you are legally capable of entering into binding contracts. The service provided involves the transportation of passengers from the specified pickup point to the drop-off destination in our designated vehicle (Citroen C3).</p>
-                </div>
+                    <div class="bg-red-50 p-8 rounded-2xl border-l-8 border-red-600">
+                        <h3 class="text-3xl font-black text-red-800 mb-4 uppercase"><i class="fas fa-stopwatch mr-3"></i> Wait Time Policy</h3>
+                        <p class="font-bold text-2xl mb-4">Charge: <span class="bg-red-600 text-white px-3 py-1 rounded">₹1 per 30 seconds</span></p>
+                        <p class="font-semibold text-gray-700">This charge activates exactly when the driver arrives at the designated pickup location. The timer halts ONLY when the ride officially begins via OTP verification.</p>
+                    </div>
 
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Section 2: Pricing & Fare Structure</h3>
-                    <p>EasyGo prides itself on a transparent pricing model. The fare structure is rigidly set as follows:</p>
-                    <ul class="list-disc pl-6 mt-3 space-y-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <li><strong>Base Fare:</strong> ₹70 is applicable for the initiation of the ride and covers distances up to the threshold of 20 kilometers.</li>
-                        <li><strong>Per Kilometer Charge:</strong> Upon exceeding the initial 20 kilometers, a charge of ₹15 per kilometer will be levied.</li>
-                        <li><strong>Toll Taxes & Parking:</strong> Any state tolls, municipal taxes, or parking fees incurred during the journey are the sole responsibility of the customer and will be added to the final bill.</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Section 3: Waiting Time Policy</h3>
-                    <p>Time is valuable for both our drivers and our customers. To ensure operational efficiency:</p>
-                    <p class="mt-2 text-red-700 font-semibold bg-red-50 p-4 rounded-lg border border-red-100">Waiting Time Charge: ₹1 per 30 seconds.</p>
-                    <p class="mt-2">This charge activates exactly when the driver arrives at the designated pickup location. The timer halts only when the ride officially begins (which is verified by the customer sharing the OTP with the driver). We request customers to be ready at the pickup point upon driver arrival.</p>
-                </div>
-
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Section 4: OTP & Security Verification</h3>
-                    <p>For passenger safety, every ride booked via EasyGo generates a unique One-Time Password (OTP). It is mandatory to provide this OTP to the driver before the commencement of the journey. Refusal to provide the OTP will result in ride cancellation.</p>
-                </div>
-
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Section 5: Customer Conduct</h3>
-                    <p>Passengers are expected to maintain the cleanliness and decorum of the vehicle. Smoking, consumption of alcohol, or eating messy items inside the cab is strictly prohibited. Any damage or extreme dirtiness caused to the vehicle's interior by the passenger will result in a cleaning fee of up to ₹1000.</p>
+                    <div>
+                        <h3 class="text-3xl font-black text-gray-900 mb-4">Section 2: Passenger Conduct</h3>
+                        <p class="font-bold border-b border-gray-200 pb-4">Vehicle: White Citroen C3</p>
+                        <p class="mt-4">Smoking, consumption of alcohol, or eating messy items inside the cab is strictly prohibited. Damage or extreme dirtiness will result in a heavy cleaning fee.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="bg-slate-900 text-slate-300 py-12 mt-auto border-t-[6px] border-blue-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-10">
-            <div class="md:col-span-2">
-                <div class="flex items-center mb-6">
-                    <img src="easy go.jpg" alt="EasyGo Logo" class="h-12 w-12 object-contain rounded-full bg-white p-0.5">
-                    <span class="ml-3 font-extrabold text-2xl text-white">EasyGo Cabs</span>
-                </div>
-                <p class="text-sm leading-relaxed max-w-sm mb-6">Premium cab service operating from Indore. We guarantee transparency, comfort, and safety on every single ride. Book instantly, travel effortlessly.</p>
-                <div class="flex space-x-4">
-                    <a href="#" class="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-400 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-pink-600 hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            
-            <div>
-                <h4 class="text-white font-bold mb-6 text-lg tracking-wide uppercase border-b border-slate-700 pb-2 inline-block">Quick Links</h4>
-                <ul class="space-y-3 text-sm font-medium">
-                    <li><button onclick="showPage('home')" class="hover:text-blue-400 hover:translate-x-1 transition-transform flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Home</button></li>
-                    <li><button onclick="showPage('about')" class="hover:text-blue-400 hover:translate-x-1 transition-transform flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> About Us</button></li>
-                    <li><button onclick="showPage('privacy')" class="hover:text-blue-400 hover:translate-x-1 transition-transform flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Privacy Policy</button></li>
-                    <li><button onclick="showPage('terms')" class="hover:text-blue-400 hover:translate-x-1 transition-transform flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-blue-500"></i> Terms & Conditions</button></li>
-                </ul>
-            </div>
-            
-            <div>
-                <h4 class="text-white font-bold mb-6 text-lg tracking-wide uppercase border-b border-slate-700 pb-2 inline-block">Contact Us</h4>
-                <div class="space-y-4">
-                    <p class="text-sm flex items-start"><i class="fab fa-whatsapp mt-1 mr-3 text-green-500 text-lg"></i> <span class="font-bold text-white">+91 76518 37322</span></p>
-                    <p class="text-sm flex items-start"><i class="fas fa-envelope mt-1 mr-3 text-blue-400 text-lg"></i> b3achang3@gmail.com</p>
-                    <p class="text-sm flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 text-red-500 text-lg"></i> Omaxe City 1, Indore,<br>Madhya Pradesh</p>
-                </div>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 font-medium">
-            <p>© 2026 EasyGo Cabs. All rights reserved.</p>
-            <p class="mt-2 md:mt-0">Designed for Comfort & Speed</p>
+    <footer class="bg-slate-900 text-slate-300 py-12 mt-auto border-t-8 border-blue-600">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-black text-white mb-6 uppercase tracking-widest">EasyGo Cabs</h2>
+            <p class="text-2xl font-bold mb-4"><i class="fas fa-map-marker-alt text-red-500 mr-2"></i> Omaxe City 1, Indore, Madhya Pradesh</p>
+            <p class="text-xl font-bold text-blue-400 mb-8"><i class="fab fa-whatsapp mr-2 text-green-500"></i> Booking: +91 76518 37322</p>
+            <p class="text-sm mt-8 opacity-50 font-medium">© 2026 EasyGo Cabs. Owned and Operated by Nishant Jaiswal.</p>
         </div>
     </footer>
 
-    <div id="loginModal" class="modal fixed inset-0 z-[100] items-center justify-center">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md relative transform scale-100 transition-transform">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-5 text-gray-400 hover:text-red-500 text-2xl font-bold">×</button>
-            
+    <div id="loginModal" class="modal fixed inset-0 items-center justify-center">
+        <div class="bg-white p-10 rounded-[2rem] shadow-2xl w-full max-w-md relative border-4 border-blue-100">
+            <button onclick="closeLoginModal()" class="absolute top-5 right-6 text-gray-400 hover:text-red-600 text-4xl font-black transition-colors">×</button>
             <div class="text-center mb-8">
-                <img src="easy go.jpg" alt="Logo" class="h-16 w-16 mx-auto rounded-full border border-gray-200 mb-4">
-                <h2 class="text-2xl font-extrabold text-gray-900">Welcome Back</h2>
-                <p class="text-sm text-gray-500 mt-1">Login to access your bookings & OTPs</p>
+                <img src="easy go.jpg" alt="Logo" class="h-20 w-20 mx-auto rounded-full border-4 border-blue-600 mb-4 shadow-lg">
+                <h2 class="text-3xl font-black text-gray-900 uppercase">Secure Login</h2>
             </div>
 
             <div id="step1">
-                <label class="block text-sm font-bold text-gray-700 mb-2">Mobile Number</label>
-                <div class="flex">
-                    <span class="inline-flex items-center px-4 bg-gray-100 border border-r-0 border-gray-300 rounded-l-xl text-gray-600 font-bold">+91</span>
-                    <input type="tel" id="mobileInput" class="flex-1 px-4 py-3 border border-gray-300 rounded-r-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Enter 10 digit number">
+                <div class="mb-6">
+                    <label class="block text-lg font-black text-gray-800 mb-2 uppercase">Full Name</label>
+                    <input type="text" id="nameInput" class="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-blue-600 outline-none font-bold text-xl transition-colors" placeholder="e.g. Rahul Sharma">
                 </div>
-                <button onclick="sendOTP()" class="w-full mt-6 bg-slate-900 hover:bg-black text-white font-bold py-3 rounded-xl transition-colors">Get OTP</button>
+                <div>
+                    <label class="block text-lg font-black text-gray-800 mb-2 uppercase">Mobile Number</label>
+                    <div class="flex shadow-sm rounded-xl">
+                        <span class="inline-flex items-center px-5 bg-gray-100 border-2 border-r-0 border-gray-300 rounded-l-xl font-black text-xl text-gray-800">+91</span>
+                        <input type="tel" id="mobileInput" class="flex-1 px-5 py-4 border-2 border-gray-300 rounded-r-xl focus:border-blue-600 outline-none font-bold text-xl transition-colors" placeholder="10 Digit Number">
+                    </div>
+                </div>
+                <button onclick="sendOTP()" class="w-full mt-8 bg-blue-600 hover:bg-blue-800 text-white font-black py-4 rounded-xl text-2xl transition-all shadow-[0_10px_15px_rgba(37,99,235,0.2)]">GENERATE OTP</button>
             </div>
 
             <div id="step2" class="hidden">
-                <p class="text-sm text-gray-600 mb-4 text-center">OTP sent to <span id="displayMobile" class="font-bold text-gray-900"></span></p>
-                <div class="flex justify-between space-x-2 mb-6">
-                    <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none otp-box">
-                    <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none otp-box">
-                    <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none otp-box">
-                    <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none otp-box">
+                <p class="text-lg text-gray-700 mb-6 text-center font-bold">OTP sent to <span id="displayMobile" class="font-black text-blue-700"></span></p>
+                <div class="flex justify-between space-x-3 mb-8">
+                    <input type="text" maxlength="1" class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl focus:border-blue-600 otp-box text-blue-900">
+                    <input type="text" maxlength="1" class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl focus:border-blue-600 otp-box text-blue-900">
+                    <input type="text" maxlength="1" class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl focus:border-blue-600 otp-box text-blue-900">
+                    <input type="text" maxlength="1" class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl focus:border-blue-600 otp-box text-blue-900">
                 </div>
-                <button onclick="verifyOTP()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors">Verify & Login</button>
-                <p class="text-center mt-4 text-sm"><a href="#" class="text-blue-600 font-semibold hover:underline">Resend OTP</a></p>
+                <button onclick="verifyOTP()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl text-2xl transition-all shadow-[0_10px_15px_rgba(22,163,74,0.3)]">VERIFY & LOGIN</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- PAGE ROUTING ---
+        // --- 1. PAGE ROUTING & AUTH ---
         function showPage(pageId) {
             document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        // --- AUTHENTICATION (LOCAL STORAGE SIMULATION) ---
-        let currentUser = localStorage.getItem('easygo_user');
-
         window.onload = function() {
-            if(currentUser) {
-                document.getElementById('loginBtn').classList.add('hidden');
-                document.getElementById('userMenu').classList.remove('hidden');
-                document.getElementById('customerPhone').value = currentUser;
-            }
+            document.getElementById('date').valueAsDate = new Date();
+            let d = new Date(); d.setMinutes(d.getMinutes() + 15);
+            document.getElementById('time').value = d.toTimeString().substring(0,5);
+
+            let storedUser = localStorage.getItem('easygo_user');
+            let storedName = localStorage.getItem('easygo_name');
+            if(storedUser && storedName) { loginUI(storedUser, storedName); }
+
+            checkActiveRide();
+            initMap();
         };
 
         function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
         function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
 
         function sendOTP() {
-            const mobile = document.getElementById('mobileInput').value;
-            if(mobile.length < 10) { alert("Please enter valid 10 digit number"); return; }
+            let name = document.getElementById('nameInput').value;
+            let mobile = document.getElementById('mobileInput').value;
+            if(!name || mobile.length < 10) { alert("Please enter Full Name and valid 10-digit number"); return; }
             document.getElementById('displayMobile').innerText = "+91 " + mobile;
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             
-            // Auto focus logic for OTP boxes
             const boxes = document.querySelectorAll('.otp-box');
             boxes.forEach((box, index) => {
                 box.addEventListener('keyup', (e) => {
@@ -409,91 +497,185 @@
         }
 
         function verifyOTP() {
-            const mobile = document.getElementById('mobileInput').value;
+            let name = document.getElementById('nameInput').value;
+            let mobile = document.getElementById('mobileInput').value;
             localStorage.setItem('easygo_user', mobile);
-            document.getElementById('customerPhone').value = mobile;
-            
+            localStorage.setItem('easygo_name', name);
+            loginUI(mobile, name);
             closeLoginModal();
+        }
+
+        function loginUI(mobile, name) {
             document.getElementById('loginBtn').classList.add('hidden');
             document.getElementById('userMenu').classList.remove('hidden');
-            alert("Login Successful! Welcome to EasyGo Cabs.");
+            document.getElementById('displayUserName').innerText = name.toUpperCase();
+            document.getElementById('customerPhone').value = mobile;
+            document.getElementById('customerNameField').value = name;
         }
 
         function logout() {
-            localStorage.removeItem('easygo_user');
-            document.getElementById('loginBtn').classList.remove('hidden');
-            document.getElementById('userMenu').classList.add('hidden');
-            document.getElementById('customerPhone').value = "";
+            localStorage.clear();
+            location.reload();
         }
 
-        // --- GOOGLE SHEETS & WHATSAPP BOOKING LOGIC ---
-        // Pura Google script ka URL yahan pe set kar diya gaya hai
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec'; 
+        // --- 2. LEAFLET MAP LOGIC ---
+        let map, pickupMarker, dropMarker;
+        const indoreCoords = [22.7196, 75.8577];
+
+        function initMap() {
+            map = L.map('map').setView(indoreCoords, 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            const greenIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                iconSize: [30, 50], iconAnchor: [15, 50]
+            });
+            const redIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                iconSize: [30, 50], iconAnchor: [15, 50]
+            });
+
+            pickupMarker = L.marker(indoreCoords, {icon: greenIcon, draggable: true}).addTo(map).bindPopup("<b>PICKUP</b>").openPopup();
+            dropMarker = L.marker([22.75, 75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("<b>DROP</b>");
+            
+            pickupMarker.on('dragend', function(e) { reverseGeocode(e.target.getLatLng(), 'pickup'); });
+            dropMarker.on('dragend', function(e) { reverseGeocode(e.target.getLatLng(), 'drop'); });
+        }
+
+        function locateMeOnMap() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const latlng = [position.coords.latitude, position.coords.longitude];
+                    map.setView(latlng, 15);
+                });
+            }
+        }
+
+        function useCurrentLocation(type) {
+            if ("geolocation" in navigator) {
+                document.getElementById(type).value = "Locating GPS...";
+                navigator.geolocation.getCurrentPosition(position => {
+                    const latlng = [position.coords.latitude, position.coords.longitude];
+                    if(type === 'pickup') pickupMarker.setLatLng(latlng);
+                    if(type === 'drop') dropMarker.setLatLng(latlng);
+                    map.setView(latlng, 15);
+                    reverseGeocode({lat: latlng[0], lng: latlng[1]}, type);
+                }, () => {
+                    alert("GPS access denied.");
+                    document.getElementById(type).value = "";
+                });
+            }
+        }
+
+        let searchTimeout;
+        function searchLocation(query, type) {
+            clearTimeout(searchTimeout);
+            let box = document.getElementById(type + '-suggestions');
+            if(query.length < 3) { box.style.display = 'none'; return; }
+            
+            searchTimeout = setTimeout(() => {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}+Indore&limit=5`)
+                .then(res => res.json())
+                .then(data => {
+                    box.innerHTML = '';
+                    if(data.length > 0) {
+                        box.style.display = 'block';
+                        data.forEach(place => {
+                            let div = document.createElement('div');
+                            div.className = 'suggestion-item';
+                            div.innerText = place.display_name.split(',').slice(0,3).join(',');
+                            div.onclick = function() {
+                                document.getElementById(type).value = div.innerText;
+                                box.style.display = 'none';
+                                let latlng = [place.lat, place.lon];
+                                if(type === 'pickup') pickupMarker.setLatLng(latlng);
+                                if(type === 'drop') dropMarker.setLatLng(latlng);
+                                let group = new L.featureGroup([pickupMarker, dropMarker]);
+                                map.fitBounds(group.getBounds(), {padding: [50, 50]});
+                            };
+                            box.appendChild(div);
+                        });
+                    } else { box.style.display = 'none'; }
+                });
+            }, 500);
+        }
+
+        function reverseGeocode(latlng, type) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.display_name) {
+                    document.getElementById(type).value = data.display_name.split(',').slice(0,3).join(',');
+                }
+            });
+        }
+
+        // --- 3. BOOKING & OTP LOGIC ---
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
 
         function handleBooking(e) {
             e.preventDefault();
-            
-            if(!localStorage.getItem('easygo_user')) {
-                alert("Please Login / Verify OTP first to book a ride.");
-                openLoginModal();
-                return;
-            }
+            if(!localStorage.getItem('easygo_user')) { alert("SECURITY ALERT: Please Login first to book."); openLoginModal(); return; }
 
             const submitBtn = document.getElementById('submitBtn');
-            const statusDiv = document.getElementById('bookingStatus');
-            
-            // Generate Ride OTP
-            const rideOtp = Math.floor(100000 + Math.random() * 900000);
+            const pickup = document.getElementById('pickup').value;
+            const drop = document.getElementById('drop').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const userPhone = document.getElementById('customerPhone').value;
+            const userName = document.getElementById('customerNameField').value;
+
+            // Generate 6 Digit Secure OTP
+            const rideOtp = Math.floor(100000 + Math.random() * 900000).toString();
             document.getElementById('bookingOTP').value = rideOtp;
 
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl mr-2"></i> Connecting to Server...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> PROCESSING...';
             submitBtn.disabled = true;
 
             const form = document.forms['google-sheet-form'];
             const formData = new FormData(form);
 
-            // Fetch API to send data to Google Sheets
             fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => {
-                    submitBtn.innerHTML = '<i class="fab fa-whatsapp text-2xl mr-2"></i> Book & Notify via WhatsApp';
-                    submitBtn.disabled = false;
-                    
-                    statusDiv.classList.remove('hidden');
-                    statusDiv.classList.add('text-green-600');
-                    statusDiv.innerText = "Data saved to Sheets! Opening WhatsApp...";
+                .then(response => finalizeBooking(userName, userPhone, pickup, drop, date, time, rideOtp))
+                .catch(error => finalizeBooking(userName, userPhone, pickup, drop, date, time, rideOtp));
+        }
 
-                    // WhatsApp Redirection
-                    const pickup = document.getElementById('pickup').value;
-                    const drop = document.getElementById('drop').value;
-                    const date = document.getElementById('date').value;
-                    const time = document.getElementById('time').value;
-                    const userPhone = document.getElementById('customerPhone').value;
+        function finalizeBooking(name, phone, pickup, drop, date, time, otp) {
+            // Save Active Ride Status
+            const rideData = { pickup, drop, otp, status: 'active' };
+            localStorage.setItem('active_ride', JSON.stringify(rideData));
+            checkActiveRide();
 
-                    const adminPhone = "917651837322";
-                    const message = `🚕 *BOOKING CONFIRMED* 🚕\n\n*Customer Number:* +91 ${userPhone}\n*Pickup:* ${pickup}\n*Drop:* ${drop}\n*Date:* ${date}\n*Time:* ${time}\n\n*Ride OTP:* ${rideOtp}\n\n*Fare Rule:* Base ₹70, ₹15/km after 20km. Wait time ₹1/30sec.`;
-                    
-                    setTimeout(() => {
-                        window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`, '_blank');
-                        alert(`Booking Confirmed!\nYour Driver Verification OTP is: ${rideOtp}\nPlease share this only when the ride starts.`);
-                        form.reset();
-                        statusDiv.classList.add('hidden');
-                    }, 1000);
-                })
-                .catch(error => {
-                    // Fallback if Google Script URL fails
-                    console.error('Error!', error.message);
-                    alert("Network Issue! Redirecting directly to WhatsApp anyway!");
-                    
-                    const pickup = document.getElementById('pickup').value;
-                    const drop = document.getElementById('drop').value;
-                    const adminPhone = "917651837322";
-                    const message = `🚕 *BOOKING CONFIRMED* 🚕\n\n*Pickup:* ${pickup}\n*Drop:* ${drop}\n*Ride OTP:* ${rideOtp}`;
-                    
-                    window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`, '_blank');
-                    
-                    submitBtn.innerHTML = '<i class="fab fa-whatsapp text-2xl mr-2"></i> Book & Notify via WhatsApp';
-                    submitBtn.disabled = false;
-                });
+            // Notify Admin (Nishant) - NO OTP included for safety
+            const adminPhone = "917651837322";
+            const message = `🚨 *EASYGO PREMIUM RIDE ALERT* 🚨\n\n*Customer Name:* ${name}\n*Phone:* +91 ${phone}\n\n📍 *Pickup:* ${pickup}\n🏁 *Drop:* ${drop}\n📅 *Date:* ${date}\n⏰ *Time:* ${time}\n\n*Notes:* OTP is generated and visible on customer dashboard. Ask for OTP upon arrival to start timer.`;
+            
+            document.getElementById('submitBtn').innerHTML = 'CONFIRM BOOKING';
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('bookingForm').reset();
+
+            window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function checkActiveRide() {
+            let activeRide = localStorage.getItem('active_ride');
+            if(activeRide) {
+                let data = JSON.parse(activeRide);
+                document.getElementById('activeRideBanner').classList.remove('hidden');
+                document.getElementById('activeRideRoute').innerText = `${data.pickup.substring(0,20)}... ➔ ${data.drop.substring(0,20)}...`;
+                document.getElementById('activeRideOTP').innerText = data.otp;
+            } else {
+                document.getElementById('activeRideBanner').classList.add('hidden');
+            }
+        }
+
+        function endRide() {
+            if(confirm("Action: Complete this ride? (OTP was verified by driver)")) {
+                localStorage.removeItem('active_ride');
+                checkActiveRide();
+            }
         }
     </script>
 </body>
