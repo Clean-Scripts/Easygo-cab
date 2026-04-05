@@ -412,8 +412,8 @@
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
         let greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [30,50], iconAnchor: [15,50] });
         let redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [30,50], iconAnchor: [15,50] });
-        pickupMarker = L.marker([22.7196,75.8577], {icon: greenIcon, draggable: true}).addTo(map).bindPopup("🚖 PICKUP").openPopup();
-        dropMarker = L.marker([22.75,75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("🏁 DROP");
+        pickupMarker = L.marker([22.7196,75.8577], {icon: greenIcon, draggable: true}).addTo(map).bindPopup("%F0%9F%9A%96 PICKUP").openPopup();
+        dropMarker = L.marker([22.75,75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("%F0%9F%8F%81 DROP");
         
         // On marker drag end: update search bars, links, and fare
         pickupMarker.on('dragend', async () => {
@@ -431,9 +431,6 @@
             updateLiveEstimate();
         });
 
-        // NEW: Click on map to set location (pickup or drop based on context or toggle)
-        // For simplicity, clicking on map will set the pickup location (most common use case)
-        // But we'll add a right-click or Ctrl+click for drop. Let's do left-click for pickup, right-click for drop.
         map.on('click', async (e) => {
             let latlng = e.latlng;
             pickupMarker.setLatLng(latlng);
@@ -462,7 +459,6 @@
         let arrivalDist = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000 - 3));
         let arrival = arrivalDist * 10;
         
-        // Slab calculation with extra km beyond 20 as "Discount" later
         let baseSlab = 0;
         let extraKm = 0;
         if (dist <= 5) baseSlab = 100;
@@ -477,7 +473,6 @@
         let gst = subtotal * 0.05;
         let total = Math.round(subtotal + gst);
         
-        // Store details for bill calculation
         window._currentFareDetails = {
             dist: dist,
             arrivalDist: arrivalDist,
@@ -494,7 +489,7 @@
         let box = document.getElementById('liveEstimateBox');
         if(!box) { box = document.createElement('div'); box.id='liveEstimateBox'; document.getElementById('bookingForm').insertBefore(box, document.getElementById('submitBtn')); }
         box.className='bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl';
-        box.innerHTML = `<div class="flex justify-between items-center"><span class="text-sm font-bold">💰 LIVE ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div>
+        box.innerHTML = `<div class="flex justify-between items-center"><span class="text-sm font-bold">%F0%9F%92%B0 LIVE ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div>
         <div class="text-[10px] grid grid-cols-2 gap-1 mt-2"><span>Base: ₹${Math.round(baseSlab)}</span><span>Extra KM: ₹${Math.round(extraCost)}</span><span>Arrival: ₹${Math.round(arrival)}</span><span>GST 5%: ₹${Math.round(gst)}</span></div>
         <small class="text-[9px] block mt-1">*Final fare includes wait time + tip</small>`;
         box.classList.remove('hidden');
@@ -502,7 +497,6 @@
     
     function updateMapLinks(lat,lng,type) { let link = `https://www.google.com/maps?q=${lat},${lng}`; document.getElementById(type==='pickup'?'pickupLink':'dropLink').value = link; }
     
-    // Modified: When search is selected, update marker, map view, and fare
     function searchLocation(q,t) { 
         clearTimeout(window.searchTimeout); 
         let box=document.getElementById(t+'-suggestions'); 
@@ -531,7 +525,6 @@
                                 updateMapLinks(p.lat, p.lon, t);
                                 calculateTotalDistance();
                                 map.fitBounds([pickupMarker.getLatLng(), dropMarker.getLatLng()]);
-                                // Also update the other marker's address if needed? No, just ensure fare updates
                                 updateLiveEstimate();
                             };
                             box.appendChild(div);
@@ -555,16 +548,16 @@
             calculateTotalDistance(); 
         }); 
     }
-    function locateMeOnMap() { useCurrentLocation('pickup'); showToast("📍 Location set as pickup", "success"); }
+    function locateMeOnMap() { useCurrentLocation('pickup'); showToast("%F0%9F%93%8D Location set as pickup", "success"); }
     
     // TOURS & FILTERS
     function filterTours(ev, season) { ev?.preventDefault?.(); currentSeason = season; document.querySelectorAll('.filter-btn').forEach(btn=>btn.classList.remove('active')); if(ev?.currentTarget) ev.currentTarget.classList.add('active'); applyDualFilter(); }
     function filterByCategory(ev, cat) { ev?.preventDefault?.(); currentCategory = cat; document.querySelectorAll('.cat-btn').forEach(btn=>btn.classList.remove('active')); if(ev?.currentTarget) ev.currentTarget.classList.add('active'); applyDualFilter(); }
     function applyDualFilter() { if(!allToursData.length) return; let filtered = allToursData.filter(t=>{ let dsc = (t.Description+"").toLowerCase(); let sea = (t.Season+"").toLowerCase(); let sMatch = (currentSeason==='All' || sea.includes(currentSeason.toLowerCase())); let cMatch = currentCategory==='All' || (currentCategory==='Nature' && (dsc.includes('fall')||dsc.includes('lake')||dsc.includes('nature'))) || (currentCategory==='Religious' && (dsc.includes('temple')||dsc.includes('spiritual'))) || (currentCategory==='Adventure' && (dsc.includes('mall')||dsc.includes('adventure'))) || (currentCategory==='Heritage' && (dsc.includes('palace')||dsc.includes('fort'))); return sMatch && cMatch; }); renderTours(filtered); }
-    function renderTours(list) { let container=document.getElementById('dynamic-tours-container'); if(!container) return; container.innerHTML=list.length?list.map(t=>`<div class="bg-white rounded-3xl shadow-xl overflow-hidden transition hover:-translate-y-2 hover:shadow-2xl"><img src="${t.ImageURL||'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88'"><div class="p-6"><h3 class="text-2xl font-black">${t.Destination}</h3><p class="text-gray-600 my-2">${t.Description}</p><div class="bg-slate-100 p-3 rounded-2xl"><span class="text-3xl font-black text-blue-700">₹${t.Price}</span><small class="text-xs"> base estimate</small></div><button onclick='bookTourPackage("${t.Destination}",${t.Price})' class="w-full mt-4 bg-slate-800 text-white py-3 rounded-xl font-bold transition hover:scale-105 hover:bg-blue-700">🎯 BOOK THIS TOUR</button></div></div>`).join(''):'<div class="col-span-full text-center py-10 font-bold">No packages match</div>'; }
+    function renderTours(list) { let container=document.getElementById('dynamic-tours-container'); if(!container) return; container.innerHTML=list.length?list.map(t=>`<div class="bg-white rounded-3xl shadow-xl overflow-hidden transition hover:-translate-y-2 hover:shadow-2xl"><img src="${t.ImageURL||'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88'"><div class="p-6"><h3 class="text-2xl font-black">${t.Destination}</h3><p class="text-gray-600 my-2">${t.Description}</p><div class="bg-slate-100 p-3 rounded-2xl"><span class="text-3xl font-black text-blue-700">₹${t.Price}</span><small class="text-xs"> base estimate</small></div><button onclick='bookTourPackage("${t.Destination}",${t.Price})' class="w-full mt-4 bg-slate-800 text-white py-3 rounded-xl font-bold transition hover:scale-105 hover:bg-blue-700">%F0%9F%8E%AF BOOK THIS TOUR</button></div></div>`).join(''):'<div class="col-span-full text-center py-10 font-bold">No packages match</div>'; }
     function bookTourPackage(dest,price) { selectedPackageBasePrice = price; showPage('home'); document.getElementById('drop').value = dest+", MP"; searchLocation(dest,'drop'); updateLiveEstimate(); window.scrollTo({top: document.getElementById('bookingForm').offsetTop-100, behavior:'smooth'}); showToast(`Package selected: ${dest}`, "success"); }
     function loadDynamicTours() { fetch(scriptURL+"?action=getTours&t="+Date.now()).then(r=>r.json()).then(d=>{ if(d.result==='success' && d.tours) { allToursData = d.tours; renderTours(allToursData); } }).catch(e=>console.log); }
-    function loadDynamicReviews() { fetch(scriptURL+"?action=getReviews&t="+Date.now()).then(r=>r.json()).then(d=>{ let con=document.getElementById('dynamic-reviews-container'); if(d.result==='success' && d.reviews){ con.innerHTML=d.reviews.reverse().map(r=>`<div class="bg-white p-6 rounded-2xl shadow-xl transition hover:-translate-y-1"><div class="flex text-yellow-400 text-xl">${'★'.repeat(r.Rating)}${'☆'.repeat(5-r.Rating)}</div><p class="font-bold text-lg mt-2">"${r.Comment}"</p><p class="text-sm mt-3 text-blue-700 font-black">— ${r.Name}</p></div>`).join(''); } }).catch(()=>{}); }
+    function loadDynamicReviews() { fetch(scriptURL+"?action=getReviews&t="+Date.now()).then(r=>r.json()).then(d=>{ let con=document.getElementById('dynamic-reviews-container'); if(d.result==='success' && d.reviews){ con.innerHTML=d.reviews.reverse().map(r=>`<div class="bg-white p-6 rounded-2xl shadow-xl transition hover:-translate-y-1"><div class="flex text-yellow-400 text-xl">${'%E2%98%85'.repeat(r.Rating)}${'%E2%98%86'.repeat(5-r.Rating)}</div><p class="font-bold text-lg mt-2">"${r.Comment}"</p><p class="text-sm mt-3 text-blue-700 font-black">— ${r.Name}</p></div>`).join(''); } }).catch(()=>{}); }
     
     // AUTH & BOOKING with WhatsApp
     function sendOTP() { let n=document.getElementById('nameInput').value, m=document.getElementById('mobileInput').value; if(!n || m.length<10){showToast("Enter name & 10-digit mobile","error");return;} document.getElementById('step1').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden'); document.getElementById('displayMobile').innerText="+91 "+m; let otp=Math.floor(1000+Math.random()*9000).toString(); let boxes=document.querySelectorAll('.otp-box'); boxes.forEach((box,i)=>setTimeout(()=>box.value=otp[i]||'', i*180)); setTimeout(()=>{document.getElementById('otpLoader').classList.remove('hidden'); syncUserToDB(n,m);},800); }
@@ -572,7 +565,7 @@
     function loginUI(mob,n){ document.getElementById('loginBtn').classList.add('hidden'); document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('displayUserName').innerHTML=n.toUpperCase(); document.getElementById('customerPhone').value=mob; document.getElementById('customerNameField').value=n; }
     function logout(){ localStorage.clear(); location.reload(); }
     
-    function handleBooking(e){ e.preventDefault(); if(!localStorage.getItem('easygo_user')){ openLoginModal(); showToast("Please login first","error"); return; } let sub=document.getElementById('submitBtn'); let otp=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('bookingOTP').value=otp; sub.innerHTML='<i class="fas fa-spinner fa-spin"></i> Booking...'; sub.disabled=true; let fd=new FormData(document.getElementById('bookingForm')); fd.append('action','bookRide'); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Ride Booked! OTP: "+otp,"success"); let rideData={ name:localStorage.getItem('easygo_name'), phone:localStorage.getItem('easygo_user'), pickup:document.getElementById('pickup').value, drop:document.getElementById('drop').value, otp:otp, date:document.getElementById('date').value, time:document.getElementById('time').value }; localStorage.setItem('active_ride',JSON.stringify(rideData)); checkActiveRide(); sub.innerHTML='🚀 BOOK NOW !! <i class="fas fa-arrow-right"></i>'; sub.disabled=false; let msg = `🟢 *EASYGO NEW RIDE BOOKING* 🟢\n\n👤 *Customer:* ${rideData.name}\n📞 *Phone:* +91 ${rideData.phone}\n📍 *Pickup:* ${rideData.pickup}\n🏁 *Drop:* ${rideData.drop}\n📅 *Date:* ${rideData.date}\n⏰ *Time:* ${rideData.time}\n🔐 *OTP:* ${otp}\n\n🚗 *Vehicle:* Citroen C3 (White)\n👨‍✈️ *Driver:* Please confirm ride`; window.open(`https://wa.me/917651837322?text=${encodeURIComponent(msg)}`,'_blank'); }).catch(()=>{ sub.innerHTML='🚀 BOOK NOW !!'; sub.disabled=false; showToast("Booking error","error"); }); }
+    function handleBooking(e){ e.preventDefault(); if(!localStorage.getItem('easygo_user')){ openLoginModal(); showToast("Please login first","error"); return; } let sub=document.getElementById('submitBtn'); let otp=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('bookingOTP').value=otp; sub.innerHTML='<i class="fas fa-spinner fa-spin"></i> Booking...'; sub.disabled=true; let fd=new FormData(document.getElementById('bookingForm')); fd.append('action','bookRide'); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Ride Booked! OTP: "+otp,"success"); let rideData={ name:localStorage.getItem('easygo_name'), phone:localStorage.getItem('easygo_user'), pickup:document.getElementById('pickup').value, drop:document.getElementById('drop').value, otp:otp, date:document.getElementById('date').value, time:document.getElementById('time').value }; localStorage.setItem('active_ride',JSON.stringify(rideData)); checkActiveRide(); sub.innerHTML='%F0%9F%9A%80 BOOK NOW !! <i class="fas fa-arrow-right"></i>'; sub.disabled=false; let msg = `%F0%9F%9F%A2 *EASYGO NEW RIDE BOOKING* %F0%9F%9F%A2%0A%0A%F0%9F%91%A4 *Customer:* ${rideData.name}%0A%F0%9F%93%9E *Phone:* +91 ${rideData.phone}%0A%F0%9F%93%8D *Pickup:* ${rideData.pickup}%0A%F0%9F%8F%81 *Drop:* ${rideData.drop}%0A%F0%9F%93%85 *Date:* ${rideData.date}%0A%E2%8F%B0 *Time:* ${rideData.time}%0A%F0%9F%94%90 *OTP:* ${otp}%0A%0A%F0%9F%9A%97 *Vehicle:* Citroen C3 (White)%0A%F0%9F%91%A8%E2%80%8D%E2%9C%88%EF%B8%8F *Driver:* Please confirm ride`; window.open(`https://wa.me/917651837322?text=${encodeURIComponent(msg)}`,'_blank'); }).catch(()=>{ sub.innerHTML='%F0%9F%9A%80 BOOK NOW !!'; sub.disabled=false; showToast("Booking error","error"); }); }
     
     function checkActiveRide(){ let active=localStorage.getItem('active_ride'); if(active){ let d=JSON.parse(active); document.getElementById('activeRideBanner').classList.remove('hidden'); document.getElementById('activeRideRoute').innerHTML=`${d.pickup.substring(0,25)} → ${d.drop.substring(0,25)}`; document.getElementById('activeRideOTP').innerHTML=d.otp; } else document.getElementById('activeRideBanner').classList.add('hidden'); }
     function endRideProcess(){ document.getElementById('billModal').classList.add('active'); let ride=JSON.parse(localStorage.getItem('active_ride')||'{}'); document.getElementById('billCustomerName').innerHTML=ride.name||'Guest'; document.getElementById('billPickup').innerHTML=ride.pickup||'N/A'; document.getElementById('billDrop').innerHTML=ride.drop||'N/A'; document.getElementById('billDate').innerHTML=new Date().toLocaleDateString(); document.getElementById('billTime').innerHTML=new Date().toLocaleTimeString(); }
@@ -627,10 +620,10 @@
     function processPaymentAndReview(){ showToast("Payment collected! Thank you","success"); closeEndRideModal(); localStorage.removeItem('active_ride'); checkActiveRide(); setTimeout(()=>{ document.getElementById('reviewModal').classList.add('active'); },300); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
     
     let currentRating=5; function setRating(v){ currentRating=v; document.getElementById('ratingValue').value=v; let stars=document.querySelectorAll('#starContainer i'); stars.forEach((star,idx)=>{ star.className = idx<v ? 'fas fa-star active' : 'far fa-star'; }); }
-    function submitReview(){ let name=localStorage.getItem('easygo_name')||"Guest"; let rating=document.getElementById('ratingValue').value; let comment=document.getElementById('reviewText').value; } let fd=new FormData(); fd.append('action','addReview'); fd.append('Name',name); fd.append('Rating',rating); fd.append('Comment',comment); fd.append('Date',new Date().toLocaleDateString()); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Thanks for review!","success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); }).catch(()=>showToast("Review failed","error")); }
+    function submitReview(){ let name=localStorage.getItem('easygo_name')||"Guest"; let rating=document.getElementById('ratingValue').value; let comment=document.getElementById('reviewText').value; let fd=new FormData(); fd.append('action','addReview'); fd.append('Name',name); fd.append('Rating',rating); fd.append('Comment',comment); fd.append('Date',new Date().toLocaleDateString()); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Thanks for review!","success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); }).catch(()=>showToast("Review failed","error")); }
     
     function toggleFaq(btn){ let item=btn.closest('.faq-item'); item.classList.toggle('active'); }
-    function buildFaq(){ let faqs=[{q:"💰 How is fare calculated?",a:"Base slab: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320. Beyond 20km: ₹16/km extra. + 5% GST + ₹2/min wait time + arrival charges from Prime Square."},{q:"⏱️ What are waiting time charges?",a:"₹2 per minute (₹1 per 30 seconds) after driver arrives at your pickup location."},{q:"🔐 How does OTP security work?",a:"6-digit OTP appears ONLY on your EasyGo dashboard. Driver never receives OTP. Ride starts only when you share OTP with driver."},{q:"🚭 Can I eat or smoke inside?",a:"Strictly prohibited. ₹500 cleaning fee applies if interior is soiled."},{q:"📞 What is cancellation policy?",a:"Free cancellation up to 15 mins before pickup. Late cancellation: ₹50."},{q:"🚗 Is this a private vehicle?",a:"Yes, private vehicle number MP09 XY 1234. Fully insured and well-maintained Citroen C3."},{q:"📍 What if my pickup is far from Prime Square?",a:"Arrival charges apply: ₹10/km for distance beyond 3km from Prime Square to your pickup."}]; let html=''; faqs.forEach((faq,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl transition hover:text-blue-700" onclick="toggleFaq(this)"><span>${i+1}. ${faq.q}</span><i class="fas fa-chevron-down faq-icon transition-transform"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 bg-slate-50 p-4 rounded-xl">${faq.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
+    function buildFaq(){ let faqs=[{q:"%F0%9F%92%B0 How is fare calculated?",a:"Base slab: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320. Beyond 20km: ₹16/km extra. + 5% GST + ₹2/min wait time + arrival charges from Prime Square."},{q:"%E2%8F%B0%EF%B8%8F What are waiting time charges?",a:"₹2 per minute (₹1 per 30 seconds) after driver arrives at your pickup location."},{q:"%F0%9F%94%90 How does OTP security work?",a:"6-digit OTP appears ONLY on your EasyGo dashboard. Driver never receives OTP. Ride starts only when you share OTP with driver."},{q:"%F0%9F%9A%AD Can I eat or smoke inside?",a:"Strictly prohibited. ₹500 cleaning fee applies if interior is soiled."},{q:"%F0%9F%93%9E What is cancellation policy?",a:"Free cancellation up to 15 mins before pickup. Late cancellation: ₹50."},{q:"%F0%9F%9A%97 Is this a private vehicle?",a:"Yes, private vehicle number MP09 XY 1234. Fully insured and well-maintained Citroen C3."},{q:"%F0%9F%93%8D What if my pickup is far from Prime Square?",a:"Arrival charges apply: ₹10/km for distance beyond 3km from Prime Square to your pickup."}]; let html=''; faqs.forEach((faq,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl transition hover:text-blue-700" onclick="toggleFaq(this)"><span>${i+1}. ${faq.q}</span><i class="fas fa-chevron-down faq-icon transition-transform"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 bg-slate-50 p-4 rounded-xl">${faq.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
     
     window.onload=()=>{ 
         initMap(); 
