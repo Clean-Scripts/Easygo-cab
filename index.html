@@ -412,8 +412,8 @@
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
         let greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [30,50], iconAnchor: [15,50] });
         let redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [30,50], iconAnchor: [15,50] });
-        pickupMarker = L.marker([22.7196,75.8577], {icon: greenIcon, draggable: true}).addTo(map).bindPopup("%F0%9F%9A%96 PICKUP").openPopup();
-        dropMarker = L.marker([22.75,75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("%F0%9F%8F%81 DROP");
+        pickupMarker = L.marker([22.7196,75.8577], {icon: greenIcon, draggable: true}).addTo(map).bindPopup("🚖 PICKUP").openPopup();
+        dropMarker = L.marker([22.75,75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("📍 DROP");
         
         // On marker drag end: update search bars, links, and fare
         pickupMarker.on('dragend', async () => {
