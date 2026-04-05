@@ -93,7 +93,6 @@
         button, .filter-chip { transition: all 0.2s ease; }
         button:hover, .filter-chip:hover { transform: translateY(-2px); }
         
-        /* Modern search bar */
         .explorer-search-wrapper {
             position: relative;
             width: 100%;
@@ -120,13 +119,15 @@
             outline: none;
             box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
         }
+        
+        .receipt-dashed { border-top: 2px dashed #cbd5e1; border-bottom: 2px dashed #cbd5e1; }
     </style>
 </head>
 <body class="text-slate-800 flex flex-col min-h-screen selection:bg-blue-200 selection:text-blue-900">
 
     <div id="toast-container" class="fixed top-24 right-5 z-[10000] flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- Navigation (unchanged, fully functional) -->
+    <!-- Navigation -->
     <nav class="bg-white/95 backdrop-blur-sm shadow-2xl sticky top-0 z-50 border-b-4 border-blue-700">
         <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
             <div class="flex justify-between h-24 items-center">
@@ -164,9 +165,8 @@
             </div>
         </div>
 
-        <!-- HOME SECTION (unchanged, fully working) -->
+        <!-- HOME SECTION -->
         <section id="home" class="page-section active max-w-7xl mx-auto px-5 py-10">
-            <!-- map & booking form same as original, preserved functionality -->
             <div class="grid lg:grid-cols-12 gap-10">
                 <div class="lg:col-span-7 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
                     <div class="p-4 bg-slate-800 flex justify-between items-center text-white"><span class="font-black text-xl"><i class="fas fa-map-marked-alt mr-3"></i>🗺️ Live GPS Route</span><button onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-full text-sm font-bold shadow-lg flex gap-2 transition hover:scale-105"><i class="fas fa-crosshairs"></i> GPS Locate</button></div>
@@ -193,30 +193,25 @@
             <div class="mt-24"><div class="text-center mb-10"><h2 class="text-4xl font-black uppercase">⭐ Verified Rider Reviews</h2><p class="text-gray-600 font-bold border-b-4 border-yellow-400 inline-block pb-2">Live from database</p></div><div id="dynamic-reviews-container" class="reviews-container"></div></div>
         </section>
 
-        <!-- ========== UPGRADED PACKAGES SECTION: TOOL-STYLE EXPLORER with SEARCH + FILTERS ========== -->
+        <!-- PACKAGES SECTION with SEARCH + FILTERS -->
         <section id="tours" class="page-section max-w-7xl mx-auto px-5 py-16">
             <div class="text-center mb-8">
                 <h1 class="text-5xl font-black mb-3 uppercase bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent">🗺️ Cab Explorer | Tour Packages</h1>
                 <p class="text-gray-600 text-lg font-medium">Discover breathtaking destinations across MP — Filter, Search & Book Instantly</p>
                 <div class="w-24 h-1 bg-blue-600 mx-auto mt-3 rounded-full"></div>
             </div>
-
-            <!-- FILTER BAR + SEARCH (professional interactive dashboard style) -->
             <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-5 mb-10">
                 <div class="flex flex-col lg:flex-row gap-5 justify-between items-end lg:items-center">
-                    <!-- Search Bar -->
                     <div class="explorer-search-wrapper">
                         <i class="fas fa-search text-gray-400"></i>
                         <input type="text" id="tourSearchInput" placeholder="Search destination, place, or category..." class="explorer-search-input font-medium" onkeyup="filterToursAndSearch()">
                     </div>
-                    <!-- Season Filters -->
                     <div class="flex flex-wrap gap-3">
                         <button onclick="setSeasonFilter('All')" class="filter-chip season-filter active px-5 py-2 rounded-full font-bold text-sm transition-all" data-season="All">🌍 All Seasons</button>
                         <button onclick="setSeasonFilter('Monsoon')" class="filter-chip season-filter px-5 py-2 rounded-full font-bold text-sm transition-all" data-season="Monsoon">☔ Monsoon</button>
                         <button onclick="setSeasonFilter('Winter')" class="filter-chip season-filter px-5 py-2 rounded-full font-bold text-sm transition-all" data-season="Winter">❄️ Winter</button>
                         <button onclick="setSeasonFilter('Summer')" class="filter-chip season-filter px-5 py-2 rounded-full font-bold text-sm transition-all" data-season="Summer">☀️ Summer</button>
                     </div>
-                    <!-- Category Quick Chips -->
                     <div class="flex flex-wrap gap-2">
                         <span class="text-xs font-bold text-gray-500 self-center">CATEGORY:</span>
                         <button onclick="setCategoryFilter('All')" class="filter-chip cat-filter active px-4 py-1.5 rounded-full font-semibold text-xs" data-cat="All">All</button>
@@ -227,8 +222,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Tours Grid with modern card design (exactly like tool dashboard) -->
             <div id="dynamic-tours-container" class="tours-explorer-grid">
                 <div class="col-span-full text-center py-20 text-gray-500"><i class="fas fa-spinner fa-spin text-3xl"></i><p class="mt-3 font-bold">Loading magical destinations...</p></div>
             </div>
@@ -238,7 +231,7 @@
             </div>
         </section>
 
-        <!-- Other sections (FAQ, About, Privacy, Terms) unchanged but kept for full compatibility -->
+        <!-- FAQ, About, Privacy, Terms Sections -->
         <section id="faq" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="text-center mb-12"><h1 class="text-5xl font-black uppercase border-b-8 border-blue-600 inline-block pb-3">❓ Frequently Asked Questions</h1><p class="mt-4 text-gray-600">Everything you need to know about EasyGo Cabs</p></div><div class="bg-white rounded-3xl shadow-2xl p-8 space-y-6" id="faqContainer"></div></section>
         <section id="about" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white rounded-3xl shadow-2xl p-10"><h2 class="text-4xl font-black text-blue-900 border-l-8 border-blue-600 pl-4">📖 The EasyGo Journey</h2><p class="text-xl mt-6 font-medium leading-relaxed">Founded by <strong>Nishant Jaiswal</strong>, based at <strong>Omaxe City 1, Indore</strong>. Our premium white Citroen C3 offers unmatched comfort for city rides and outstation tours. No surge pricing, 100% transparent fare calculation, and premium service across Madhya Pradesh. We prioritize customer safety, cleanliness and punctuality.</p><p class="mt-4 text-lg"><i class="fas fa-car text-blue-600"></i> Vehicle: Citroen C3 <i class="fas fa-id-card"></i></p></div></section>
         <section id="privacy" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white rounded-3xl shadow-2xl p-10"><h1 class="text-4xl font-black text-blue-900 mb-6">🔒 Privacy Policy</h1><p class="text-gray-600 mb-4"><strong>Effective Date:</strong> April 1, 2026 | <strong>Last Updated:</strong> April 5, 2026</p><div class="space-y-6"><div><h2 class="text-2xl font-bold">1. Information We Collect</h2><p>We collect your name, phone number, pickup/drop locations, and ride history to provide seamless cab services.</p></div><div><h2 class="text-2xl font-bold">2. How We Use Your Data</h2><p>Your data is used for ride booking, fare calculation, driver coordination, and customer support.</p></div><div><h2 class="text-2xl font-bold">3. Data Security</h2><p>All data is encrypted and stored securely via Google Workspace.</p></div><div><h2 class="text-2xl font-bold">4. Your Rights</h2><p>You can request deletion of your data by contacting us on WhatsApp.</p></div></div></div></section>
@@ -247,93 +240,107 @@
 
     <footer class="bg-slate-900 text-slate-300 py-12 border-t-8 border-blue-600 text-center"><p class="text-2xl font-black text-white">EasyGo Cabs</p><p class="mt-2"><i class="fas fa-map-marker-alt"></i> Omaxe City 1, Indore | <i class="fab fa-whatsapp"></i> +91 76518 37322 </p><p class="text-xs mt-6">© 2026 EasyGo | Premium Rides | All Rights Reserved</p></footer>
 
-    <!-- Modals & script integration (keeping original booking + upgraded explorer) -->
+    <!-- MODALS -->
     <div id="loginModal" class="modal fixed inset-0"><div class="bg-white p-8 rounded-3xl max-w-md w-full shadow-2xl"><button onclick="closeLoginModal()" class="float-right text-3xl font-black">&times;</button><div class="text-center"><img src="easy go.jpg" class="h-20 w-20 rounded-full mx-auto border-4 border-blue-600"></div><div id="step1"><input type="text" id="nameInput" placeholder="Full Name" class="w-full p-4 border-2 rounded-xl my-3 font-bold"><div class="flex"><span class="bg-slate-200 p-4 rounded-l-xl">+91</span><input type="tel" id="mobileInput" placeholder="10 digit mobile" class="flex-1 p-4 border-2 rounded-r-xl"></div><button onclick="sendOTP()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black mt-5 transition hover:scale-105">GENERATE OTP</button></div><div id="step2" class="hidden"><p class="text-center font-bold">OTP sent to <span id="displayMobile"></span></p><div class="flex justify-center gap-3 my-6"><input type="text" readonly class="otp-box w-16 h-20 text-center text-4xl font-black border-4 rounded-2xl"></div><div id="otpLoader" class="text-center hidden font-bold text-blue-600">Verifying...</div></div></div></div>
-    <div id="billModal" class="modal fixed inset-0 overflow-y-auto py-10"><div class="bg-white rounded-3xl max-w-2xl w-full mx-4"><div class="bg-slate-800 p-6 text-white text-center rounded-t-3xl"><h2 class="text-3xl font-black">🧾 TAX INVOICE</h2></div><div class="p-6"><div id="billInputSection"><input type="number" id="inputActualKM" placeholder="Total KM Traveled" class="w-full p-3 border-2 rounded-xl my-2"><input type="number" id="inputWaitTime" placeholder="Wait Time (minutes)" class="w-full p-3 border-2 rounded-xl my-2"><input type="number" id="inputTip" placeholder="Driver Tip (₹)" class="w-full p-3 border-2 rounded-xl my-2"><button onclick="calculateFinalBill()" class="w-full bg-blue-700 text-white p-4 rounded-xl font-black mt-3">📊 CALCULATE FARE</button><button onclick="closeEndRideModal()" class="w-full mt-2 bg-gray-300 p-3 rounded-xl">Cancel</button></div><div id="billDisplaySection" class="hidden"><div id="billDetails"></div><button onclick="processPaymentAndReview()" class="w-full bg-green-600 text-white p-4 rounded-xl font-black mt-5">✅ COLLECT PAYMENT</button></div></div></div></div>
-    <div id="reviewModal" class="modal fixed inset-0"><div class="bg-white p-8 rounded-3xl max-w-md w-full text-center"><h2 class="text-2xl font-black">⭐ Rate your ride</h2><div class="star-rating text-4xl my-4" id="starContainer"><i class="far fa-star" onclick="setRating(1)"></i><i class="far fa-star" onclick="setRating(2)"></i><i class="far fa-star" onclick="setRating(3)"></i><i class="far fa-star" onclick="setRating(4)"></i><i class="far fa-star" onclick="setRating(5)"></i></div><input type="hidden" id="ratingValue" value="5"><textarea id="reviewText" rows="3" class="w-full border-2 rounded-xl p-3" placeholder="Share experience..."></textarea><button onclick="submitReview()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-black mt-4">📝 PUBLISH REVIEW</button></div></div>
 
-    <script>
-        // ---------- Global variables (keep existing map & booking logic) ----------
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
-        const PRIME_SQUARE = L.latLng(22.7628, 75.9234);
-        let map, pickupMarker, dropMarker, allToursData = [], currentSeason = 'All', currentCategory = 'All', selectedPackageBasePrice = 0;
-        let stopMarkers = [], stopLocations = [];
-        
-        // ---- TOURS EXPLORER LOGIC (upgraded with search & filters) ----
-        function filterToursAndSearch() {
-            if(!allToursData.length) return;
-            const searchTerm = document.getElementById('tourSearchInput')?.value.toLowerCase() || '';
-            let filtered = allToursData.filter(tour => {
-                const desc = (tour.Description || "").toLowerCase();
-                const dest = (tour.Destination || "").toLowerCase();
-                const seasonMatch = (currentSeason === 'All' || (tour.Season || "").toLowerCase().includes(currentSeason.toLowerCase()));
-                let catMatch = currentCategory === 'All';
-                if(!catMatch) {
-                    if(currentCategory === 'Nature' && (desc.includes('fall') || desc.includes('lake') || desc.includes('water') || desc.includes('nature'))) catMatch = true;
-                    else if(currentCategory === 'Religious' && (desc.includes('temple') || desc.includes('spiritual') || desc.includes('mandir') || desc.includes('church'))) catMatch = true;
-                    else if(currentCategory === 'Adventure' && (desc.includes('adventure') || desc.includes('mall') || desc.includes('food') || desc.includes('market'))) catMatch = true;
-                    else if(currentCategory === 'Heritage' && (desc.includes('fort') || desc.includes('palace') || desc.includes('heritage'))) catMatch = true;
-                    else catMatch = false;
-                }
-                const searchMatch = searchTerm === '' || dest.includes(searchTerm) || desc.includes(searchTerm);
-                return seasonMatch && catMatch && searchMatch;
-            });
-            renderToursGrid(filtered);
-            const emptyMsg = document.getElementById('empty-tours-message');
-            if(emptyMsg) emptyMsg.classList.toggle('hidden', filtered.length > 0);
-        }
-        
-        function setSeasonFilter(season) { currentSeason = season; document.querySelectorAll('.season-filter').forEach(btn => btn.classList.remove('active')); document.querySelector(`.season-filter[data-season="${season}"]`).classList.add('active'); filterToursAndSearch(); }
-        function setCategoryFilter(cat) { currentCategory = cat; document.querySelectorAll('.cat-filter').forEach(btn => btn.classList.remove('active')); document.querySelector(`.cat-filter[data-cat="${cat}"]`).classList.add('active'); filterToursAndSearch(); }
-        
-        function renderToursGrid(tours) {
-            const container = document.getElementById('dynamic-tours-container');
-            if(!container) return;
-            if(!tours.length) { container.innerHTML = ''; return; }
-            container.innerHTML = tours.map(t => `
-                <div class="tour-card group">
-                    <div class="relative overflow-hidden h-56"><img src="${t.ImageURL || 'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88'"><div class="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-full px-3 py-1 text-xs font-black shadow">⭐ ${t.Popularity || 'Trending'}</div></div>
-                    <div class="p-6">
-                        <h3 class="text-2xl font-black text-slate-800 flex justify-between"><span>${t.Destination}</span><span class="text-blue-700 text-xl">₹${t.Price}</span></h3>
-                        <p class="text-gray-500 text-sm mt-2 line-clamp-2">${t.Description || 'Amazing scenic route with EasyGo cabs.'}</p>
-                        <div class="flex flex-wrap gap-2 mt-4"><span class="bg-slate-100 px-3 py-1 rounded-full text-xs font-bold"><i class="fas fa-calendar-alt"></i> ${t.Season || 'All Year'}</span><span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-bold"><i class="fas fa-tag"></i> ${getCategoryLabel(t.Description)}</span></div>
-                        <button onclick='bookTourPackageDirect("${t.Destination}", ${t.Price})' class="w-full mt-5 bg-slate-900 text-white py-3 rounded-xl font-bold transition hover:bg-blue-700 hover:shadow-lg flex justify-center gap-2 items-center"><i class="fas fa-car-side"></i> BOOK THIS TOUR</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        function getCategoryLabel(desc) { const d = desc.toLowerCase(); if(d.includes('fall')||d.includes('nature')) return '🌿 Nature'; if(d.includes('temple')) return '🛕 Religious'; if(d.includes('fort')) return '🏰 Heritage'; return '✨ Explorer'; }
-        function bookTourPackageDirect(dest, price) { selectedPackageBasePrice = price; showPage('home'); document.getElementById('drop').value = dest+", MP"; searchLocation(dest,'drop'); updateLiveEstimate(); window.scrollTo({top: document.getElementById('bookingForm').offsetTop-100, behavior:'smooth'}); showToast(`✨ ${dest} package added!`, "success"); }
-        
-        async function loadDynamicTours() { try { let res = await fetch(scriptURL+"?action=getTours&t="+Date.now()); let d = await res.json(); if(d.result==='success' && d.tours) { allToursData = d.tours; filterToursAndSearch(); } else { document.getElementById('dynamic-tours-container').innerHTML='<div class="col-span-full text-center p-10">Failed to load tours</div>'; } } catch(e) { console.log(e); } }
-        
-        // --- Existing functions (keep map, booking, reviews, etc) ---
-        function showPage(id) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); if(id==='tours' && !allToursData.length) loadDynamicTours(); }
-        function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
-        function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
-        function showToast(msg, type) { let t = document.createElement('div'); t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type==='success'?'border-green-500':'border-red-500'} pointer-events-auto`; t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-triangle'} mr-2"></i> ${msg}`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(),3000); }
-        function closeEndRideModal() { document.getElementById('billModal').classList.remove('active'); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
-        function addStop() { /* simplified stop add */ let container = document.getElementById('stopsContainer'); let stopId = Date.now(); let div = document.createElement('div'); div.className = 'stop-item'; div.id = `stop-${stopId}`; div.innerHTML = `<div class="flex gap-2"><i class="fas fa-map-pin text-purple-500"></i><input type="text" placeholder="Stop location" class="flex-1 p-2 border rounded-lg"></div>`; container.appendChild(div); calculateTotalDistance(); }
-        function initMap() { map = L.map('map').setView([22.7196,75.8577],12); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM'}).addTo(map); let greenIcon = L.icon({iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',iconSize:[30,50],iconAnchor:[15,50]}); let redIcon = L.icon({iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',iconSize:[30,50],iconAnchor:[15,50]}); pickupMarker = L.marker([22.7196,75.8577],{icon:greenIcon, draggable:true}).addTo(map); dropMarker = L.marker([22.75,75.89],{icon:redIcon, draggable:true}).addTo(map); pickupMarker.on('dragend',()=>{ calculateTotalDistance(); updateLiveEstimate(); }); dropMarker.on('dragend',()=>{ calculateTotalDistance(); updateLiveEstimate(); }); calculateTotalDistance(); }
-        function calculateTotalDistance() { let totalDist = pickupMarker.getLatLng().distanceTo(dropMarker.getLatLng()); let roadKm = (totalDist * 1.3 / 1000).toFixed(2); document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM"; document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm)); updateLiveEstimate(); return roadKm; }
-        function updateLiveEstimate() { let dist = parseFloat(document.getElementById('mapDistanceDisplay').innerText) || 0; let baseSlab = dist<=5?100:(dist<=10?180:(dist<=20?320:320)); let extraKm = dist>20 ? dist-20 : 0; let extraCost = extraKm*16; let subtotal = baseSlab+extraCost; let gst = subtotal*0.05; let total = Math.round(subtotal+gst+(selectedPackageBasePrice||0)); let box = document.getElementById('liveEstimateBox'); if(!box) { box = document.createElement('div'); box.id='liveEstimateBox'; document.getElementById('bookingForm').insertBefore(box, document.getElementById('submitBtn')); } box.className='bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl'; box.innerHTML = `<div class="flex justify-between"><span class="text-sm font-bold">💰 ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div><small class="text-xs">*Incl. GST + package estimate</small>`; box.classList.remove('hidden'); }
-        function searchLocation(q,t) { /* simplified */ let box=document.getElementById(t+'-suggestions'); if(q.length<3){box.style.display='none';return;} fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`).then(r=>r.json()).then(d=>{ box.innerHTML=''; if(d.length){box.style.display='block'; d.forEach(p=>{let div=document.createElement('div'); div.className='suggestion-item'; div.innerText=p.display_name.split(',')[0]; div.onclick=()=>{ document.getElementById(t).value=div.innerText; box.style.display='none'; let latlng = L.latLng(p.lat,p.lon); if(t==='pickup') pickupMarker.setLatLng(latlng); else dropMarker.setLatLng(latlng); calculateTotalDistance(); updateLiveEstimate(); }; box.appendChild(div);})} else box.style.display='none'; }); }
-        function useCurrentLocation(t) { navigator.geolocation.getCurrentPosition(pos=>{ let latlng=[pos.coords.latitude,pos.coords.longitude]; if(t==='pickup') pickupMarker.setLatLng(latlng); else dropMarker.setLatLng(latlng); calculateTotalDistance(); }); }
-        function locateMeOnMap() { useCurrentLocation('pickup'); }
-        function handleBooking(e){ e.preventDefault(); if(!localStorage.getItem('easygo_user')){openLoginModal(); return;} let otp=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('bookingOTP').value=otp; let fd=new FormData(document.getElementById('bookingForm')); fd.append('action','bookRide'); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Ride Booked! OTP: "+otp,"success"); let rideData={name:localStorage.getItem('easygo_name'), phone:localStorage.getItem('easygo_user'), pickup:document.getElementById('pickup').value, drop:document.getElementById('drop').value, otp:otp, date:document.getElementById('date').value, time:document.getElementById('time').value}; localStorage.setItem('active_ride',JSON.stringify(rideData)); checkActiveRide(); window.open(`https://wa.me/917651837322?text=New%20Booking%20OTP%3A${otp}`,'_blank'); }); }
-        function checkActiveRide(){ let active=localStorage.getItem('active_ride'); if(active){ let d=JSON.parse(active); document.getElementById('activeRideBanner').classList.remove('hidden'); document.getElementById('activeRideRoute').innerHTML=`${d.pickup.substring(0,25)} → ${d.drop.substring(0,25)}`; document.getElementById('activeRideOTP').innerHTML=d.otp; } else document.getElementById('activeRideBanner').classList.add('hidden'); }
-        function endRideProcess(){ document.getElementById('billModal').classList.add('active'); }
-        function calculateFinalBill(){ let km=parseFloat(document.getElementById('inputActualKM').value)||0; let wait=parseFloat(document.getElementById('inputWaitTime').value)||0; let tip=parseFloat(document.getElementById('inputTip').value)||0; let base=km<=5?100:(km<=10?180:(km<=20?320:320)); let extra=km>20?(km-20)*16:0; let subtotal=base+extra+(wait*2); let total=Math.round(subtotal*1.05+tip); document.getElementById('billDetails').innerHTML=`<div class="space-y-2"><p><strong>Distance:</strong> ${km} km</p><p><strong>Base Fare:</strong> ₹${base}</p><p><strong>Extra KM:</strong> ₹${extra}</p><p><strong>Wait:</strong> ₹${wait*2}</p><p><strong>GST 5%:</strong> ₹${Math.round(subtotal*0.05)}</p><p class="text-2xl font-black">Total: ₹${total}</p></div>`; document.getElementById('billInputSection').classList.add('hidden'); document.getElementById('billDisplaySection').classList.remove('hidden'); }
-        function processPaymentAndReview(){ showToast("Payment collected!","success"); closeEndRideModal(); localStorage.removeItem('active_ride'); checkActiveRide(); setTimeout(()=>document.getElementById('reviewModal').classList.add('active'),300); }
-        let currentRating=5; function setRating(v){ currentRating=v; document.getElementById('ratingValue').value=v; let stars=document.querySelectorAll('#starContainer i'); stars.forEach((star,idx)=>{ star.className = idx<v ? 'fas fa-star active' : 'far fa-star'; }); }
-        function submitReview(){ let name=localStorage.getItem('easygo_name')||"Guest"; let rating=document.getElementById('ratingValue').value; let comment=document.getElementById('reviewText').value; let fd=new FormData(); fd.append('action','addReview'); fd.append('Name',name); fd.append('Rating',rating); fd.append('Comment',comment); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Thanks for review!","success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); }); }
-        function loadDynamicReviews(){ fetch(scriptURL+"?action=getReviews&t="+Date.now()).then(r=>r.json()).then(d=>{ let con=document.getElementById('dynamic-reviews-container'); if(d.result==='success') con.innerHTML=d.reviews.slice(0,6).map(r=>`<div class="bg-white p-6 rounded-2xl shadow-xl"><div class="text-yellow-400">${'★'.repeat(r.Rating)}${'☆'.repeat(5-r.Rating)}</div><p class="font-bold mt-2">"${r.Comment}"</p><p class="text-sm mt-2 text-blue-700">— ${r.Name}</p></div>`).join(''); }); }
-        function buildFaq(){ let faqs=[{q:"💰 Fare calculation?",a:"Slab rates: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320, extra ₹16/km + GST 5% + wait time ₹2/min."},{q:"🔐 OTP security?",a:"6-digit OTP only on your dashboard. Driver never receives OTP."}]; let html=''; faqs.forEach((f,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl" onclick="this.closest('.faq-item').classList.toggle('active')"><span>${i+1}. ${f.q}</span><i class="fas fa-chevron-down faq-icon"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 p-4">${f.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
-        window.onload = () => { initMap(); document.getElementById('date').valueAsDate=new Date(); if(localStorage.getItem('easygo_user') && localStorage.getItem('easygo_name')) loginUI(localStorage.getItem('easygo_user'),localStorage.getItem('easygo_name')); checkActiveRide(); loadDynamicReviews(); loadDynamicTours(); buildFaq(); setRating(5); };
-        function loginUI(mob,n){ document.getElementById('loginBtn').classList.add('hidden'); document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('displayUserName').innerHTML=n.toUpperCase(); document.getElementById('customerPhone').value=mob; document.getElementById('customerNameField').value=n; }
-        function logout(){ localStorage.clear(); location.reload(); }
-        function sendOTP(){ let n=document.getElementById('nameInput').value, m=document.getElementById('mobileInput').value; if(!n||m.length<10){showToast("Enter name & mobile","error");return;} document.getElementById('step1').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden'); let otp=Math.floor(1000+Math.random()*9000).toString(); let boxes=document.querySelectorAll('.otp-box'); boxes.forEach((box,i)=>setTimeout(()=>box.value=otp[i]||'', i*180)); setTimeout(()=>{ localStorage.setItem('easygo_user',m); localStorage.setItem('easygo_name',n); loginUI(m,n); closeLoginModal(); showToast(`Welcome ${n}!`,"success"); },1500); }
-    </script>
+    <!-- BILL MODAL - COMPLETE WITH ALL DETAILS -->
+    <div id="billModal" class="modal fixed inset-0 overflow-y-auto py-10"><div class="bg-white rounded-3xl max-w-2xl w-full mx-4"><div class="bg-slate-800 p-6 text-white text-center rounded-t-3xl"><h2 class="text-3xl font-black">🧾 TAX INVOICE</h2><p class="text-sm">EasyGo Cabs - Premium Service</p></div><div class="p-6"><div id="billInputSection"><input type="number" id="inputActualKM" placeholder="Total KM Traveled" class="w-full p-3 border-2 rounded-xl my-2"><input type="number" id="inputWaitTime" placeholder="Wait Time (minutes)" class="w-full p-3 border-2 rounded-xl my-2"><input type="number" id="inputTip" placeholder="Driver Tip (₹)" class="w-full p-3 border-2 rounded-xl my-2"><button onclick="calculateFinalBill()" class="w-full bg-blue-700 text-white p-4 rounded-xl font-black mt-3 transition hover:scale-105">📊 CALCULATE FARE</button><button onclick="closeEndRideModal()" class="w-full mt-2 bg-gray-300 p-3 rounded-xl transition hover:scale-105">Cancel</button></div><div id="billDisplaySection" class="hidden"><div class="border-b pb-3 mb-3"><p><strong>Customer:</strong> <span id="billCustomerName"></span></p><p><strong>Date:</strong> <span id="billDate"></span> | <strong>Time:</strong> <span id="billTime"></span></p><p><strong>From:</strong> <span id="billPickup"></span></p><p><strong>To:</strong> <span id="billDrop"></span></p><p><strong>Distance:</strong> <span id="billDistance"></span> km | <strong>Travel Time:</strong> <span id="billTravelTime"></span> mins</p></div><div class="space-y-2"><div class="flex justify-between"><span>Base Fare (Slab + Arrival):</span><span id="billBaseFare">₹0</span></div><div class="flex justify-between"><span>Extra KM (beyond 20km):</span><span id="billExtraCost">₹0</span></div><div class="flex justify-between"><span>Wait Time (<span id="billWaitMins"></span> mins @ ₹2/min):</span><span id="billWaitCost">₹0</span></div><div class="flex justify-between font-bold text-xl border-t pt-2 mt-2"><span>Subtotal:</span><span id="billSubtotal">₹0</span></div><div class="flex justify-between"><span>GST (5%):</span><span id="billTax">₹0</span></div><div class="flex justify-between text-green-700"><span>Driver Tip:</span><span id="billTipVal">₹0</span></div><div class="flex justify-between text-2xl font-black bg-slate-100 p-3 rounded-xl mt-2"><span>GRAND TOTAL:</span><span id="billGrandTotal">₹0</span></div></div><button onclick="processPaymentAndReview()" class="w-full bg-green-600 text-white p-4 rounded-xl font-black mt-5 transition hover:scale-105">✅ COLLECT PAYMENT</button></div></div></div></div>
+
+    <div id="reviewModal" class="modal fixed inset-0"><div class="bg-white p-8 rounded-3xl max-w-md w-full text-center"><h2 class="text-2xl font-black">⭐ Rate your ride</h2><div class="star-rating text-4xl my-4" id="starContainer"><i class="far fa-star" onclick="setRating(1)"></i><i class="far fa-star" onclick="setRating(2)"></i><i class="far fa-star" onclick="setRating(3)"></i><i class="far fa-star" onclick="setRating(4)"></i><i class="far fa-star" onclick="setRating(5)"></i></div><input type="hidden" id="ratingValue" value="5"><textarea id="reviewText" rows="3" class="w-full border-2 rounded-xl p-3" placeholder="Share experience..."></textarea><button onclick="submitReview()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-black mt-4 transition hover:scale-105">📝 PUBLISH REVIEW</button></div></div>
+
+<script>
+    // ===================== COMPLETE SYSTEM =====================
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
+    const PRIME_SQUARE = L.latLng(22.7628, 75.9234);
+    let map, pickupMarker, dropMarker, allToursData = [], currentSeason = 'All', currentCategory = 'All', selectedPackageBasePrice = 0;
+    let stopMarkers = [], stopLocations = [];
+
+    function showPage(id) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); if(id==='tours' && !allToursData.length) loadDynamicTours(); }
+    function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+    function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+    function showToast(msg, type) { let t = document.createElement('div'); t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type==='success'?'border-green-500':'border-red-500'} pointer-events-auto`; t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-triangle'} mr-2"></i> ${msg}`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(),3000); }
+    function closeEndRideModal() { document.getElementById('billModal').classList.remove('active'); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
+
+    // Multiple Stops Functions
+    function addStop() { let container = document.getElementById('stopsContainer'); let stopId = Date.now(); let div = document.createElement('div'); div.className = 'stop-item'; div.id = `stop-${stopId}`; div.innerHTML = `<div class="flex gap-2"><i class="fas fa-map-pin text-purple-500"></i><input type="text" placeholder="Stop location" class="flex-1 p-2 border rounded-lg"></div>`; container.appendChild(div); calculateTotalDistance(); }
+
+    function calculateTotalDistance() { let totalDist = pickupMarker.getLatLng().distanceTo(dropMarker.getLatLng()); let roadKm = (totalDist * 1.3 / 1000).toFixed(2); document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM"; document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm)); updateLiveEstimate(); return roadKm; }
+
+    function updateLiveEstimate() { let dist = parseFloat(document.getElementById('mapDistanceDisplay').innerText) || 0; let arrivalDist = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000 - 3)); let arrival = arrivalDist * 10; let baseSlab = 0; let extraKm = 0; if (dist <= 5) baseSlab = 100; else if (dist <= 10) baseSlab = 180; else if (dist <= 20) baseSlab = 320; else { baseSlab = 320; extraKm = dist - 20; } let extraCost = extraKm * 16; let subtotal = baseSlab + extraCost + arrival + (selectedPackageBasePrice||0); let gst = subtotal * 0.05; let total = Math.round(subtotal + gst); let box = document.getElementById('liveEstimateBox'); if(!box) { box = document.createElement('div'); box.id='liveEstimateBox'; document.getElementById('bookingForm').insertBefore(box, document.getElementById('submitBtn')); } box.className='bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl'; box.innerHTML = `<div class="flex justify-between"><span class="text-sm font-bold">💰 ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div><small class="text-xs">*Final fare includes wait time + tip</small>`; box.classList.remove('hidden'); }
+
+    function searchLocation(q,t) { let box=document.getElementById(t+'-suggestions'); if(q.length<3){box.style.display='none';return;} fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`).then(r=>r.json()).then(d=>{ box.innerHTML=''; if(d.length){box.style.display='block'; d.forEach(p=>{let div=document.createElement('div'); div.className='suggestion-item'; div.innerText=p.display_name.split(',')[0]; div.onclick=()=>{ document.getElementById(t).value=div.innerText; box.style.display='none'; let latlng = L.latLng(p.lat,p.lon); if(t==='pickup') pickupMarker.setLatLng(latlng); else dropMarker.setLatLng(latlng); calculateTotalDistance(); updateLiveEstimate(); }; box.appendChild(div);})} else box.style.display='none'; }); }
+    function useCurrentLocation(t) { navigator.geolocation.getCurrentPosition(pos=>{ let latlng=[pos.coords.latitude,pos.coords.longitude]; if(t==='pickup') pickupMarker.setLatLng(latlng); else dropMarker.setLatLng(latlng); calculateTotalDistance(); }); }
+    function locateMeOnMap() { useCurrentLocation('pickup'); showToast("📍 Location set as pickup", "success"); }
+
+    function initMap() { map = L.map('map').setView([22.7196,75.8577],12); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM'}).addTo(map); let greenIcon = L.icon({iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',iconSize:[30,50],iconAnchor:[15,50]}); let redIcon = L.icon({iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',iconSize:[30,50],iconAnchor:[15,50]}); pickupMarker = L.marker([22.7196,75.8577],{icon:greenIcon, draggable:true}).addTo(map); dropMarker = L.marker([22.75,75.89],{icon:redIcon, draggable:true}).addTo(map); pickupMarker.on('dragend',()=>{ calculateTotalDistance(); updateLiveEstimate(); }); dropMarker.on('dragend',()=>{ calculateTotalDistance(); updateLiveEstimate(); }); calculateTotalDistance(); }
+
+    // TOURS FUNCTIONS
+    function filterToursAndSearch() { if(!allToursData.length) return; const searchTerm = document.getElementById('tourSearchInput')?.value.toLowerCase() || ''; let filtered = allToursData.filter(tour => { const desc = (tour.Description || "").toLowerCase(); const dest = (tour.Destination || "").toLowerCase(); const seasonMatch = (currentSeason === 'All' || (tour.Season || "").toLowerCase().includes(currentSeason.toLowerCase())); let catMatch = currentCategory === 'All'; if(!catMatch) { if(currentCategory === 'Nature' && (desc.includes('fall') || desc.includes('lake') || desc.includes('water') || desc.includes('nature'))) catMatch = true; else if(currentCategory === 'Religious' && (desc.includes('temple') || desc.includes('spiritual') || desc.includes('mandir'))) catMatch = true; else if(currentCategory === 'Adventure' && (desc.includes('adventure') || desc.includes('mall') || desc.includes('food'))) catMatch = true; else if(currentCategory === 'Heritage' && (desc.includes('fort') || desc.includes('palace') || desc.includes('heritage'))) catMatch = true; else catMatch = false; } const searchMatch = searchTerm === '' || dest.includes(searchTerm) || desc.includes(searchTerm); return seasonMatch && catMatch && searchMatch; }); renderToursGrid(filtered); document.getElementById('empty-tours-message').classList.toggle('hidden', filtered.length > 0); }
+    function setSeasonFilter(season) { currentSeason = season; document.querySelectorAll('.season-filter').forEach(btn => btn.classList.remove('active')); document.querySelector(`.season-filter[data-season="${season}"]`).classList.add('active'); filterToursAndSearch(); }
+    function setCategoryFilter(cat) { currentCategory = cat; document.querySelectorAll('.cat-filter').forEach(btn => btn.classList.remove('active')); document.querySelector(`.cat-filter[data-cat="${cat}"]`).classList.add('active'); filterToursAndSearch(); }
+    function renderToursGrid(tours) { const container = document.getElementById('dynamic-tours-container'); if(!container) return; if(!tours.length) { container.innerHTML = ''; return; } container.innerHTML = tours.map(t => `<div class="tour-card group"><div class="relative overflow-hidden h-56"><img src="${t.ImageURL || 'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="w-full h-full object-cover transition duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88'"></div><div class="p-6"><h3 class="text-2xl font-black flex justify-between"><span>${t.Destination}</span><span class="text-blue-700">₹${t.Price}</span></h3><p class="text-gray-500 text-sm mt-2">${t.Description || 'Amazing scenic route.'}</p><button onclick='bookTourPackageDirect("${t.Destination}", ${t.Price})' class="w-full mt-5 bg-slate-900 text-white py-3 rounded-xl font-bold transition hover:bg-blue-700">🚀 BOOK THIS TOUR</button></div></div>`).join(''); }
+    function bookTourPackageDirect(dest, price) { selectedPackageBasePrice = price; showPage('home'); document.getElementById('drop').value = dest+", MP"; searchLocation(dest,'drop'); updateLiveEstimate(); window.scrollTo({top: document.getElementById('bookingForm').offsetTop-100, behavior:'smooth'}); showToast(`✨ ${dest} package added!`, "success"); }
+    async function loadDynamicTours() { try { let res = await fetch(scriptURL+"?action=getTours&t="+Date.now()); let d = await res.json(); if(d.result==='success' && d.tours) { allToursData = d.tours; filterToursAndSearch(); } } catch(e) { console.log(e); } }
+
+    // BOOKING WITH WHATSAPP MESSAGE (decorated fonts, no emojis)
+    function handleBooking(e){ e.preventDefault(); if(!localStorage.getItem('easygo_user')){openLoginModal(); return;} let sub=document.getElementById('submitBtn'); let otp=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('bookingOTP').value=otp; sub.innerHTML='<i class="fas fa-spinner fa-spin"></i> Booking...'; sub.disabled=true; let fd=new FormData(document.getElementById('bookingForm')); fd.append('action','bookRide'); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Ride Booked! OTP: "+otp,"success"); let rideData={ name:localStorage.getItem('easygo_name'), phone:localStorage.getItem('easygo_user'), pickup:document.getElementById('pickup').value, drop:document.getElementById('drop').value, otp:otp, date:document.getElementById('date').value, time:document.getElementById('time').value }; localStorage.setItem('active_ride',JSON.stringify(rideData)); checkActiveRide(); sub.innerHTML='🚀 BOOK NOW <i class="fas fa-arrow-right"></i>'; sub.disabled=false; 
+            // WhatsApp message with decorated fonts (no emojis)
+            let msg = `*𝐄𝐀𝐒𝐘𝐆𝐎 𝐂𝐀𝐁𝐒 - 𝐍𝐄𝐖 𝐑𝐈𝐃𝐄 𝐁𝐎𝐎𝐊𝐈𝐍𝐆*%0A%0A◈ 𝐂𝐮𝐬𝐭𝐨𝐦𝐞𝐫: ${rideData.name}%0A◈ 𝐏𝐡𝐨𝐧𝐞: +91 ${rideData.phone}%0A◈ 𝐏𝐢𝐜𝐤𝐮𝐩: ${rideData.pickup}%0A◈ 𝐃𝐫𝐨𝐩: ${rideData.drop}%0A◈ 𝐃𝐚𝐭𝐞: ${rideData.date}%0A◈ 𝐓𝐢𝐦𝐞: ${rideData.time}%0A◈ 𝐎𝐓𝐏: ${otp}%0A%0A◈ 𝐕𝐞𝐡𝐢𝐜𝐥𝐞: 𝐂𝐢𝐭𝐫𝐨𝐞𝐧 𝐂𝟑 (𝐖𝐡𝐢𝐭𝐞)%0A◈ 𝐃𝐫𝐢𝐯𝐞𝐫: 𝐏𝐥𝐞𝐚𝐬𝐞 𝐜𝐨𝐧𝐟𝐢𝐫𝐦 𝐫𝐢𝐝𝐞`;
+            window.open(`https://wa.me/917651837322?text=${msg}`, '_blank');
+        }).catch(()=>{ sub.innerHTML='🚀 BOOK NOW <i class="fas fa-arrow-right"></i>'; sub.disabled=false; showToast("Booking error","error"); }); 
+    }
+
+    function checkActiveRide(){ let active=localStorage.getItem('active_ride'); if(active){ let d=JSON.parse(active); document.getElementById('activeRideBanner').classList.remove('hidden'); document.getElementById('activeRideRoute').innerHTML=`${d.pickup.substring(0,25)} → ${d.drop.substring(0,25)}`; document.getElementById('activeRideOTP').innerHTML=d.otp; } else document.getElementById('activeRideBanner').classList.add('hidden'); }
+    
+    function endRideProcess(){ document.getElementById('billModal').classList.add('active'); let ride=JSON.parse(localStorage.getItem('active_ride')||'{}'); document.getElementById('billCustomerName').innerHTML=ride.name||'Guest'; document.getElementById('billPickup').innerHTML=ride.pickup||'N/A'; document.getElementById('billDrop').innerHTML=ride.drop||'N/A'; document.getElementById('billDate').innerHTML=new Date().toLocaleDateString(); document.getElementById('billTime').innerHTML=new Date().toLocaleTimeString(); }
+    
+    function calculateFinalBill(){ 
+        let km = parseFloat(document.getElementById('inputActualKM').value) || 0;
+        let wait = parseFloat(document.getElementById('inputWaitTime').value) || 0;
+        let tip = parseFloat(document.getElementById('inputTip').value) || 0;
+        let arrivalDist = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000 - 3));
+        let arrival = arrivalDist * 10;
+        let baseSlab = 0;
+        let extraKm = 0;
+        if (km <= 5) baseSlab = 100;
+        else if (km <= 10) baseSlab = 180;
+        else if (km <= 20) baseSlab = 320;
+        else { baseSlab = 320; extraKm = km - 20; }
+        let extraCost = extraKm * 16;
+        let waitCost = wait * 2;
+        let subtotal = baseSlab + extraCost + waitCost + arrival + (selectedPackageBasePrice||0);
+        let gst = subtotal * 0.05;
+        let total = Math.round(subtotal + gst + tip);
+        document.getElementById('billBaseFare').innerHTML = `₹${Math.round(baseSlab + arrival)}`;
+        if (extraKm > 0) { document.getElementById('billExtraCost').innerHTML = `<span class="line-through text-red-500">₹${Math.round(extraCost)}</span> <span class="text-green-600">(Discount Applied)</span>`; } 
+        else { document.getElementById('billExtraCost').innerHTML = `₹0`; }
+        document.getElementById('billWaitMins').innerHTML = wait;
+        document.getElementById('billWaitCost').innerHTML = `₹${Math.round(waitCost)}`;
+        document.getElementById('billSubtotal').innerHTML = `₹${subtotal.toFixed(2)}`;
+        document.getElementById('billTax').innerHTML = `₹${Math.round(gst)}`;
+        document.getElementById('billTipVal').innerHTML = `₹${tip}`;
+        document.getElementById('billGrandTotal').innerHTML = `₹${total}`;
+        document.getElementById('billDistance').innerHTML = km;
+        document.getElementById('billTravelTime').innerHTML = Math.round(km*2.5+wait);
+        document.getElementById('billInputSection').classList.add('hidden');
+        document.getElementById('billDisplaySection').classList.remove('hidden');
+    }
+    
+    function processPaymentAndReview(){ showToast("Payment collected! Thank you","success"); closeEndRideModal(); localStorage.removeItem('active_ride'); checkActiveRide(); setTimeout(()=>{ document.getElementById('reviewModal').classList.add('active'); },300); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
+    
+    let currentRating=5; function setRating(v){ currentRating=v; document.getElementById('ratingValue').value=v; let stars=document.querySelectorAll('#starContainer i'); stars.forEach((star,idx)=>{ star.className = idx<v ? 'fas fa-star active' : 'far fa-star'; }); }
+    function submitReview(){ let name=localStorage.getItem('easygo_name')||"Guest"; let rating=document.getElementById('ratingValue').value; let comment=document.getElementById('reviewText').value; let fd=new FormData(); fd.append('action','addReview'); fd.append('Name',name); fd.append('Rating',rating); fd.append('Comment',comment); fd.append('Date',new Date().toLocaleDateString()); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Thanks for review!","success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); }).catch(()=>showToast("Review failed","error")); }
+    
+    function loadDynamicReviews(){ fetch(scriptURL+"?action=getReviews&t="+Date.now()).then(r=>r.json()).then(d=>{ let con=document.getElementById('dynamic-reviews-container'); if(d.result==='success') con.innerHTML=d.reviews.slice(0,6).map(r=>`<div class="bg-white p-6 rounded-2xl shadow-xl"><div class="text-yellow-400">${'★'.repeat(r.Rating)}${'☆'.repeat(5-r.Rating)}</div><p class="font-bold mt-2">"${r.Comment}"</p><p class="text-sm mt-2 text-blue-700">— ${r.Name}</p></div>`).join(''); }); }
+    
+    function buildFaq(){ let faqs=[{q:"💰 How is fare calculated?",a:"Base slab: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320. Beyond 20km: ₹16/km extra. + 5% GST + ₹2/min wait time + arrival charges."},{q:"⏱️ What are waiting time charges?",a:"₹2 per minute (₹1 per 30 seconds) after driver arrives."},{q:"🔐 How does OTP security work?",a:"6-digit OTP appears ONLY on your EasyGo dashboard. Driver never receives OTP."},{q:"🚭 Can I eat or smoke inside?",a:"Strictly prohibited. ₹500 cleaning fee applies."},{q:"📞 What is cancellation policy?",a:"Free cancellation up to 15 mins before pickup. Late cancellation: ₹50."}]; let html=''; faqs.forEach((faq,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl transition hover:text-blue-700" onclick="this.closest('.faq-item').classList.toggle('active')"><span>${i+1}. ${faq.q}</span><i class="fas fa-chevron-down faq-icon transition-transform"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 bg-slate-50 p-4 rounded-xl">${faq.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
+    
+    function loginUI(mob,n){ document.getElementById('loginBtn').classList.add('hidden'); document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('displayUserName').innerHTML=n.toUpperCase(); document.getElementById('customerPhone').value=mob; document.getElementById('customerNameField').value=n; }
+    function logout(){ localStorage.clear(); location.reload(); }
+    function sendOTP(){ let n=document.getElementById('nameInput').value, m=document.getElementById('mobileInput').value; if(!n || m.length<10){showToast("Enter name & 10-digit mobile","error");return;} document.getElementById('step1').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden'); document.getElementById('displayMobile').innerText="+91 "+m; let otp=Math.floor(1000+Math.random()*9000).toString(); let boxes=document.querySelectorAll('.otp-box'); boxes.forEach((box,i)=>setTimeout(()=>box.value=otp[i]||'', i*180)); setTimeout(()=>{document.getElementById('otpLoader').classList.remove('hidden'); syncUserToDB(n,m);},800); }
+    function syncUserToDB(n,p){ let fd=new FormData(); fd.append('action','registerUser'); fd.append('Name',n); fd.append('Phone',p); fetch(scriptURL,{method:'POST',body:fd}).finally(()=>{ localStorage.setItem('easygo_user',p); localStorage.setItem('easygo_name',n); loginUI(p,n); closeLoginModal(); showToast(`Welcome ${n}!`,"success"); document.getElementById('otpLoader').classList.add('hidden'); }); }
+    
+    window.onload = () => { initMap(); document.getElementById('date').valueAsDate=new Date(); let d=new Date(); d.setMinutes(d.getMinutes()+15); document.getElementById('time').value=d.toTimeString().substring(0,5); if(localStorage.getItem('easygo_user') && localStorage.getItem('easygo_name')) loginUI(localStorage.getItem('easygo_user'),localStorage.getItem('easygo_name')); checkActiveRide(); loadDynamicReviews(); loadDynamicTours(); buildFaq(); setRating(5); };
+</script>
 </body>
 </html>
