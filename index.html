@@ -225,253 +225,386 @@
     <div id="reviewModal" class="modal fixed inset-0"><div class="bg-white p-8 rounded-3xl max-w-md w-full text-center"><button onclick="skipReview()" class="float-right text-sm underline">Skip</button><h2 class="text-2xl font-black">⭐ Rate your ride</h2><div class="star-rating text-4xl my-4" id="starContainer"><i class="far fa-star" onclick="setRating(1)"></i><i class="far fa-star" onclick="setRating(2)"></i><i class="far fa-star" onclick="setRating(3)"></i><i class="far fa-star" onclick="setRating(4)"></i><i class="far fa-star" onclick="setRating(5)"></i></div><input type="hidden" id="ratingValue" value="5"><textarea id="reviewText" rows="3" class="w-full border-2 rounded-xl p-3" placeholder="Share experience..."></textarea><button onclick="submitReview()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-black mt-4 transition hover:scale-105">📝 PUBLISH REVIEW</button></div></div>
 
 <script>
-    // ===================== COMPLETE SYSTEM =====================
+    // ===================== COMPLETE SYSTEM - FIXED FARE UPDATE =====================
+
     const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
+
     const PRIME_SQUARE = L.latLng(22.7628, 75.9234);
+
     let map, pickupMarker, dropMarker, allToursData = [], currentSeason = 'All', currentCategory = 'All', selectedPackageBasePrice = 0;
+
     let stopMarkers = [];
+
     let stopLocations = [];
 
+
+
     function showPage(id) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); if(id==='tours' && !allToursData.length) loadDynamicTours(); }
+
     function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+
     function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+
     function showToast(msg, type) { let t = document.createElement('div'); t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type==='success'?'border-green-500':'border-red-500'} pointer-events-auto`; t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-triangle'} mr-2"></i> ${msg}`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(),3000); }
+
     function closeEndRideModal() { document.getElementById('billModal').classList.remove('active'); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
+
     function skipReview() { document.getElementById('reviewModal').classList.remove('active'); }
+
     
+
     // Multiple Stops Functions
+
     function addStop() {
+
         let container = document.getElementById('stopsContainer');
+
         let stopId = Date.now();
+
         let div = document.createElement('div');
+
         div.className = 'stop-item';
+
         div.id = `stop-${stopId}`;
+
         div.innerHTML = `
+
             <div class="flex gap-2 items-center">
+
                 <i class="fas fa-map-pin text-purple-500"></i>
+
                 <input type="text" placeholder="Stop location" class="flex-1 p-2 border rounded-lg stop-input" data-stop-id="${stopId}" onkeyup="searchStopLocation(this.value, ${stopId})">
+
                 <button type="button" onclick="removeStop(${stopId})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+
             </div>
+
             <div id="stop-suggestions-${stopId}" class="suggestions-box hidden"></div>
+
         `;
+
         container.appendChild(div);
+
         stopLocations.push(null);
+
         calculateTotalDistance();
+
     }
+
     
+
     function removeStop(stopId) {
+
         document.getElementById(`stop-${stopId}`).remove();
+
         stopLocations = stopLocations.filter((_,i) => i !== stopMarkers.findIndex(m => m?.id === stopId));
+
         calculateTotalDistance();
+
     }
+
     
+
     function searchStopLocation(query, stopId) {
+
         if(query.length < 3) return;
+
         fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}+Indore&limit=5`)
+
             .then(r=>r.json()).then(data=>{
+
                 let box = document.getElementById(`stop-suggestions-${stopId}`);
+
                 if(box){
+
                     box.innerHTML = '';
+
                     if(data.length){
+
                         box.style.display = 'block';
+
                         data.forEach(p=>{
+
                             let div = document.createElement('div');
+
                             div.className = 'suggestion-item';
+
                             div.innerText = p.display_name.split(',')[0];
+
                             div.onclick = () => {
+
                                 let input = document.querySelector(`.stop-input[data-stop-id="${stopId}"]`);
+
                                 if(input) input.value = div.innerText;
+
                                 box.style.display = 'none';
+
                                 let latlng = L.latLng(p.lat, p.lon);
+
                                 stopLocations[stopMarkers.findIndex(m=>m?.id===stopId)] = latlng;
+
                                 calculateTotalDistance();
+
                             };
+
                             box.appendChild(div);
+
                         });
+
                     }
+
                 }
+
             });
+
     }
+
     
+
     function calculateTotalDistance() {
+
         let points = [pickupMarker.getLatLng()];
+
         stopLocations.forEach(s => { if(s) points.push(s); });
+
         points.push(dropMarker.getLatLng());
+
         
+
         let totalDist = 0;
+
         for(let i=0; i<points.length-1; i++) {
+
             totalDist += points[i].distanceTo(points[i+1]);
+
         }
+
         let roadKm = (totalDist * 1.3 / 1000).toFixed(1);
+
         document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM";
+
         document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm));
+
         updateLiveEstimate();
+
         return roadKm;
+
     }
+
+
 
     function initMap() {
+
         map = L.map('map').setView([22.7196, 75.8577], 12);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+
         let greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [30,50], iconAnchor: [15,50] });
+
         let redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [30,50], iconAnchor: [15,50] });
+
         pickupMarker = L.marker([22.7196,75.8577], {icon: greenIcon, draggable: true}).addTo(map).bindPopup("🚖 PICKUP").openPopup();
+
         dropMarker = L.marker([22.75,75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("🏁 DROP");
+
         pickupMarker.on('dragend', () => { calculateTotalDistance(); updateMapLinks(pickupMarker.getLatLng().lat, pickupMarker.getLatLng().lng, 'pickup'); updateLiveEstimate(); });
+
         dropMarker.on('dragend', () => { calculateTotalDistance(); updateMapLinks(dropMarker.getLatLng().lat, dropMarker.getLatLng().lng, 'drop'); updateLiveEstimate(); });
+
         calculateTotalDistance();
-    }
-    
-    function updateLiveEstimate() {
-        let dist = parseFloat(document.getElementById('mapDistanceDisplay').innerText) || 0;
-        let arrival = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000 - 3) * 10);
-        let baseSlab = dist<=5?100:(dist<=10?180:(dist<=20?320:320));
-        let extra = dist>20?(dist-20)*16:0;
-        let subtotal = baseSlab+extra+arrival + (selectedPackageBasePrice||0);
-        let gst = subtotal*0.05;
-        let total = Math.round(subtotal+gst);
-        let box = document.getElementById('liveEstimateBox');
-        if(!box) { box = document.createElement('div'); box.id='liveEstimateBox'; document.getElementById('bookingForm').insertBefore(box, document.getElementById('submitBtn')); }
-        box.className='bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl';
-        box.innerHTML = `<div class="flex justify-between items-center"><span class="text-sm font-bold">💰 LIVE ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div>
-        <div class="text-[10px] grid grid-cols-2 gap-1 mt-2"><span>Base: ₹${baseSlab}</span><span>Extra KM: ₹${extra}</span><span>Arrival: ₹${arrival.toFixed(0)}</span><span>GST 5%: ₹${Math.round(gst)}</span></div>
-        <small class="text-[9px] block mt-1">*Final fare includes wait time + tip</small>`;
-        box.classList.remove('hidden');
-    }
-    
-    function updateMapLinks(lat,lng,type) { let link = `https://www.google.com/maps?q=${lat},${lng}`; document.getElementById(type==='pickup'?'pickupLink':'dropLink').value = link; }
-    function reverseGeocode(ll,type) { fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${ll.lat}&lon=${ll.lng}`).then(r=>r.json()).then(d=>{ if(d.display_name) document.getElementById(type).value = d.display_name.split(',').slice(0,3).join(','); }); }
-    
-    function searchLocation(q,t) { 
-        clearTimeout(window.searchTimeout); 
-        let box=document.getElementById(t+'-suggestions'); 
-        if(q.length<3){box.style.display='none';return;} 
-        window.searchTimeout=setTimeout(()=>{
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`).then(r=>r.json()).then(d=>{
-                box.innerHTML='';
-                if(d.length){
-                    box.style.display='block';
-                    d.forEach(p=>{
-                        let div=document.createElement('div');
-                        div.className='suggestion-item';
-                        div.innerText=p.display_name.split(',')[0];
-                        div.onclick=()=>{
-                            document.getElementById(t).value=div.innerText;
-                            box.style.display='none';
-                            let latlng=L.latLng(p.lat, p.lon);
-                            if(t==='pickup'){
-                                pickupMarker.setLatLng(latlng);
-                            }else{
-                                dropMarker.setLatLng(latlng);
-                                // Manual drop selection resets package price to calculate by distance
-                                selectedPackageBasePrice = 0;
-                            }
-                            updateMapLinks(p.lat,p.lon,t);
-                            calculateTotalDistance();
-                            map.fitBounds([pickupMarker.getLatLng(),dropMarker.getLatLng()], {padding: [50, 50]});
-                        };
-                        box.appendChild(div);
-                    });
-                }else box.style.display='none';
-            });
-        },400);
+
     }
 
-    function useCurrentLocation(t) { navigator.geolocation.getCurrentPosition(pos=>{ let latlng=[pos.coords.latitude,pos.coords.longitude]; if(t==='pickup'){pickupMarker.setLatLng(latlng);updateLiveEstimate();}else{dropMarker.setLatLng(latlng);} map.setView(latlng,14); reverseGeocode({lat:latlng[0],lng:latlng[1]},t); calculateTotalDistance(); }); }
+    
+
+    function updateLiveEstimate() {
+
+        let dist = parseFloat(document.getElementById('mapDistanceDisplay').innerText) || 0;
+
+        let arrival = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000 - 3) * 10);
+
+        let baseSlab = dist<=5?100:(dist<=10?180:(dist<=20?320:320));
+
+        let extra = dist>20?(dist-20)*16:0;
+
+        let subtotal = baseSlab+extra+arrival + (selectedPackageBasePrice||0);
+
+        let gst = subtotal*0.05;
+
+        let total = Math.round(subtotal+gst);
+
+        let box = document.getElementById('liveEstimateBox');
+
+        if(!box) { box = document.createElement('div'); box.id='liveEstimateBox'; document.getElementById('bookingForm').insertBefore(box, document.getElementById('submitBtn')); }
+
+        box.className='bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl';
+
+        box.innerHTML = `<div class="flex justify-between items-center"><span class="text-sm font-bold">💰 LIVE ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div>
+
+        <div class="text-[10px] grid grid-cols-2 gap-1 mt-2"><span>Base: ₹${baseSlab}</span><span>Extra KM: ₹${extra}</span><span>Arrival: ₹${arrival.toFixed(0)}</span><span>GST 5%: ₹${Math.round(gst)}</span></div>
+
+        <small class="text-[9px] block mt-1">*Final fare includes wait time + tip</small>`;
+
+        box.classList.remove('hidden');
+
+    }
+
+    
+
+    function updateMapLinks(lat,lng,type) { let link = `https://www.google.com/maps?q=${lat},${lng}`; document.getElementById(type==='pickup'?'pickupLink':'dropLink').value = link; }
+
+    function reverseGeocode(ll,type) { fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${ll.lat}&lon=${ll.lng}`).then(r=>r.json()).then(d=>{ if(d.display_name) document.getElementById(type).value = d.display_name.split(',').slice(0,3).join(','); }); }
+
+    // --- FIXED: searchLocation now properly updates markers AND refreshes fare ---
+    function searchLocation(q, t) {
+        clearTimeout(window.searchTimeout);
+        let box = document.getElementById(t + '-suggestions');
+        if (q.length < 3) {
+            if (box) box.style.display = 'none';
+            return;
+        }
+        window.searchTimeout = setTimeout(() => {
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`)
+                .then(r => r.json())
+                .then(data => {
+                    if (box) {
+                        box.innerHTML = '';
+                        if (data.length) {
+                            box.style.display = 'block';
+                            data.forEach(p => {
+                                let div = document.createElement('div');
+                                div.className = 'suggestion-item';
+                                div.innerText = p.display_name.split(',')[0];
+                                div.onclick = () => {
+                                    // Set input field value
+                                    document.getElementById(t).value = div.innerText;
+                                    box.style.display = 'none';
+                                    
+                                    // Get lat/lng from selected suggestion
+                                    let lat = parseFloat(p.lat);
+                                    let lng = parseFloat(p.lon);
+                                    let newLatLng = L.latLng(lat, lng);
+                                    
+                                    // Update the appropriate marker
+                                    if (t === 'pickup') {
+                                        pickupMarker.setLatLng(newLatLng);
+                                        updateMapLinks(lat, lng, 'pickup');
+                                        // Reverse geocode to get proper address
+                                        reverseGeocode(newLatLng, 'pickup');
+                                    } else {
+                                        dropMarker.setLatLng(newLatLng);
+                                        updateMapLinks(lat, lng, 'drop');
+                                        reverseGeocode(newLatLng, 'drop');
+                                    }
+                                    
+                                    // CRITICAL FIX: Recalculate distance and update fare
+                                    calculateTotalDistance();  // This calls updateLiveEstimate inside
+                                    
+                                    // Fit map bounds to show both markers
+                                    map.fitBounds([pickupMarker.getLatLng(), dropMarker.getLatLng()]);
+                                };
+                                box.appendChild(div);
+                            });
+                        } else {
+                            box.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(err => console.error("Search error:", err));
+        }, 400);
+    }
+
+    function useCurrentLocation(t) { 
+        navigator.geolocation.getCurrentPosition(pos => { 
+            let latlng = [pos.coords.latitude, pos.coords.longitude]; 
+            if (t === 'pickup') {
+                pickupMarker.setLatLng(latlng);
+                updateLiveEstimate();
+            } else {
+                dropMarker.setLatLng(latlng);
+            } 
+            map.setView(latlng, 14); 
+            reverseGeocode({lat: latlng[0], lng: latlng[1]}, t); 
+            calculateTotalDistance(); 
+        }); 
+    }
+    
     function locateMeOnMap() { useCurrentLocation('pickup'); showToast("📍 Location set as pickup", "success"); }
     
     // TOURS & FILTERS
+
     function filterTours(ev, season) { ev?.preventDefault?.(); currentSeason = season; document.querySelectorAll('.filter-btn').forEach(btn=>btn.classList.remove('active')); if(ev?.currentTarget) ev.currentTarget.classList.add('active'); applyDualFilter(); }
+
     function filterByCategory(ev, cat) { ev?.preventDefault?.(); currentCategory = cat; document.querySelectorAll('.cat-btn').forEach(btn=>btn.classList.remove('active')); if(ev?.currentTarget) ev.currentTarget.classList.add('active'); applyDualFilter(); }
+
     function applyDualFilter() { if(!allToursData.length) return; let filtered = allToursData.filter(t=>{ let dsc = (t.Description+"").toLowerCase(); let sea = (t.Season+"").toLowerCase(); let sMatch = (currentSeason==='All' || sea.includes(currentSeason.toLowerCase())); let cMatch = currentCategory==='All' || (currentCategory==='Nature' && (dsc.includes('fall')||dsc.includes('lake')||dsc.includes('nature'))) || (currentCategory==='Religious' && (dsc.includes('temple')||dsc.includes('spiritual'))) || (currentCategory==='Adventure' && (dsc.includes('mall')||dsc.includes('adventure'))) || (currentCategory==='Heritage' && (dsc.includes('palace')||dsc.includes('fort'))); return sMatch && cMatch; }); renderTours(filtered); }
+
     function renderTours(list) { let container=document.getElementById('dynamic-tours-container'); if(!container) return; container.innerHTML=list.length?list.map(t=>`<div class="bg-white rounded-3xl shadow-xl overflow-hidden transition hover:-translate-y-2 hover:shadow-2xl"><img src="${t.ImageURL||'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88'"><div class="p-6"><h3 class="text-2xl font-black">${t.Destination}</h3><p class="text-gray-600 my-2">${t.Description}</p><div class="bg-slate-100 p-3 rounded-2xl"><span class="text-3xl font-black text-blue-700">₹${t.Price}</span><small class="text-xs"> base estimate</small></div><button onclick='bookTourPackage("${t.Destination}",${t.Price})' class="w-full mt-4 bg-slate-800 text-white py-3 rounded-xl font-bold transition hover:scale-105 hover:bg-blue-700">🎯 BOOK THIS TOUR</button></div></div>`).join(''):'<div class="col-span-full text-center py-10 font-bold">No packages match</div>'; }
-    
+
     function bookTourPackage(dest,price) { 
-        selectedPackageBasePrice = parseFloat(price); 
+        selectedPackageBasePrice = price; 
         showPage('home'); 
         document.getElementById('drop').value = dest+", MP"; 
-        
-        // Find destination on map to update fare
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${dest}+Indore&limit=1`).then(r=>r.json()).then(d=>{
-            if(d.length){
-                let latlng = L.latLng(d[0].lat, d[0].lon);
-                dropMarker.setLatLng(latlng);
-                calculateTotalDistance();
-                map.fitBounds([pickupMarker.getLatLng(), dropMarker.getLatLng()], {padding: [50, 50]});
-            }
-        });
-        window.scrollTo({top: document.getElementById('bookingForm').offsetTop-100, behavior:'smooth'}); 
+        // Trigger search to update marker and fare
+        searchLocation(dest+", MP", 'drop'); 
+        // Small delay to ensure search completes and updates fare
+        setTimeout(() => {
+            updateLiveEstimate();
+            window.scrollTo({top: document.getElementById('bookingForm').offsetTop-100, behavior:'smooth'});
+        }, 100);
         showToast(`Package selected: ${dest}`, "success"); 
     }
 
     function loadDynamicTours() { fetch(scriptURL+"?action=getTours&t="+Date.now()).then(r=>r.json()).then(d=>{ if(d.result==='success' && d.tours) { allToursData = d.tours; renderTours(allToursData); } }).catch(e=>console.log); }
+
     function loadDynamicReviews() { fetch(scriptURL+"?action=getReviews&t="+Date.now()).then(r=>r.json()).then(d=>{ let con=document.getElementById('dynamic-reviews-container'); if(d.result==='success' && d.reviews){ con.innerHTML=d.reviews.reverse().map(r=>`<div class="bg-white p-6 rounded-2xl shadow-xl transition hover:-translate-y-1"><div class="flex text-yellow-400 text-xl">${'★'.repeat(r.Rating)}${'☆'.repeat(5-r.Rating)}</div><p class="font-bold text-lg mt-2">"${r.Comment}"</p><p class="text-sm mt-3 text-blue-700 font-black">— ${r.Name}</p></div>`).join(''); } }).catch(()=>{}); }
+
     
+
     // AUTH & BOOKING with WhatsApp
+
     function sendOTP() { let n=document.getElementById('nameInput').value, m=document.getElementById('mobileInput').value; if(!n || m.length<10){showToast("Enter name & 10-digit mobile","error");return;} document.getElementById('step1').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden'); document.getElementById('displayMobile').innerText="+91 "+m; let otp=Math.floor(1000+Math.random()*9000).toString(); let boxes=document.querySelectorAll('.otp-box'); boxes.forEach((box,i)=>setTimeout(()=>box.value=otp[i]||'', i*180)); setTimeout(()=>{document.getElementById('otpLoader').classList.remove('hidden'); syncUserToDB(n,m);},800); }
+
     function syncUserToDB(n,p){ let fd=new FormData(); fd.append('action','registerUser'); fd.append('Name',n); fd.append('Phone',p); fetch(scriptURL,{method:'POST',body:fd}).finally(()=>{ localStorage.setItem('easygo_user',p); localStorage.setItem('easygo_name',n); loginUI(p,n); closeLoginModal(); showToast(`Welcome ${n}!`,"success"); document.getElementById('otpLoader').classList.add('hidden'); }); }
+
     function loginUI(mob,n){ document.getElementById('loginBtn').classList.add('hidden'); document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('displayUserName').innerHTML=n.toUpperCase(); document.getElementById('customerPhone').value=mob; document.getElementById('customerNameField').value=n; }
+
     function logout(){ localStorage.clear(); location.reload(); }
+
     
+
     function handleBooking(e){ e.preventDefault(); if(!localStorage.getItem('easygo_user')){ openLoginModal(); showToast("Please login first","error"); return; } let sub=document.getElementById('submitBtn'); let otp=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('bookingOTP').value=otp; sub.innerHTML='<i class="fas fa-spinner fa-spin"></i> Booking...'; sub.disabled=true; let fd=new FormData(document.getElementById('bookingForm')); fd.append('action','bookRide'); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Ride Booked! OTP: "+otp,"success"); let rideData={ name:localStorage.getItem('easygo_name'), phone:localStorage.getItem('easygo_user'), pickup:document.getElementById('pickup').value, drop:document.getElementById('drop').value, otp:otp, date:document.getElementById('date').value, time:document.getElementById('time').value }; localStorage.setItem('active_ride',JSON.stringify(rideData)); checkActiveRide(); sub.innerHTML='🚀 BOOK NOW !! <i class="fas fa-arrow-right"></i>'; sub.disabled=false; let msg = `🟢 *EASYGO NEW RIDE BOOKING* 🟢\n\n👤 *Customer:* ${rideData.name}\n📞 *Phone:* +91 ${rideData.phone}\n📍 *Pickup:* ${rideData.pickup}\n🏁 *Drop:* ${rideData.drop}\n📅 *Date:* ${rideData.date}\n⏰ *Time:* ${rideData.time}\n🔐 *OTP:* ${otp}\n\n🚗 *Vehicle:* Citroen C3 (White)\n👨‍✈️ *Driver:* Please confirm ride`; window.open(`https://wa.me/917651837322?text=${encodeURIComponent(msg)}`,'_blank'); }).catch(()=>{ sub.innerHTML='🚀 BOOK NOW !!'; sub.disabled=false; showToast("Booking error","error"); }); }
+
     
+
     function checkActiveRide(){ let active=localStorage.getItem('active_ride'); if(active){ let d=JSON.parse(active); document.getElementById('activeRideBanner').classList.remove('hidden'); document.getElementById('activeRideRoute').innerHTML=`${d.pickup.substring(0,25)} → ${d.drop.substring(0,25)}`; document.getElementById('activeRideOTP').innerHTML=d.otp; } else document.getElementById('activeRideBanner').classList.add('hidden'); }
+
     function endRideProcess(){ document.getElementById('billModal').classList.add('active'); let ride=JSON.parse(localStorage.getItem('active_ride')||'{}'); document.getElementById('billCustomerName').innerHTML=ride.name||'Guest'; document.getElementById('billPickup').innerHTML=ride.pickup||'N/A'; document.getElementById('billDrop').innerHTML=ride.drop||'N/A'; document.getElementById('billDate').innerHTML=new Date().toLocaleDateString(); document.getElementById('billTime').innerHTML=new Date().toLocaleTimeString(); }
+
     
-    function calculateFinalBill() {
-        let km = parseFloat(document.getElementById('inputActualKM').value) || 0;
-        let wait = parseFloat(document.getElementById('inputWaitTime').value) || 0;
-        let tip = parseFloat(document.getElementById('inputTip').value) || 0;
 
-        let base = km <= 5 ? 100 : (km <= 10 ? 180 : (km <= 20 ? 320 : 320));
-        let extra = km > 20 ? (km - 20) * 16 : 0;
-        let waitCost = wait * 2;
-        let arrival = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng()) / 1000 - 3) * 10);
-        
-        let subtotal = base + extra + waitCost + arrival + (selectedPackageBasePrice || 0);
-        let gst = subtotal * 0.05;
-        let rawTotal = subtotal + gst + tip;
-        
-        // Professional Rounding & EasyGo Discount Logic
-        let finalTotal = Math.floor(rawTotal); 
-        let discountVal = (rawTotal - finalTotal);
+    function calculateFinalBill(){ let km=parseFloat(document.getElementById('inputActualKM').value)||0, wait=parseFloat(document.getElementById('inputWaitTime').value)||0, tip=parseFloat(document.getElementById('inputTip').value)||0; let base=km<=5?100:(km<=10?180:(km<=20?320:320)); let extra=km>20?(km-20)*16:0; let waitCost=wait*2; let arrival=Math.max(0,(PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000-3)*10); let subtotal=base+extra+waitCost+arrival+(selectedPackageBasePrice||0); let gst=subtotal*0.05; let total=Math.round(subtotal+gst+tip); document.getElementById('billBaseFare').innerHTML=`₹${Math.round(base+arrival)}`; document.getElementById('billExtraCost').innerHTML=`₹${extra}`; document.getElementById('billWaitMins').innerHTML=wait; document.getElementById('billWaitCost').innerHTML=`₹${waitCost}`; document.getElementById('billSubtotal').innerHTML=`₹${subtotal}`; document.getElementById('billTax').innerHTML=`₹${Math.round(gst)}`; document.getElementById('billTipVal').innerHTML=`₹${tip}`; document.getElementById('billGrandTotal').innerHTML=`₹${total}`; document.getElementById('billDistance').innerHTML=km; document.getElementById('billTravelTime').innerHTML=Math.round(km*2.5+wait); document.getElementById('billInputSection').classList.add('hidden'); document.getElementById('billDisplaySection').classList.remove('hidden'); }
 
-        document.getElementById('billBaseFare').innerHTML = `₹${(base + arrival).toFixed(2)}`;
-        document.getElementById('billExtraCost').innerHTML = `₹${extra.toFixed(2)}`;
-        document.getElementById('billWaitMins').innerHTML = wait;
-        document.getElementById('billWaitCost').innerHTML = `₹${waitCost.toFixed(2)}`;
-        document.getElementById('billSubtotal').innerHTML = `₹${subtotal.toFixed(2)}`;
-        document.getElementById('billTax').innerHTML = `₹${gst.toFixed(2)}`;
-        document.getElementById('billTipVal').innerHTML = `₹${tip.toFixed(2)}`;
-        document.getElementById('billGrandTotal').innerHTML = `₹${finalTotal}`;
-        document.getElementById('billDistance').innerHTML = km.toFixed(1);
-        document.getElementById('billTravelTime').innerHTML = Math.round(km * 2.5 + wait);
-
-        // Inject Discount Row if point values exist
-        let billDiv = document.querySelector('#billDisplaySection .space-y-2');
-        let oldRow = document.getElementById('discount-row');
-        if(oldRow) oldRow.remove();
-        
-        if(discountVal > 0) {
-            let dRow = document.createElement('div');
-            dRow.id = "discount-row";
-            dRow.className = "flex justify-between text-red-600 font-bold text-xs italic";
-            dRow.innerHTML = `<span>EasyGo Round-off Discount:</span><span>- ₹${discountVal.toFixed(2)}</span>`;
-            billDiv.insertBefore(dRow, document.querySelector('.text-2xl.font-black'));
-        }
-
-        document.getElementById('billInputSection').classList.add('hidden');
-        document.getElementById('billDisplaySection').classList.remove('hidden');
-    }
     
+
     function processPaymentAndReview(){ showToast("Payment collected! Thank you","success"); closeEndRideModal(); localStorage.removeItem('active_ride'); checkActiveRide(); setTimeout(()=>{ document.getElementById('reviewModal').classList.add('active'); },300); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
+
     
+
     let currentRating=5; function setRating(v){ currentRating=v; document.getElementById('ratingValue').value=v; let stars=document.querySelectorAll('#starContainer i'); stars.forEach((star,idx)=>{ star.className = idx<v ? 'fas fa-star active' : 'far fa-star'; }); }
+
     function submitReview(){ let name=localStorage.getItem('easygo_name')||"Guest"; let rating=document.getElementById('ratingValue').value; let comment=document.getElementById('reviewText').value; if(!comment){ showToast("Please write a review","warning"); return; } let fd=new FormData(); fd.append('action','addReview'); fd.append('Name',name); fd.append('Rating',rating); fd.append('Comment',comment); fd.append('Date',new Date().toLocaleDateString()); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Thanks for review!","success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); }).catch(()=>showToast("Review failed","error")); }
+
     
+
     function toggleFaq(btn){ let item=btn.closest('.faq-item'); item.classList.toggle('active'); }
+
     function buildFaq(){ let faqs=[{q:"💰 How is fare calculated?",a:"Base slab: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320. Beyond 20km: ₹16/km extra. + 5% GST + ₹2/min wait time + arrival charges from Prime Square."},{q:"⏱️ What are waiting time charges?",a:"₹2 per minute (₹1 per 30 seconds) after driver arrives at your pickup location."},{q:"🔐 How does OTP security work?",a:"6-digit OTP appears ONLY on your EasyGo dashboard. Driver never receives OTP. Ride starts only when you share OTP with driver."},{q:"🚭 Can I eat or smoke inside?",a:"Strictly prohibited. ₹500 cleaning fee applies if interior is soiled."},{q:"📞 What is cancellation policy?",a:"Free cancellation up to 15 mins before pickup. Late cancellation: ₹50."},{q:"🚗 Is this a private vehicle?",a:"Yes, private vehicle number MP09 XY 1234. Fully insured and well-maintained Citroen C3."},{q:"📍 What if my pickup is far from Prime Square?",a:"Arrival charges apply: ₹10/km for distance beyond 3km from Prime Square to your pickup."}]; let html=''; faqs.forEach((faq,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl transition hover:text-blue-700" onclick="toggleFaq(this)"><span>${i+1}. ${faq.q}</span><i class="fas fa-chevron-down faq-icon transition-transform"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 bg-slate-50 p-4 rounded-xl">${faq.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
+
     
+
     window.onload=()=>{ initMap(); document.getElementById('date').valueAsDate=new Date(); let d=new Date(); d.setMinutes(d.getMinutes()+15); document.getElementById('time').value=d.toTimeString().substring(0,5); let storedUser=localStorage.getItem('easygo_user'), storedName=localStorage.getItem('easygo_name'); if(storedUser && storedName) loginUI(storedUser,storedName); checkActiveRide(); loadDynamicReviews(); loadDynamicTours(); buildFaq(); setRating(5); };
+
 </script>
 </body>
 </html>
