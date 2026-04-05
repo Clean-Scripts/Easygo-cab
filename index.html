@@ -2,637 +2,221 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyGo Cabs - Premium Travel Indore</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>EasyGo Cabs | Premium Rides in Indore & MP</title>
     <link rel="icon" type="image/jpeg" href="easy go.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-size: 16px; overflow-x: hidden; background-color: #f8fafc; } 
+        body { font-size: 16px; overflow-x: hidden; background: #f1f5f9; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         
-        /* PAGE TRANSITIONS */
-        .page-section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .page-section { display: none; animation: fadeInUp 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
         .page-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* MODAL STYLING */
-        .modal { display: none; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(6px); z-index: 9999;}
-        .modal.active { display: flex; animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes scaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal { display: none; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; }
+        .modal.active { display: flex; animation: modalPop 0.25s ease-out; }
+        @keyframes modalPop { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
         
-        /* CUSTOM SCROLLBAR */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 20px; }
+        ::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 20px; }
         
-        /* SUGGESTIONS BOX */
         .suggestions-box {
             position: absolute; width: 100%; background: white; z-index: 1000;
-            border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            max-height: 250px; overflow-y: auto; display: none; border: 2px solid #e2e8f0;
-            margin-top: 5px;
+            border-radius: 1rem; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            max-height: 260px; overflow-y: auto; display: none; border: 1px solid #eef2ff;
+            margin-top: 6px;
         }
-        .suggestion-item { padding: 14px 18px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 15px; font-weight: 600; color: #334155;}
-        .suggestion-item:hover { background-color: #eff6ff; color: #1d4ed8; padding-left: 22px; transition: all 0.2s;}
-
-        /* CONTAINERS */
+        .suggestion-item { padding: 14px 20px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #1e293b; transition: all 0.2s; background: white; }
+        .suggestion-item:hover { background: #dbeafe; color: #1e3a8a; padding-left: 28px; }
+        
         .reviews-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
-        .tours-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2.5rem; }
+        .tours-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2.2rem; }
         
-        /* RATINGS */
-        .star-rating i { cursor: pointer; color: #cbd5e1; transition: color 0.2s; }
-        .star-rating i.active, .star-rating i:hover { color: #fbbf24; }
+        .star-rating i { cursor: pointer; transition: all 0.15s; font-size: 2rem; margin: 0 4px; }
+        .star-rating i.active, .star-rating i:hover { color: #fbbf24; text-shadow: 0 0 5px #ffb347; transform: scale(1.05); }
         
-        /* BILLING DESIGN */
-        .receipt-dashed { border-top: 2px dashed #cbd5e1; border-bottom: 2px dashed #cbd5e1; }
-
-        /* BUTTONS */
-        .filter-btn.active { background-color: #1e3a8a !important; color: white !important; border-color: #1e3a8a !important; }
-        .cat-btn { transition: all 0.3s ease; border: 2px solid #e2e8f0; cursor: pointer; }
-        .cat-btn.active { 
-            background-color: #0f172a !important; 
-            color: white !important; 
-            border-color: #0f172a !important;
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
-        }
+        .filter-btn.active { background: #0f172a !important; color: white !important; border-color: #0f172a !important; box-shadow: 0 8px 18px -6px #0f172a80; }
+        .cat-btn { transition: all 0.25s; cursor: pointer; border: 2px solid #e2e8f0; background: white; }
+        .cat-btn.active { background: #0f172a !important; color: white !important; border-color: #0f172a !important; transform: translateY(-2px); box-shadow: 0 12px 18px -10px #0f172a60; }
         
-        /* FAQ ACCORDION */
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .faq-item.active .faq-answer { max-height: 500px; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .faq-item.active .faq-answer { max-height: 380px; }
         .faq-item.active .faq-icon { transform: rotate(180deg); }
+        
+        .btn-ripple { transition: all 0.2s; }
+        .btn-ripple:active { transform: scale(0.97); }
+        .receipt-dashed { border-top: 2px dashed #cbd5e1; border-bottom: 2px dashed #cbd5e1; }
+        
+        @media (max-width: 768px) {
+            .tours-container, .reviews-container { grid-template-columns: 1fr; }
+        }
+        .leaflet-control-attribution { font-size: 8px; }
+        .custom-map-card { border-radius: 2rem; overflow: hidden; }
     </style>
 </head>
-<body class="text-slate-800 font-sans flex flex-col min-h-screen selection:bg-blue-300 selection:text-blue-900">
+<body class="text-slate-800 flex flex-col min-h-screen selection:bg-blue-200 selection:text-blue-900">
 
     <div id="toast-container" class="fixed top-24 right-5 z-[10000] flex flex-col gap-3 pointer-events-none"></div>
 
-    <nav class="bg-white shadow-xl sticky top-0 z-50 border-b-4 border-blue-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-24">
-                <div class="flex items-center cursor-pointer" onclick="showPage('home')">
-                    <img src="easy go.jpg" alt="EasyGo Logo" class="h-16 w-16 object-cover rounded-full border-2 border-blue-600 shadow-md">
+    <!-- Navigation -->
+    <nav class="bg-white/95 backdrop-blur-sm shadow-2xl sticky top-0 z-50 border-b-4 border-blue-700">
+        <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
+            <div class="flex justify-between h-24 items-center">
+                <div class="flex items-center cursor-pointer group" onclick="showPage('home')">
+                    <img src="easy go.jpg" alt="EasyGo Logo" class="h-16 w-16 object-cover rounded-full border-2 border-blue-600 shadow-xl group-hover:scale-105 transition">
                     <div class="ml-4">
                         <span class="block font-black text-3xl text-blue-900 leading-none tracking-tight">EasyGo</span>
                         <span class="block text-sm font-extrabold text-blue-600 tracking-widest uppercase mt-1">Premium Cabs</span>
                     </div>
                 </div>
-                
-                <div class="hidden xl:flex items-center space-x-6">
-                    <button onclick="showPage('home')" class="nav-btn text-gray-800 hover:text-blue-700 font-black text-lg transition-colors border-b-2 border-transparent hover:border-blue-600 pb-1">Home</button>
-                    <button onclick="showPage('tours')" class="nav-btn text-gray-800 hover:text-blue-700 font-black text-lg transition-colors border-b-2 border-transparent hover:border-blue-600 pb-1 text-blue-600">Packages</button>
-                    <button onclick="showPage('about')" class="nav-btn text-gray-800 hover:text-blue-700 font-black text-lg transition-colors border-b-2 border-transparent hover:border-blue-600 pb-1">Story</button>
-                    <button onclick="showPage('faq')" class="nav-btn text-gray-800 hover:text-blue-700 font-black text-lg transition-colors border-b-2 border-transparent hover:border-blue-600 pb-1">FAQ</button>
-                    <button onclick="showPage('privacy')" class="nav-btn text-gray-800 hover:text-blue-700 font-black text-lg transition-colors border-b-2 border-transparent hover:border-blue-600 pb-1">Privacy</button>
-                    <button onclick="showPage('terms')" class="nav-btn text-gray-800 hover:text-blue-700 font-black text-lg transition-colors border-b-2 border-transparent hover:border-blue-600 pb-1">Terms</button>
-                    
-                    <div id="userMenu" class="hidden flex items-center space-x-4 bg-slate-100 px-5 py-2.5 rounded-full border-2 border-slate-200">
-                        <div class="text-right">
-                            <span id="displayUserName" class="block text-base font-black text-slate-900"></span>
-                            <span class="block text-xs font-bold text-green-600 uppercase tracking-wider"><i class="fas fa-check-circle"></i> Verified</span>
-                        </div>
-                        <button onclick="logout()" class="text-sm bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700 font-bold shadow-md transition-all">Logout</button>
+                <div class="hidden xl:flex items-center space-x-7">
+                    <button onclick="showPage('home')" class="nav-btn font-black text-lg transition-all hover:text-blue-700 border-b-2 border-transparent hover:border-blue-600 pb-1">Home</button>
+                    <button onclick="showPage('tours')" class="nav-btn font-black text-lg transition-all hover:text-blue-700 border-b-2 border-transparent hover:border-blue-600 pb-1">Packages</button>
+                    <button onclick="showPage('about')" class="nav-btn font-black text-lg transition-all hover:text-blue-700 border-b-2 border-transparent hover:border-blue-600 pb-1">Story</button>
+                    <button onclick="showPage('faq')" class="nav-btn font-black text-lg transition-all hover:text-blue-700 border-b-2 border-transparent hover:border-blue-600 pb-1">FAQ</button>
+                    <button onclick="showPage('privacy')" class="nav-btn font-black text-lg transition-all hover:text-blue-700 border-b-2 border-transparent hover:border-blue-600 pb-1">Privacy</button>
+                    <button onclick="showPage('terms')" class="nav-btn font-black text-lg transition-all hover:text-blue-700 border-b-2 border-transparent hover:border-blue-600 pb-1">Terms</button>
+                    <div id="userMenu" class="hidden items-center space-x-4 bg-slate-100 px-5 py-2.5 rounded-full shadow-md">
+                        <div class="text-right"><span id="displayUserName" class="block text-base font-black text-slate-900"></span><span class="block text-xs font-bold text-green-600"><i class="fas fa-check-circle"></i> Verified</span></div>
+                        <button onclick="logout()" class="text-sm bg-red-500 text-white px-5 py-2 rounded-full font-bold hover:bg-red-700 transition shadow">Logout</button>
                     </div>
-                    <button id="loginBtn" onclick="openLoginModal()" class="bg-blue-600 text-white px-8 py-3 rounded-full font-black text-lg hover:bg-blue-800 shadow-[0_10px_20px_rgba(37,99,235,0.3)] transition-all transform hover:-translate-y-1 flex items-center border-b-4 border-blue-900">
-                        <i class="fas fa-sign-in-alt mr-2"></i> Login
-                    </button>
+                    <button id="loginBtn" onclick="openLoginModal()" class="bg-blue-700 text-white px-7 py-3 rounded-full font-black text-lg hover:bg-blue-900 shadow-xl transition-all hover:-translate-y-1 flex items-center gap-2"><i class="fas fa-sign-in-alt"></i> Login</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow relative">
-        
+    <main class="flex-grow">
+        <!-- Active Ride Banner -->
         <div id="activeRideBanner" class="hidden bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white shadow-2xl border-b-8 border-yellow-400">
-            <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center mb-4 md:mb-0">
-                    <div class="h-16 w-16 bg-white rounded-full flex items-center justify-center text-blue-900 text-3xl mr-5 shadow-[0_0_20px_rgba(255,255,255,0.4)] animate-bounce">
-                        <i class="fas fa-car-side"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-black text-2xl text-yellow-400 tracking-wider">YOUR RIDE IS ACTIVE</h4>
-                        <p class="text-lg font-bold opacity-90 mt-1" id="activeRideRoute">Loading route...</p>
-                    </div>
-                </div>
-                <div class="bg-black/50 px-8 py-3 rounded-2xl border-2 border-white/20 text-center shadow-inner backdrop-blur-sm">
-                    <p class="text-sm uppercase tracking-widest font-bold text-gray-300 mb-1">Verify OTP with Driver</p>
-                    <p class="text-5xl font-black tracking-[0.2em] text-white drop-shadow-md" id="activeRideOTP">------</p>
-                </div>
-                <button onclick="endRideProcess()" class="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 border-b-4 border-red-900 px-8 py-4 rounded-2xl font-black text-xl transition-all shadow-xl hover:shadow-red-500/50">
-                    END RIDE & GENERATE BILL
-                </button>
+            <div class="max-w-7xl mx-auto px-5 py-5 flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center gap-4"><div class="h-14 w-14 bg-white rounded-full flex items-center justify-center text-blue-900 text-2xl animate-pulse"><i class="fas fa-car-side"></i></div><div><h4 class="font-black text-xl text-yellow-400">RIDE ACTIVE</h4><p class="font-bold" id="activeRideRoute">Loading...</p></div></div>
+                <div class="bg-black/50 px-6 py-2 rounded-2xl text-center"><p class="text-xs uppercase font-bold">Verify OTP</p><p class="text-4xl font-black tracking-widest" id="activeRideOTP">------</p></div>
+                <button onclick="endRideProcess()" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl font-black shadow-xl transition">END RIDE & BILL</button>
             </div>
         </div>
 
-        <section id="home" class="page-section active max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="grid lg:grid-cols-12 gap-10 items-start">
-                
-                <div class="lg:col-span-7 bg-white rounded-[2rem] shadow-2xl overflow-hidden border-4 border-slate-200 relative">
-                    <div class="p-5 bg-slate-900 flex justify-between items-center text-white border-b-4 border-blue-600 z-10 relative">
-                        <h3 class="font-black text-xl tracking-wide uppercase"><i class="fas fa-map-marked-alt mr-3 text-blue-400 text-2xl"></i>Live GPS Routing</h3>
-                        <button type="button" onclick="useCurrentLocation('pickup')" class="bg-blue-500 hover:bg-blue-400 text-slate-900 px-6 py-2 rounded-full text-sm font-extrabold transition-colors shadow-lg flex items-center">
-                            <i class="fas fa-crosshairs mr-2"></i> GPS Locate
-                        </button>
-                    </div>
-                    <div id="map" class="w-full h-[650px] z-0"></div>
-                    
-                    <div class="absolute bottom-5 left-5 right-5 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-xl border-2 border-blue-100 z-10 flex justify-between items-center">
-                        <div>
-                            <p class="text-xs font-bold text-gray-500 uppercase">Estimated Distance</p>
-                            <p class="text-2xl font-black text-blue-900" id="mapDistanceDisplay">0.0 km</p>
-                        </div>
-                        <i class="fas fa-route text-3xl text-blue-300"></i>
-                    </div>
+        <!-- HOME SECTION -->
+        <section id="home" class="page-section active max-w-7xl mx-auto px-5 py-10">
+            <div class="grid lg:grid-cols-12 gap-10">
+                <div class="lg:col-span-7 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+                    <div class="p-4 bg-slate-800 flex justify-between items-center text-white"><span class="font-black text-xl"><i class="fas fa-map-marked-alt mr-3"></i>Live GPS Route</span><button onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-full text-sm font-bold shadow-lg flex gap-2"><i class="fas fa-crosshairs"></i> GPS Locate</button></div>
+                    <div id="map" class="w-full h-[580px] z-0"></div>
+                    <div class="absolute bottom-6 left-6 bg-white/95 backdrop-blur p-3 rounded-2xl shadow-xl border border-blue-200 flex gap-3 z-10"><div><p class="text-xs font-bold text-gray-500">DISTANCE</p><p class="text-2xl font-black text-blue-900" id="mapDistanceDisplay">0.0 km</p></div><i class="fas fa-route text-3xl text-blue-300"></i></div>
                 </div>
-
                 <div class="lg:col-span-5">
-                    <div class="bg-white p-8 rounded-[2rem] shadow-2xl border-4 border-blue-50 relative">
-                        <div class="flex justify-between items-center mb-8 border-b-4 border-yellow-400 pb-4">
-                            <h2 class="text-4xl font-black text-slate-900 uppercase tracking-tight">Book EasyGo</h2>
-                            <button onclick="showPage('tours')" class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-lg font-black text-sm uppercase tracking-wider hover:bg-yellow-500 transition shadow">View Packages</button>
-                        </div>
-                        
-                        <form id="bookingForm" name="google-sheet-form" class="space-y-6" onsubmit="handleBooking(event)">
-                            <input type="hidden" id="customerPhone" name="Phone">
-                            <input type="hidden" id="customerNameField" name="Name">
-                            <input type="hidden" id="bookingOTP" name="OTP">
-                            <input type="hidden" id="pickupLink" name="Pickup_Link">
-                            <input type="hidden" id="dropLink" name="Drop_Link">
-
-                            <div class="relative">
-                                <label class="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">Pickup Location</label>
-                                <div class="flex shadow-md rounded-xl">
-                                    <div class="relative flex-grow">
-                                        <i class="fas fa-circle text-green-500 absolute left-5 top-5 text-sm"></i>
-                                        <input type="text" id="pickup" name="Pickup" required autocomplete="off" onkeyup="searchLocation(this.value, 'pickup')" class="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-l-xl focus:border-blue-600 focus:bg-white outline-none font-bold text-slate-900 text-lg transition-colors placeholder-gray-400" placeholder="Search Pickup Point...">
-                                        <div id="pickup-suggestions" class="suggestions-box"></div>
-                                    </div>
-                                    <button type="button" onclick="useCurrentLocation('pickup')" class="bg-slate-900 text-white px-6 rounded-r-xl hover:bg-blue-700 transition-colors border-2 border-l-0 border-slate-900" title="Use GPS Location">
-                                        <i class="fas fa-location-arrow text-xl"></i>
-                                    </button>
-                                </div>
+                    <div class="bg-white p-7 rounded-3xl shadow-2xl border border-blue-50 relative">
+                        <div class="flex justify-between items-center mb-6"><h2 class="text-3xl font-black text-slate-900 uppercase">Book EasyGo</h2><button onclick="showPage('tours')" class="bg-amber-400 text-amber-900 px-5 py-2 rounded-xl font-black text-sm shadow-md hover:bg-amber-500 transition">📦 Packages</button></div>
+                        <form id="bookingForm" onsubmit="handleBooking(event)">
+                            <input type="hidden" id="customerPhone" name="Phone"><input type="hidden" id="customerNameField" name="Name"><input type="hidden" id="bookingOTP" name="OTP"><input type="hidden" id="pickupLink" name="Pickup_Link"><input type="hidden" id="dropLink" name="Drop_Link">
+                            <div class="space-y-5">
+                                <div class="relative"><label class="block text-sm font-black">📍 Pickup Location</label><div class="flex"><div class="relative flex-1"><i class="fas fa-circle text-green-500 absolute left-4 top-5 text-sm"></i><input type="text" id="pickup" name="Pickup" required autocomplete="off" onkeyup="searchLocation(this.value, 'pickup')" class="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg"><div id="pickup-suggestions" class="suggestions-box"></div></div><button type="button" onclick="useCurrentLocation('pickup')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700"><i class="fas fa-location-arrow"></i></button></div></div>
+                                <div class="relative"><label class="block text-sm font-black">🏁 Drop Location</label><div class="flex"><div class="relative flex-1"><i class="fas fa-square text-red-500 absolute left-4 top-5 text-sm"></i><input type="text" id="drop" name="Drop" required autocomplete="off" onkeyup="searchLocation(this.value, 'drop')" class="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg"><div id="drop-suggestions" class="suggestions-box"></div></div><button type="button" onclick="useCurrentLocation('drop')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700"><i class="fas fa-location-arrow"></i></button></div></div>
+                                <div class="grid grid-cols-2 gap-5"><div><label class="block text-sm font-black">📅 Pickup Date</label><input type="date" id="date" name="Date" required class="w-full px-4 py-4 bg-slate-50 border-2 rounded-xl font-bold"></div><div><label class="block text-sm font-black">⏰ Pickup Time</label><input type="time" id="time" name="Time" required class="w-full px-4 py-4 bg-slate-50 border-2 rounded-xl font-bold"></div></div>
+                                <div id="liveEstimateBox" class="hidden"></div>
+                                <button type="submit" id="submitBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-xl text-2xl transition-all flex justify-center gap-3 items-center">BOOK NOW <i class="fas fa-arrow-right"></i></button>
                             </div>
-
-                            <div class="relative">
-                                <label class="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">Drop Location</label>
-                                <div class="flex shadow-md rounded-xl">
-                                    <div class="relative flex-grow">
-                                        <i class="fas fa-square text-red-500 absolute left-5 top-5 text-sm"></i>
-                                        <input type="text" id="drop" name="Drop" required autocomplete="off" onkeyup="searchLocation(this.value, 'drop')" class="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-l-xl focus:border-blue-600 focus:bg-white outline-none font-bold text-slate-900 text-lg transition-colors placeholder-gray-400" placeholder="Search Destination...">
-                                        <div id="drop-suggestions" class="suggestions-box"></div>
-                                    </div>
-                                    <button type="button" onclick="useCurrentLocation('drop')" class="bg-slate-900 text-white px-6 rounded-r-xl hover:bg-blue-700 transition-colors border-2 border-l-0 border-slate-900" title="Use GPS Location">
-                                        <i class="fas fa-location-arrow text-xl"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">Pickup Date</label>
-                                    <div class="relative shadow-md rounded-xl">
-                                        <i class="fas fa-calendar-alt text-blue-600 absolute left-4 top-4 text-lg"></i>
-                                        <input type="date" id="date" name="Date" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-600 outline-none font-bold text-slate-900 text-base">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">Pickup Time</label>
-                                    <div class="relative shadow-md rounded-xl">
-                                        <i class="fas fa-clock text-blue-600 absolute left-4 top-4 text-lg"></i>
-                                        <input type="time" id="time" name="Time" required class="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-600 outline-none font-bold text-slate-900 text-base">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="liveEstimateBox"></div>
-
-                            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-1 text-2xl mt-6 border-b-4 border-blue-900 flex justify-center items-center">
-                                BOOK NOW !! <i class="fas fa-arrow-right ml-3"></i>
-                            </button>
                         </form>
                     </div>
                 </div>
             </div>
-
-            <div class="mt-24">
-                <div class="text-center mb-12">
-                    <h2 class="text-5xl font-black text-slate-900 uppercase tracking-tight">Verified Rider Reviews</h2>
-                    <p class="text-xl text-gray-600 mt-3 font-bold border-b-4 border-yellow-400 inline-block pb-2">100% Genuine. Fetched Live From Database.</p>
-                </div>
-                <div id="dynamic-reviews-container" class="reviews-container">
-                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 animate-pulse h-48"></div>
-                </div>
-            </div>
+            <div class="mt-24"><div class="text-center mb-10"><h2 class="text-4xl font-black uppercase">Verified Rider Reviews</h2><p class="text-gray-600 font-bold border-b-4 border-yellow-400 inline-block pb-2">Live from database</p></div><div id="dynamic-reviews-container" class="reviews-container"></div></div>
         </section>
 
-        <section id="tours" class="page-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div class="text-center mb-16">
-                <h1 class="text-6xl font-black text-slate-900 mb-6 tracking-tight uppercase">Explore MP with EasyGo</h1>
-                <div class="max-w-4xl mx-auto bg-yellow-50 border-l-8 border-yellow-400 p-6 rounded-2xl shadow-sm">
-                    <p class="text-xl text-slate-800 font-bold leading-relaxed">
-                        Discover the heart of India with our premium tour packages. From waterfalls to spiritual destinations.
-                    </p>
-                </div>
+        <!-- TOURS SECTION (packages) -->
+        <section id="tours" class="page-section max-w-7xl mx-auto px-5 py-16">
+            <div class="text-center mb-12"><h1 class="text-5xl font-black mb-4 uppercase">Explore MP with EasyGo</h1><div class="bg-yellow-50 border-l-8 border-yellow-400 p-5 rounded-2xl"><p class="font-bold text-lg">Discover majestic falls & spiritual centers. <span class="text-red-600 text-sm">*Base estimates, final fare depends on pickup location.</span></p></div></div>
+            <div class="flex flex-wrap justify-center gap-4 mb-8"><button onclick="filterTours(event, 'All')" class="filter-btn active bg-white px-8 py-3 rounded-full font-black shadow-md border">All Seasons</button><button onclick="filterTours(event, 'Monsoon')" class="filter-btn bg-white px-8 py-3 rounded-full font-black"><i class="fas fa-cloud-rain"></i> Monsoon</button><button onclick="filterTours(event, 'Winter')" class="filter-btn bg-white px-8 py-3 rounded-full font-black"><i class="fas fa-snowflake"></i> Winter</button><button onclick="filterTours(event, 'Summer')" class="filter-btn bg-white px-8 py-3 rounded-full font-black"><i class="fas fa-sun"></i> Summer</button></div>
+            <div class="flex flex-wrap justify-center gap-3 mb-8 bg-slate-100 p-4 rounded-3xl"><span class="w-full text-center font-black text-sm uppercase">Category</span>
+                <button onclick="filterByCategory(event, 'All')" class="cat-btn active px-6 py-2 rounded-full font-bold">All Places</button>
+                <button onclick="filterByCategory(event, 'Nature')" class="cat-btn px-6 py-2 rounded-full font-bold"><i class="fas fa-leaf text-green-600"></i> Nature & Falls</button>
+                <button onclick="filterByCategory(event, 'Religious')" class="cat-btn px-6 py-2 rounded-full font-bold"><i class="fas fa-om text-orange-600"></i> Religious</button>
+                <button onclick="filterByCategory(event, 'Adventure')" class="cat-btn px-6 py-2 rounded-full font-bold"><i class="fas fa-utensils"></i> Adventure & Food</button>
+                <button onclick="filterByCategory(event, 'Heritage')" class="cat-btn px-6 py-2 rounded-full font-bold"><i class="fas fa-fort-awesome"></i> Heritage</button>
             </div>
-            <div id="dynamic-tours-container" class="tours-container">
-                </div>
+            <div id="dynamic-tours-container" class="tours-container"></div>
         </section>
 
-        <section id="faq" class="page-section max-w-5xl mx-auto px-4 py-16">
-            <div class="text-center mb-16">
-                <h1 class="text-5xl font-black text-slate-900 mb-6 tracking-tight uppercase border-b-8 border-blue-600 inline-block pb-4">Frequently Asked Questions</h1>
-            </div>
-            <div class="bg-white rounded-[2rem] shadow-2xl p-10 border-4 border-slate-100 space-y-6">
-                <div class="faq-item border-b-2 border-slate-200 pb-6">
-                    <button class="w-full flex justify-between items-center text-left" onclick="toggleFaq(this)">
-                        <span class="font-black text-2xl text-slate-800">1. How is the fare calculated?</span>
-                        <i class="fas fa-chevron-down faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p class="mt-4 text-lg font-bold text-slate-600 leading-relaxed">We use a slab-based pricing for city rides and per-km for long distances. 0-5km: ₹100, 5-10km: ₹180, 10-20km: ₹320. Plus 5% GST.</p>
-                    </div>
-                </div>
-                <div class="faq-item border-b-2 border-slate-200 pb-6">
-                    <button class="w-full flex justify-between items-center text-left" onclick="toggleFaq(this)">
-                        <span class="font-black text-2xl text-slate-800">2. Is waiting time charged?</span>
-                        <i class="fas fa-chevron-down faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p class="mt-4 text-lg font-bold text-slate-600 leading-relaxed">Yes, waiting is ₹2 per minute (₹1 per 30 seconds).</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="privacy" class="page-section max-w-5xl mx-auto px-4 py-16">
-            <div class="bg-white p-12 rounded-[2rem] shadow-2xl border-4 border-slate-100">
-                <h1 class="text-5xl font-black text-slate-900 mb-10 border-b-8 border-blue-600 pb-4 inline-block uppercase tracking-tight">Privacy Policy</h1>
-                <div class="space-y-10 text-xl font-bold text-slate-700 leading-relaxed">
-                    <p class="bg-slate-100 p-6 rounded-xl font-black border-l-8 border-slate-400">Effective Date: January 1, 2026</p>
-                    <p>At EasyGo Cabs, we take your privacy seriously. This document outlines how we collect and use your data.</p>
-                    <h3 class="text-2xl font-black">1. Data Collection</h3>
-                    <p>We collect your Name, Phone number, and Location (Pickup and Drop) to provide transportation services.</p>
-                    <h3 class="text-2xl font-black">2. Security</h3>
-                    <p>Your data is stored securely using Google Workspace tools and is never shared with third-party advertisers.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="terms" class="page-section max-w-5xl mx-auto px-4 py-16">
-            <div class="bg-white p-12 rounded-[2rem] shadow-2xl border-4 border-slate-100">
-                <h1 class="text-5xl font-black text-slate-900 mb-10 border-b-8 border-blue-600 pb-4 inline-block uppercase tracking-tight">Terms & Conditions</h1>
-                <div class="space-y-10 text-xl font-bold text-slate-700 leading-relaxed">
-                    <h3 class="text-2xl font-black">1. General Usage</h3>
-                    <p>By using EasyGo Cabs, you agree to follow the safety rules and pay the calculated fare as per our pricing engine.</p>
-                    <h3 class="text-2xl font-black">2. Payment</h3>
-                    <p>Payments are collected at the end of the ride via Cash, UPI, or other digital methods available.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="page-section max-w-6xl mx-auto px-4 py-16">
-            <div class="text-center mb-16">
-                <h1 class="text-6xl font-black text-slate-900 mb-6 tracking-tight uppercase">The EasyGo Journey</h1>
-            </div>
-            <div class="bg-white rounded-[2rem] shadow-2xl p-12 border-4 border-slate-100 mb-16">
-                <h2 class="text-4xl font-black text-blue-900 mb-8 border-b-4 border-blue-600 pb-4 inline-block">Our Story: Driven by Nishant Jaiswal</h2>
-                <div class="text-xl text-gray-800 space-y-8 font-medium leading-loose">
-                    <p>Founded in Indore, EasyGo Cabs started with a vision to provide the most comfortable and premium cab experience in the city. Operating with our signature white Citroen C3, we ensure every ride is smooth and safe.</p>
-                </div>
-            </div>
-        </section>
-
+        <section id="faq" class="page-section max-w-5xl mx-auto px-5 py-16"><div class="text-center mb-12"><h1 class="text-5xl font-black uppercase border-b-8 border-blue-600 inline-block pb-3">FAQs</h1></div><div class="bg-white rounded-3xl shadow-2xl p-8 space-y-6" id="faqContainer"></div></section>
+        <section id="about" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white rounded-3xl shadow-2xl p-10"><h2 class="text-4xl font-black text-blue-900 border-l-8 border-blue-600 pl-4">The EasyGo Journey</h2><p class="text-xl mt-6 font-medium leading-relaxed">Founded by Nishant Jaiswal, based at Omaxe City 1, Indore. Our white Citroen C3 offers unmatched comfort. No surge, transparent pricing, and premium service across MP.</p></div></section>
+        <section id="privacy" class="page-section max-w-5xl mx-auto px-5 py-16"><div class="bg-white p-10 rounded-3xl shadow-2xl"><h1 class="text-4xl font-black">Privacy Policy</h1><p class="mt-4">Your data is secure. We never share personal info. Bookings encrypted via Google Workspace.</p></div></section>
+        <section id="terms" class="page-section max-w-5xl mx-auto px-5 py-16"><div class="bg-white p-10 rounded-3xl shadow-2xl"><h1 class="text-4xl font-black">Fare Rules</h1><ul class="list-disc pl-8 mt-4 space-y-2"><li>0-5km ₹100</li><li>5-10km ₹180</li><li>10-20km ₹320</li><li>20+ km: ₹16/km extra</li><li>Wait charge: ₹2/min</li><li>GST 5%</li></ul></div></section>
     </main>
 
-    <footer class="bg-slate-900 text-slate-300 py-16 mt-auto border-t-8 border-blue-600">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <h2 class="text-5xl font-black text-white mb-6 uppercase tracking-widest drop-shadow-md">EasyGo Cabs</h2>
-            <div class="flex justify-center items-center space-x-6 mb-8">
-                <span class="h-2 w-20 bg-blue-600 rounded-full"></span>
-                <i class="fas fa-taxi text-3xl text-yellow-400"></i>
-                <span class="h-2 w-20 bg-blue-600 rounded-full"></span>
-            </div>
-            <p class="text-2xl font-bold mb-4 text-slate-200">Omaxe City 1, Indore, MP</p>
-            <p class="text-2xl font-black text-blue-400 mb-10 bg-slate-800 inline-block px-8 py-3 rounded-2xl shadow-inner">Booking: +91 76518 37322</p>
-            <p class="text-sm opacity-50 font-bold uppercase">© 2026 EasyGo Cabs.</p>
-        </div>
-    </footer>
+    <footer class="bg-slate-900 text-slate-300 py-12 border-t-8 border-blue-600 text-center"><p class="text-2xl font-black text-white">EasyGo Cabs</p><p class="mt-2"><i class="fas fa-map-marker-alt"></i> Omaxe City 1, Indore | <i class="fab fa-whatsapp"></i> +91 76518 37322</p><p class="text-xs mt-6">© 2026 EasyGo | Premium Rides</p></footer>
 
-    <div id="loginModal" class="modal fixed inset-0 items-center justify-center">
-        <div class="bg-white p-10 rounded-[2rem] shadow-2xl w-full max-w-md relative border-4 border-blue-100">
-            <button onclick="closeLoginModal()" class="absolute top-5 right-6 text-slate-400 text-4xl font-black">×</button>
-            <div id="step1">
-                <h2 class="text-3xl font-black text-center mb-8 uppercase">Secure Login</h2>
-                <input type="text" id="nameInput" class="w-full px-5 py-4 border-2 rounded-xl mb-6 font-bold text-xl" placeholder="Full Name">
-                <input type="tel" id="mobileInput" class="w-full px-5 py-4 border-2 rounded-xl mb-8 font-bold text-xl" placeholder="Mobile Number">
-                <button onclick="sendOTP()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl text-2xl shadow-lg uppercase">Generate OTP</button>
-            </div>
-            <div id="step2" class="hidden text-center">
-                <p class="text-lg font-bold mb-6 uppercase">Enter Code Sent To <span id="displayMobile" class="text-blue-700"></span></p>
-                <div class="flex justify-between space-x-3 mb-8">
-                    <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 rounded-xl otp-box">
-                    <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 rounded-xl otp-box">
-                    <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 rounded-xl otp-box">
-                    <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 rounded-xl otp-box">
-                </div>
-                <div id="otpLoader" class="text-blue-600 font-black animate-pulse uppercase">Verifying...</div>
-            </div>
-        </div>
-    </div>
+    <!-- MODALS -->
+    <div id="loginModal" class="modal fixed inset-0"><div class="bg-white p-8 rounded-3xl max-w-md w-full shadow-2xl"><button onclick="closeLoginModal()" class="float-right text-3xl font-black">&times;</button><div class="text-center"><img src="easy go.jpg" class="h-20 w-20 rounded-full mx-auto border-4 border-blue-600"></div><div id="step1"><input type="text" id="nameInput" placeholder="Full Name" class="w-full p-4 border-2 rounded-xl my-3 font-bold"><div class="flex"><span class="bg-slate-200 p-4 rounded-l-xl">+91</span><input type="tel" id="mobileInput" placeholder="10 digit mobile" class="flex-1 p-4 border-2 rounded-r-xl"></div><button onclick="sendOTP()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black mt-5">GENERATE OTP</button></div><div id="step2" class="hidden"><p class="text-center font-bold">OTP sent to <span id="displayMobile"></span></p><div class="flex justify-center gap-3 my-6"><input type="text" readonly class="otp-box w-16 h-20 text-center text-4xl font-black border-4 rounded-2xl"></div><div id="otpLoader" class="text-center hidden font-bold text-blue-600">Verifying...</div></div></div></div>
 
-    <div id="billModal" class="modal fixed inset-0 items-center justify-center">
-        <div class="bg-white rounded-[2rem] shadow-2xl max-w-md w-full relative overflow-hidden">
-            <div class="bg-slate-900 text-white p-8 text-center border-b-8 border-blue-600">
-                <h2 class="text-4xl font-black uppercase tracking-widest">Tax Invoice</h2>
-            </div>
-            <div class="p-8 bg-[#fdfbf7]">
-                <div id="billInputSection" class="space-y-5">
-                    <input type="number" id="inputActualKM" class="w-full px-4 py-3 border-2 rounded-xl font-bold text-xl" placeholder="Actual KM Traveled">
-                    <input type="number" id="inputWaitTime" class="w-full px-4 py-3 border-2 rounded-xl font-bold text-xl" value="0" placeholder="Wait Minutes">
-                    <button onclick="calculateFinalBill()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl text-lg shadow-lg uppercase">Calculate Fare</button>
-                </div>
-                <div id="billDisplaySection" class="hidden font-mono">
-                    <div class="receipt-dashed py-4 mb-4 text-sm font-bold">
-                        <div class="flex justify-between">BASE SLAB COST: <span id="billBaseSlab"></span></div>
-                        <div class="flex justify-between">WAIT CHARGES: <span id="billWaitCost"></span></div>
-                        <div class="flex justify-between">GST (5%): <span id="billTax"></span></div>
-                    </div>
-                    <div class="flex justify-between text-3xl font-black mb-6">GRAND TOTAL: <span id="billGrandTotal"></span></div>
-                    <button onclick="processPaymentAndReview()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl uppercase">Collect Payment</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="billModal" class="modal fixed inset-0"><div class="bg-white rounded-3xl max-w-md w-full"><div class="bg-slate-800 p-6 text-white text-center rounded-t-3xl"><h2 class="text-3xl font-black">TAX INVOICE</h2></div><div class="p-6"><div id="billInputSection"><input type="number" id="inputActualKM" placeholder="Total KM" class="w-full p-3 border-2 rounded-xl my-2"><input type="number" id="inputWaitTime" placeholder="Wait time (min)" class="w-full p-3 border-2 rounded-xl my-2"><input type="number" id="inputTip" placeholder="Tip (₹)" class="w-full p-3 border-2 rounded-xl my-2"><button onclick="calculateFinalBill()" class="w-full bg-blue-700 text-white p-4 rounded-xl font-black mt-3">CALCULATE</button><button onclick="closeEndRideModal()" class="w-full mt-2 bg-gray-300 p-3 rounded-xl">Cancel</button></div><div id="billDisplaySection" class="hidden"><div class="flex justify-between"><span>Base Slab:</span><span id="billBaseSlab">₹0</span></div><div class="flex justify-between"><span>Extra KM:</span><span id="billExtraCost">₹0</span></div><div class="flex justify-between"><span>Wait time:</span><span id="billWaitCost">₹0</span></div><div class="flex justify-between font-bold text-xl mt-3"><span>Grand Total:</span><span id="billGrandTotal">₹0</span></div><button onclick="processPaymentAndReview()" class="w-full bg-green-600 text-white p-4 rounded-xl mt-5 font-black">PAY & COMPLETE</button></div></div></div></div>
 
-    <div id="reviewModal" class="modal fixed inset-0 items-center justify-center">
-        <div class="bg-white p-10 rounded-[2rem] shadow-2xl w-full max-w-md text-center border-4 border-yellow-400">
-            <h2 class="text-3xl font-black uppercase mb-8">Rate Your Experience</h2>
-            <div class="star-rating text-5xl mb-8 flex justify-center space-x-2" id="starContainer">
-                <i class="fas fa-star" onclick="setRating(1)"></i>
-                <i class="fas fa-star" onclick="setRating(2)"></i>
-                <i class="fas fa-star" onclick="setRating(3)"></i>
-                <i class="fas fa-star" onclick="setRating(4)"></i>
-                <i class="fas fa-star" onclick="setRating(5)"></i>
-            </div>
-            <input type="hidden" id="ratingValue" value="5">
-            <textarea id="reviewText" rows="3" class="w-full px-5 py-4 border-2 rounded-xl mb-6 font-bold" placeholder="Write a short review..."></textarea>
-            <button onclick="submitReview()" class="w-full bg-slate-900 text-white font-black py-4 rounded-xl uppercase">Publish Now</button>
-        </div>
-    </div>
+    <div id="reviewModal" class="modal fixed inset-0"><div class="bg-white p-8 rounded-3xl max-w-md w-full text-center"><button onclick="skipReview()" class="float-right text-sm underline">Skip</button><h2 class="text-2xl font-black">Rate your ride</h2><div class="star-rating text-4xl my-4" id="starContainer"><i class="far fa-star" onclick="setRating(1)"></i><i class="far fa-star" onclick="setRating(2)"></i><i class="far fa-star" onclick="setRating(3)"></i><i class="far fa-star" onclick="setRating(4)"></i><i class="far fa-star" onclick="setRating(5)"></i></div><input type="hidden" id="ratingValue" value="5"><textarea id="reviewText" rows="3" class="w-full border-2 rounded-xl p-3" placeholder="Share experience..."></textarea><button onclick="submitReview()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-black mt-4">PUBLISH REVIEW</button></div></div>
 
 <script>
-    /* 1. SCRIPT CONFIGURATION */
+    // ===================== GLOBAL FIXES & ENHANCEMENTS =====================
     const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
-    const PRIME_SQUARE_COORDS = L.latLng(22.7628, 75.9234); 
-    const indoreCoords = [22.7196, 75.8577];
+    const PRIME_SQUARE = L.latLng(22.7628, 75.9234);
+    let map, pickupMarker, dropMarker, allToursData = [], currentSeason = 'All', currentCategory = 'All', selectedPackageBasePrice = 0;
 
-    let map, pickupMarker, dropMarker;
-    let searchTimeout;
-
-    /* 2. INITIALIZATION */
-    window.onload = function() {
-        initMap();
-        loadDynamicTours();
-        loadDynamicReviews();
-        checkActiveRide();
-        if(localStorage.getItem('easygo_user')) {
-            loginUI(localStorage.getItem('easygo_user'), localStorage.getItem('easygo_name'));
-        }
-        document.getElementById('date').valueAsDate = new Date();
-    };
-
-    /* 3. MAP LOGIC */
-    function initMap() {
-        map = L.map('map').setView(indoreCoords, 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-        const greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [25, 41], iconAnchor: [12, 41] });
-        const redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [25, 41], iconAnchor: [12, 41] });
-
-        pickupMarker = L.marker(indoreCoords, {icon: greenIcon, draggable: true}).addTo(map);
-        dropMarker = L.marker([22.75, 75.89], {icon: redIcon, draggable: true}).addTo(map);
-
-        pickupMarker.on('dragend', function() { 
-            let ll = pickupMarker.getLatLng();
-            updateMapLinks(ll.lat, ll.lng, 'pickup');
-            reverseGeocode(ll, 'pickup');
-            updateLiveEstimate();
-        });
-
-        dropMarker.on('dragend', function() { 
-            let ll = dropMarker.getLatLng();
-            updateMapLinks(ll.lat, ll.lng, 'drop');
-            reverseGeocode(ll, 'drop');
-            updateLiveEstimate();
-        });
-    }
-
-    /* 4. FIXED MAP LINKS FOR DB */
-    function updateMapLinks(lat, lng, type) {
-        // Standard Google Maps format for reliable redirect
-        let link = `https://www.google.com/maps?q=${lat},${lng}`;
-        if(type === 'pickup') document.getElementById('pickupLink').value = link;
-        if(type === 'drop') document.getElementById('dropLink').value = link;
-    }
-
-    /* 5. LIVE FARE ENGINE */
-    function updateLiveEstimate() {
-        let p = pickupMarker.getLatLng();
-        let d = dropMarker.getLatLng();
-        
-        let dist = (p.distanceTo(d) * 1.3 / 1000); 
-        let arrivalDist = (PRIME_SQUARE_COORDS.distanceTo(p) / 1000);
-        
-        document.getElementById('mapDistanceDisplay').innerText = dist.toFixed(1) + " KM";
-        document.getElementById('inputActualKM').value = dist.toFixed(1);
-
-        let arrivalFare = arrivalDist > 3 ? (arrivalDist - 3) * 10 : 0;
-        let baseSlab = 0;
-        if(dist <= 5) baseSlab = 100;
-        else if(dist <= 10) baseSlab = 180;
-        else if(dist <= 20) baseSlab = 320;
-        else baseSlab = 320 + (dist - 20) * 16;
-
-        let total = Math.round((baseSlab + arrivalFare) * 1.05);
-
-        document.getElementById('liveEstimateBox').innerHTML = `
-            <div class="bg-blue-900 text-white p-5 rounded-2xl mb-4 border-b-8 border-yellow-400 shadow-xl animate-pulse">
-                <div class="flex justify-between items-center">
-                    <span class="font-black tracking-widest text-blue-300">LIVE ESTIMATE</span>
-                    <span class="text-3xl font-black">₹${total}*</span>
-                </div>
-                <p class="text-xs opacity-60 mt-2 font-bold uppercase">*Final fare will be generated on ride completion</p>
-            </div>
-        `;
-    }
-
-    /* 6. SEARCH AND GEOCODING */
-    function searchLocation(query, type) {
-        clearTimeout(searchTimeout);
-        let box = document.getElementById(type + '-suggestions');
-        if(query.length < 3) { box.style.display = 'none'; return; }
-        
-        searchTimeout = setTimeout(() => {
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}+Indore&limit=5`)
-            .then(res => res.json()).then(data => {
-                box.innerHTML = '';
-                box.style.display = 'block';
-                data.forEach(place => {
-                    let div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.innerText = place.display_name.split(',').slice(0,3).join(',');
-                    div.onclick = function() {
-                        document.getElementById(type).value = div.innerText;
-                        box.style.display = 'none';
-                        let latlng = [place.lat, place.lon];
-                        if(type === 'pickup') { pickupMarker.setLatLng(latlng); updateMapLinks(place.lat, place.lon, 'pickup'); }
-                        else { dropMarker.setLatLng(latlng); updateMapLinks(place.lat, place.lon, 'drop'); }
-                        map.setView(latlng, 14);
-                        updateLiveEstimate();
-                    };
-                    box.appendChild(div);
-                });
-            });
-        }, 500);
-    }
-
-    function useCurrentLocation(type) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            let ll = [pos.coords.latitude, pos.coords.longitude];
-            if(type === 'pickup') pickupMarker.setLatLng(ll);
-            else dropMarker.setLatLng(ll);
-            map.setView(ll, 15);
-            reverseGeocode({lat: ll[0], lng: ll[1]}, type);
-            updateMapLinks(ll[0], ll[1], type);
-            updateLiveEstimate();
-        });
-    }
-
-    function reverseGeocode(ll, type) {
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${ll.lat}&lon=${ll.lng}`)
-        .then(res => res.json()).then(data => {
-            if(data.display_name) document.getElementById(type).value = data.display_name.split(',').slice(0,3).join(',');
-        });
-    }
-
-    /* 7. AUTHENTICATION LOGIC */
-    function sendOTP() {
-        let n = document.getElementById('nameInput').value;
-        let m = document.getElementById('mobileInput').value;
-        if(!n || m.length < 10) return alert("Enter valid Name and Phone!");
-        
-        document.getElementById('displayMobile').innerText = "+91 " + m;
-        document.getElementById('step1').classList.add('hidden');
-        document.getElementById('step2').classList.remove('hidden');
-        
-        let otp = Math.floor(1000 + Math.random() * 9000).toString();
-        let boxes = document.querySelectorAll('.otp-box');
-        
-        otp.split('').forEach((char, i) => {
-            setTimeout(() => { boxes[i].value = char; }, i * 400);
-        });
-
-        setTimeout(() => {
-            localStorage.setItem('easygo_user', m);
-            localStorage.setItem('easygo_name', n);
-            loginUI(m, n);
-            closeLoginModal();
-        }, 3000);
-    }
-
-    function loginUI(m, n) {
-        document.getElementById('loginBtn').classList.add('hidden');
-        document.getElementById('userMenu').classList.remove('hidden');
-        document.getElementById('displayUserName').innerText = n.toUpperCase();
-        document.getElementById('customerPhone').value = m;
-        document.getElementById('customerNameField').value = n;
-    }
-
-    /* 8. BOOKING LOGIC */
-    function handleBooking(e) {
-        e.preventDefault();
-        if(!localStorage.getItem('easygo_user')) return openLoginModal();
-        
-        const sub = document.getElementById('submitBtn');
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        document.getElementById('bookingOTP').value = otp;
-        sub.innerHTML = "Processing Booking...";
-        sub.disabled = true;
-
-        let fd = new FormData(document.getElementById('bookingForm'));
-        fd.append('action', 'bookRide');
-
-        fetch(scriptURL, { method: 'POST', body: fd }).then(() => {
-            let d = { name: localStorage.getItem('easygo_name'), pickup: document.getElementById('pickup').value, drop: document.getElementById('drop').value, otp: otp };
-            localStorage.setItem('active_ride', JSON.stringify(d));
-            checkActiveRide();
-            window.open(`https://wa.me/917651837322?text=New Ride Booking From ${d.pickup} to ${d.drop}`, '_blank');
-            sub.innerHTML = "BOOK NOW !!";
-            sub.disabled = false;
-        });
-    }
-
-    /* 9. BILLING LOGIC */
-    function calculateFinalBill() {
-        let km = parseFloat(document.getElementById('inputActualKM').value);
-        let wait = parseFloat(document.getElementById('inputWaitTime').value);
-        let fare = km <= 5 ? 100 : km <= 10 ? 180 : km <= 20 ? 320 : 320 + (km-20)*16;
-        let tax = fare * 0.05;
-        let total = Math.round(fare + tax + (wait * 2));
-        
-        document.getElementById('billBaseSlab').innerText = "₹" + fare;
-        document.getElementById('billWaitCost').innerText = "₹" + (wait * 2);
-        document.getElementById('billTax').innerText = "₹" + tax.toFixed(2);
-        document.getElementById('billGrandTotal').innerText = "₹" + total;
-        
-        document.getElementById('billInputSection').classList.add('hidden');
-        document.getElementById('billDisplaySection').classList.remove('hidden');
-    }
-
-    function processPaymentAndReview() {
-        localStorage.removeItem('active_ride');
-        document.getElementById('billModal').classList.remove('active');
-        document.getElementById('reviewModal').classList.add('active');
-    }
-
-    /* 10. SYSTEM UTILS */
-    function checkActiveRide() {
-        let active = localStorage.getItem('active_ride');
-        if(active) {
-            let d = JSON.parse(active);
-            document.getElementById('activeRideBanner').classList.remove('hidden');
-            document.getElementById('activeRideOTP').innerText = d.otp;
-            document.getElementById('activeRideRoute').innerText = d.pickup.substring(0,30) + "...";
-        } else {
-            document.getElementById('activeRideBanner').classList.add('hidden');
-        }
-    }
-
-    function showPage(id) {
-        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
-    }
-
+    function showPage(id) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); if(id==='tours' && !allToursData.length) loadDynamicTours(); }
     function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
     function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
-    function endRideProcess() { document.getElementById('billModal').classList.add('active'); }
-    function toggleFaq(btn) { btn.parentElement.classList.toggle('active'); }
-    function setRating(v) { document.getElementById('ratingValue').value = v; }
-    function logout() { localStorage.clear(); location.reload(); }
+    function showToast(msg, type) { let t = document.createElement('div'); t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type==='success'?'border-green-500':'border-red-500'} pointer-events-auto`; t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-triangle'} mr-2"></i> ${msg}`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(),3000); }
+    function closeEndRideModal() { document.getElementById('billModal').classList.remove('active'); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
+    function skipReview() { document.getElementById('reviewModal').classList.remove('active'); }
     
-    // Dynamic content placeholders
-    function loadDynamicTours() {}
-    function loadDynamicReviews() {}
-    function submitReview() { location.reload(); }
-
+    function initMap() {
+        map = L.map('map').setView([22.7196, 75.8577], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+        let greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [30,50], iconAnchor: [15,50] });
+        let redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [30,50], iconAnchor: [15,50] });
+        pickupMarker = L.marker([22.7196,75.8577], {icon: greenIcon, draggable: true}).addTo(map).bindPopup("🚖 PICKUP").openPopup();
+        dropMarker = L.marker([22.75,75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("🏁 DROP");
+        pickupMarker.on('dragend', e => { let ll = e.target.getLatLng(); reverseGeocode(ll,'pickup'); calculateDistance(); updateMapLinks(ll.lat,ll.lng,'pickup'); updateLiveEstimate(); });
+        dropMarker.on('dragend', e => { let ll = e.target.getLatLng(); reverseGeocode(ll,'drop'); calculateDistance(); updateMapLinks(ll.lat,ll.lng,'drop'); updateLiveEstimate(); });
+        calculateDistance();
+    }
+    function calculateDistance() { let d = pickupMarker.getLatLng().distanceTo(dropMarker.getLatLng()) * 1.3 / 1000; let km = Math.max(1, d.toFixed(1)); document.getElementById('mapDistanceDisplay').innerText = km + " KM"; document.getElementById('inputActualKM').value = km; }
+    function updateLiveEstimate() { let dist = parseFloat(document.getElementById('mapDistanceDisplay').innerText) || 0; let arrival = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000 - 3) * 10); let baseSlab = dist<=5?100:(dist<=10?180:(dist<=20?320:320)); let extra = dist>20?(dist-20)*16:0; let subtotal = baseSlab+extra+arrival; let gst = subtotal*0.05; let total = Math.round(subtotal+gst); let box = document.getElementById('liveEstimateBox'); if(!box) { box = document.createElement('div'); box.id='liveEstimateBox'; document.getElementById('bookingForm').insertBefore(box, document.getElementById('submitBtn')); } box.className='bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl'; box.innerHTML = `<div class="flex justify-between"><span class="text-sm font-bold">💰 ESTIMATED FARE</span><span class="text-2xl font-black">₹${total}</span></div><small class="text-[10px]">*5% GST + arrival charges included</small>`; box.classList.remove('hidden'); }
+    function updateMapLinks(lat,lng,type) { let link = `https://www.google.com/maps?q=${lat},${lng}`; document.getElementById(type==='pickup'?'pickupLink':'dropLink').value = link; }
+    function reverseGeocode(ll,type) { fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${ll.lat}&lon=${ll.lng}`).then(r=>r.json()).then(d=>{ if(d.display_name) document.getElementById(type).value = d.display_name.split(',').slice(0,3).join(','); }); }
+    function searchLocation(q,t) { clearTimeout(window.searchTimeout); let box=document.getElementById(t+'-suggestions'); if(q.length<3){box.style.display='none';return;} window.searchTimeout=setTimeout(()=>{fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`).then(r=>r.json()).then(d=>{box.innerHTML='';if(d.length){box.style.display='block';d.forEach(p=>{let div=document.createElement('div');div.className='suggestion-item';div.innerText=p.display_name.split(',')[0];div.onclick=()=>{document.getElementById(t).value=div.innerText;box.style.display='none';let latlng=[p.lat,p.lon];if(t==='pickup'){pickupMarker.setLatLng(latlng);updateLiveEstimate();}else{dropMarker.setLatLng(latlng);}updateMapLinks(p.lat,p.lon,t);calculateDistance();map.fitBounds([pickupMarker.getLatLng(),dropMarker.getLatLng()]);};box.appendChild(div);});}else box.style.display='none';});},400);}
+    function useCurrentLocation(t) { navigator.geolocation.getCurrentPosition(pos=>{ let latlng=[pos.coords.latitude,pos.coords.longitude]; if(t==='pickup'){pickupMarker.setLatLng(latlng);updateLiveEstimate();}else{dropMarker.setLatLng(latlng);} map.setView(latlng,14); reverseGeocode({lat:latlng[0],lng:latlng[1]},t); calculateDistance(); }); }
+    function locateMeOnMap() { useCurrentLocation('pickup'); showToast("📍 Location set as pickup", "success"); }
+    
+    // TOURS & FILTERS FIXED
+    function filterTours(ev, season) { ev?.preventDefault?.(); currentSeason = season; document.querySelectorAll('.filter-btn').forEach(btn=>btn.classList.remove('active')); if(ev?.currentTarget) ev.currentTarget.classList.add('active'); else document.querySelector(`.filter-btn[onclick*="'${season}'"]`)?.classList.add('active'); applyDualFilter(); }
+    function filterByCategory(ev, cat) { ev?.preventDefault?.(); currentCategory = cat; document.querySelectorAll('.cat-btn').forEach(btn=>btn.classList.remove('active')); if(ev?.currentTarget) ev.currentTarget.classList.add('active'); applyDualFilter(); }
+    function applyDualFilter() { if(!allToursData.length) return; let filtered = allToursData.filter(t=>{ let dsc = (t.Description+"").toLowerCase(); let sea = (t.Season+"").toLowerCase(); let sMatch = (currentSeason==='All' || sea.includes(currentSeason.toLowerCase())); let cMatch = currentCategory==='All' || (currentCategory==='Nature' && (dsc.includes('fall')||dsc.includes('lake')||dsc.includes('nature'))) || (currentCategory==='Religious' && (dsc.includes('temple')||dsc.includes('spiritual'))) || (currentCategory==='Adventure' && (dsc.includes('mall')||dsc.includes('adventure'))) || (currentCategory==='Heritage' && (dsc.includes('palace')||dsc.includes('fort'))); return sMatch && cMatch; }); renderTours(filtered); }
+    function renderTours(list) { let container=document.getElementById('dynamic-tours-container'); if(!container) return; container.innerHTML=list.length?list.map(t=>`<div class="bg-white rounded-3xl shadow-xl overflow-hidden transition hover:-translate-y-2"><img src="${t.ImageURL||'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88'"><div class="p-6"><h3 class="text-2xl font-black">${t.Destination}</h3><p class="text-gray-600 my-2">${t.Description}</p><div class="bg-slate-100 p-3 rounded-2xl"><span class="text-3xl font-black text-blue-700">₹${t.Price}</span><small class="text-xs"> base estimate</small></div><button onclick='bookTourPackage("${t.Destination}",${t.Price})' class="w-full mt-4 bg-slate-800 text-white py-3 rounded-xl font-bold">BOOK THIS TOUR</button></div></div>`).join(''):'<div class="col-span-full text-center py-10 font-bold">No packages match</div>'; }
+    function bookTourPackage(dest,price) { selectedPackageBasePrice = price; showPage('home'); document.getElementById('drop').value = dest+", MP"; searchLocation(dest,'drop'); updateLiveEstimate(); window.scrollTo({top: document.getElementById('bookingForm').offsetTop-100, behavior:'smooth'}); showToast(`Package selected: ${dest}`, "success"); }
+    function loadDynamicTours() { fetch(scriptURL+"?action=getTours&t="+Date.now()).then(r=>r.json()).then(d=>{ if(d.result==='success' && d.tours) { allToursData = d.tours; renderTours(allToursData); } }).catch(e=>console.log); }
+    function loadDynamicReviews() { fetch(scriptURL+"?action=getReviews&t="+Date.now()).then(r=>r.json()).then(d=>{ let con=document.getElementById('dynamic-reviews-container'); if(d.result==='success' && d.reviews){ con.innerHTML=d.reviews.reverse().map(r=>`<div class="bg-white p-6 rounded-2xl shadow-xl"><div class="flex text-yellow-400">${'★'.repeat(r.Rating)}${'☆'.repeat(5-r.Rating)}</div><p class="font-bold text-lg mt-2">"${r.Comment}"</p><p class="text-sm mt-3 text-blue-700 font-black">— ${r.Name}</p></div>`).join(''); } }).catch(()=>{}); }
+    
+    // AUTH & BOOKING
+    function sendOTP() { let n=document.getElementById('nameInput').value, m=document.getElementById('mobileInput').value; if(!n || m.length<10){showToast("Enter name & 10-digit mobile","error");return;} document.getElementById('step1').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden'); document.getElementById('displayMobile').innerText="+91 "+m; let otp=Math.floor(1000+Math.random()*9000).toString(); let boxes=document.querySelectorAll('.otp-box'); boxes.forEach((box,i)=>setTimeout(()=>box.value=otp[i]||'', i*180)); setTimeout(()=>{document.getElementById('otpLoader').classList.remove('hidden'); syncUserToDB(n,m);},800); }
+    function syncUserToDB(n,p){ let fd=new FormData(); fd.append('action','registerUser'); fd.append('Name',n); fd.append('Phone',p); fetch(scriptURL,{method:'POST',body:fd}).finally(()=>{ localStorage.setItem('easygo_user',p); localStorage.setItem('easygo_name',n); loginUI(p,n); closeLoginModal(); showToast(`Welcome ${n}!`,"success"); document.getElementById('otpLoader').classList.add('hidden'); }); }
+    function loginUI(mob,n){ document.getElementById('loginBtn').classList.add('hidden'); document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('displayUserName').innerText=n.toUpperCase(); document.getElementById('customerPhone').value=mob; document.getElementById('customerNameField').value=n; }
+    function logout(){ localStorage.clear(); location.reload(); }
+    function handleBooking(e){ e.preventDefault(); if(!localStorage.getItem('easygo_user')){ openLoginModal(); showToast("Please login first","error"); return; } let sub=document.getElementById('submitBtn'); let otp=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('bookingOTP').value=otp; sub.innerHTML='<i class="fas fa-spinner fa-spin"></i> Booking...'; sub.disabled=true; let fd=new FormData(document.getElementById('bookingForm')); fd.append('action','bookRide'); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Ride Booked! OTP: "+otp,"success"); localStorage.setItem('active_ride',JSON.stringify({ name:localStorage.getItem('easygo_name'), pickup:document.getElementById('pickup').value, drop:document.getElementById('drop').value, otp:otp })); checkActiveRide(); sub.innerHTML='BOOK NOW !! <i class="fas fa-arrow-right"></i>'; sub.disabled=false; window.open(`https://wa.me/917651837322?text=${encodeURIComponent("New Ride: "+otp)}`,'_blank'); }).catch(()=>{ sub.innerHTML='BOOK NOW !!'; sub.disabled=false; showToast("Booking error","error"); }); }
+    function checkActiveRide(){ let active=localStorage.getItem('active_ride'); if(active){ let d=JSON.parse(active); document.getElementById('activeRideBanner').classList.remove('hidden'); document.getElementById('activeRideRoute').innerText=`${d.pickup.substring(0,20)} → ${d.drop.substring(0,20)}`; document.getElementById('activeRideOTP').innerText=d.otp; } else document.getElementById('activeRideBanner').classList.add('hidden'); }
+    function endRideProcess(){ document.getElementById('billModal').classList.add('active'); }
+    function calculateFinalBill(){ let km=parseFloat(document.getElementById('inputActualKM').value)||0, wait=parseFloat(document.getElementById('inputWaitTime').value)||0, tip=parseFloat(document.getElementById('inputTip').value)||0; let base=km<=5?100:(km<=10?180:(km<=20?320:320)); let extra=km>20?(km-20)*16:0; let waitCost=wait*2; let arrival=Math.max(0,(PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000-3)*10); let subtotal=base+extra+waitCost+arrival; let gst=subtotal*0.05; let total=Math.round(subtotal+gst+tip); document.getElementById('billBaseSlab').innerText=`₹${Math.round(base+arrival)}`; document.getElementById('billExtraCost').innerText=`₹${extra}`; document.getElementById('billWaitCost').innerText=`₹${waitCost}`; document.getElementById('billGrandTotal').innerText=`₹${total}`; document.getElementById('billInputSection').classList.add('hidden'); document.getElementById('billDisplaySection').classList.remove('hidden'); }
+    function processPaymentAndReview(){ showToast("Payment collected!","success"); closeEndRideModal(); localStorage.removeItem('active_ride'); checkActiveRide(); setTimeout(()=>{ document.getElementById('reviewModal').classList.add('active'); },300); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
+    let currentRating=5; function setRating(v){ currentRating=v; document.getElementById('ratingValue').value=v; let stars=document.querySelectorAll('#starContainer i'); stars.forEach((star,idx)=>{ star.className = idx<v ? 'fas fa-star active' : 'far fa-star'; }); }
+    function submitReview(){ let name=localStorage.getItem('easygo_name')||"Guest"; let rating=document.getElementById('ratingValue').value; let comment=document.getElementById('reviewText').value; if(!comment){ showToast("Please write a review","warning"); return; } let fd=new FormData(); fd.append('action','addReview'); fd.append('Name',name); fd.append('Rating',rating); fd.append('Comment',comment); fd.append('Date',new Date().toLocaleDateString()); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Thanks for review!","success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); }).catch(()=>showToast("Review failed","error")); }
+    
+    // FAQ ACCORDION
+    function toggleFaq(btn){ let item=btn.closest('.faq-item'); item.classList.toggle('active'); }
+    function buildFaq(){ let faqs=[{q:"How is fare calculated?",a:"Slab based: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320, beyond ₹16/km + 5% GST."},{q:"Wait time charges?",a:"₹2 per minute after driver arrives."},{q:"Is OTP secure?",a:"Yes, OTP only on your dashboard, driver never sees it."},{q:"Outstation tours?",a:"Yes! Citroen C3 perfect for ghats."},{q:"Food/Smoking?",a:"Strictly prohibited. Heavy cleaning fee applies."}]; let html=''; faqs.forEach((faq,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl" onclick="toggleFaq(this)"><span>${i+1}. ${faq.q}</span><i class="fas fa-chevron-down faq-icon transition-transform"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 bg-slate-50 p-4 rounded-xl">${faq.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
+    
+    window.onload=()=>{ initMap(); document.getElementById('date').valueAsDate=new Date(); let d=new Date(); d.setMinutes(d.getMinutes()+15); document.getElementById('time').value=d.toTimeString().substring(0,5); let storedUser=localStorage.getItem('easygo_user'), storedName=localStorage.getItem('easygo_name'); if(storedUser && storedName) loginUI(storedUser,storedName); checkActiveRide(); loadDynamicReviews(); loadDynamicTours(); buildFaq(); setRating(5); };
 </script>
 </body>
 </html>
-
