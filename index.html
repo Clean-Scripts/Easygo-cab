@@ -711,10 +711,15 @@
         }
 
         function calculateMapDistance() {
+            if (!pickupMarker || !dropMarker) return;
             let distanceMeters = pickupMarker.getLatLng().distanceTo(dropMarker.getLatLng());
-            let roadKm = (distanceMeters * 1.3 / 1000).toFixed(1);
+            let roadKm = (distanceMeters * 1.3 / 1000).toFixed(1);          
             document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM";
             document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm));
+            if (typeof updateLiveEstimate === "function") {
+                updateLiveEstimate();
+            }
+            console.log("Trip Distance Updated:", roadKm, "KM");
         }
 
         function locateMeOnMap() {
