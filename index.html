@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyGo Cabs | Premium Rides in Indore</title>
+    <title>EasyGo Cabs</title>
     <link rel="icon" type="image/jpeg" href="easy go.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -165,7 +165,7 @@
                             </div>
 
                             <div class="relative">
-                                <label class="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">Drop Location / Tour</label>
+                                <label class="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">Drop Location</label>
                                 <div class="flex shadow-md rounded-xl">
                                     <div class="relative flex-grow">
                                         <i class="fas fa-square text-red-500 absolute left-5 top-5 text-sm"></i>
@@ -195,21 +195,8 @@
                                 </div>
                             </div>
 
-                            <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-inner">
-                                <p class="text-xl font-black text-blue-900 mb-3 border-b-2 border-blue-200 pb-2 flex items-center uppercase"><i class="fas fa-rupee-sign mr-3 bg-blue-200 p-2 rounded-full"></i> Rate Card</p>
-                                <ul class="space-y-3 mt-4 text-sm font-bold text-slate-800">
-                                    <li class="flex justify-between items-center"><span>0 - 5 KM Base Rate</span> <span class="text-lg text-blue-700 font-black">₹100</span></li>
-                                    <li class="flex justify-between items-center border-t border-blue-100 pt-2"><span>5 - 10 KM Rate</span> <span class="text-lg text-blue-700 font-black">₹180</span></li>
-                                    <li class="flex justify-between items-center border-t border-blue-100 pt-2"><span>10 - 20 KM Rate</span> <span class="text-lg text-blue-700 font-black">₹320</span></li>
-                                    <li class="flex justify-between items-center border-t border-blue-100 pt-2"><span>After 20 KM</span> <span class="text-lg text-blue-700 bg-white px-2 py-1 rounded shadow-sm">₹16 / km</span></li>
-                                    <li class="flex justify-between items-center text-red-600 mt-2 pt-3 border-t border-blue-200">
-                                        <span>Wait Time (Before start)</span> <span class="bg-red-100 px-2 py-1 rounded">₹1 / 30 sec</span>
-                                    </li>
-                                </ul>
-                            </div>
-
                             <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-[0_10px_20px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-1 text-2xl mt-6 border-b-4 border-blue-900 flex justify-center items-center">
-                                SECURE BOOKING <i class="fas fa-arrow-right ml-3"></i>
+                                BOOK NOW !! <i class="fas fa-arrow-right ml-3"></i>
                             </button>
                         </form>
                     </div>
@@ -246,6 +233,15 @@
                 <button onclick="filterTours('Summer')" class="filter-btn bg-white text-slate-700 border-2 border-slate-300 font-black px-8 py-3 rounded-full hover:bg-slate-100 transition-colors uppercase tracking-widest shadow-md"><i class="fas fa-sun text-yellow-500 mr-2"></i> Summer</button>
             </div>
 
+            <div class="flex flex-wrap justify-center gap-3 mb-6">
+                <span class="w-full text-center font-black text-slate-500 uppercase tracking-widest text-xs mb-2">Filter by Category</span>
+                <button onclick="filterByCategory('All')" class="cat-btn active bg-slate-200 px-6 py-2 rounded-full font-bold text-sm shadow-sm">All Places</button>
+                <button onclick="filterByCategory('Nature')" class="cat-btn bg-white border px-6 py-2 rounded-full font-bold text-sm shadow-sm">Nature & Falls</button>
+                <button onclick="filterByCategory('Religious')" class="cat-btn bg-white border px-6 py-2 rounded-full font-bold text-sm shadow-sm">Religious</button>
+                <button onclick="filterByCategory('Adventure')" class="cat-btn bg-white border px-6 py-2 rounded-full font-bold text-sm shadow-sm">Adventure & Malls</button>
+                <button onclick="filterByCategory('Heritage')" class="cat-btn bg-white border px-6 py-2 rounded-full font-bold text-sm shadow-sm">Heritage</button>
+            </div>
+            
             <div id="dynamic-tours-container" class="tours-container">
                 <div class="bg-white rounded-[2rem] shadow-2xl border-2 border-slate-100 animate-pulse h-96"></div>
                 <div class="bg-white rounded-[2rem] shadow-2xl border-2 border-slate-100 animate-pulse h-96"></div>
@@ -390,7 +386,7 @@
             </div>
             <p class="text-2xl font-bold mb-4 text-slate-200"><i class="fas fa-map-marker-alt text-red-500 mr-3 text-3xl"></i> Omaxe City 1, Indore, Madhya Pradesh</p>
             <p class="text-2xl font-black text-blue-400 mb-10 bg-slate-800 inline-block px-8 py-3 rounded-2xl border border-slate-700 shadow-inner"><i class="fab fa-whatsapp mr-3 text-green-500 text-3xl align-middle"></i> Booking: +91 76518 37322</p>
-            <p class="text-sm mt-8 opacity-50 font-bold tracking-widest uppercase">© 2026 EasyGo Cabs. Owned and Operated by Nishant Jaiswal.</p>
+            <p class="text-sm mt-8 opacity-50 font-bold tracking-widest uppercase">© 2026 EasyGo Cabs.</p>
         </div>
     </footer>
 
@@ -423,7 +419,7 @@
                     <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 border-slate-200 rounded-xl otp-box text-blue-900 bg-slate-100 shadow-inner">
                     <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 border-slate-200 rounded-xl otp-box text-blue-900 bg-slate-100 shadow-inner">
                 </div>
-                <div id="otpLoader" class="text-center hidden text-blue-600 font-black text-xl mb-4 bg-blue-50 py-3 rounded-xl border border-blue-200"><i class="fas fa-circle-notch fa-spin mr-3"></i> Syncing with Server...</div>
+                <div id="otpLoader" class="text-center hidden text-blue-600 font-black text-xl mb-4 bg-blue-50 py-3 rounded-xl border border-blue-200"><i class="fas fa-circle-notch fa-spin mr-3"></i> Generating OTP...</div>
             </div>
         </div>
     </div>
@@ -433,7 +429,7 @@
             <div class="bg-slate-900 text-white p-8 sm:rounded-t-[2rem] text-center relative overflow-hidden">
                 <div class="absolute -top-10 -right-10 text-9xl text-white/5"><i class="fas fa-file-invoice"></i></div>
                 <h2 class="text-4xl font-black tracking-widest uppercase mb-2 relative z-10">TAX INVOICE</h2>
-                <p class="text-blue-300 font-bold tracking-widest text-sm relative z-10">EASYGO CABS INDORE</p>
+                <p class="text-blue-300 font-bold tracking-widest text-sm relative z-10">EASYGO CABS</p>
             </div>
             <div class="p-8 bg-[#fdfbf7] relative">
                 <div id="billInputSection" class="space-y-5">
@@ -508,6 +504,41 @@
     <script>
         // REPLACE WITH YOUR ACTUAL GOOGLE APPS SCRIPT DEPLOYMENT URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
+
+        let currentSeason = 'All';
+        let currentCategory = 'All';
+        
+        function filterTours(season) {
+            currentSeason = season;
+            // UI Update for Season Buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            applyDualFilter();
+        }
+        
+        function filterByCategory(category) {
+            currentCategory = category;
+            // UI Update for Category Buttons
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-slate-900', 'text-white');
+                btn.classList.add('bg-white', 'text-slate-700');
+            });
+            event.currentTarget.classList.add('active', 'bg-slate-900', 'text-white');
+            applyDualFilter();
+        }
+        
+        function applyDualFilter() {
+            let filtered = allToursData.filter(t => {
+                // Season Check
+                const matchSeason = (currentSeason === 'All' || t.Season.toLowerCase().includes(currentSeason.toLowerCase()) || t.Season.toLowerCase() === 'all seasons');
+                
+                // Category Check (Hum Description mein category search karenge)
+                const matchCategory = (currentCategory === 'All' || t.Description.toLowerCase().includes(currentCategory.toLowerCase()) || t.Destination.toLowerCase().includes(currentCategory.toLowerCase()));
+                
+                return matchSeason && matchCategory;
+            });
+            renderTours(filtered);
+        }
 
         // Custom Toasts
         function showToast(message, type = 'success') {
@@ -752,44 +783,77 @@
             } else { document.getElementById('activeRideBanner').classList.add('hidden'); }
         }
 
-        // Billing & GST
-        function endRideProcess() { document.getElementById('billModal').classList.add('active'); }
-        function closeEndRideModal() { document.getElementById('billModal').classList.remove('active'); }
-
-        function calculateFinalBill() {
-            let km = parseFloat(document.getElementById('inputActualKM').value) || 0;
-            let waitMins = parseFloat(document.getElementById('inputWaitTime').value) || 0;
-            let tip = parseFloat(document.getElementById('inputTip').value) || 0;
-
-            let baseSlab = 0; let extraKms = 0; let extraCost = 0;
-            if(km <= 5) { baseSlab = 100; }
-            else if(km <= 10) { baseSlab = 180; }
-            else if(km <= 20) { baseSlab = 320; }
-            else { baseSlab = 320; extraKms = km - 20; extraCost = extraKms * 16; }
-
-            let waitCost = waitMins * 2;
-            let subtotal = baseSlab + extraCost + waitCost;
-            let gst = subtotal * 0.05; // 5% GST
-            let grandTotal = subtotal + gst + tip;
-
-            document.getElementById('billDate').innerText = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
-            document.getElementById('billId').innerText = "INV-" + Math.floor(100000 + Math.random() * 900000);
+        // --- Updated Billing Logic with Silent Arrival Fare ---
+            function calculateFinalBill() {
+                // 1. Core Inputs
+                let dropKM = parseFloat(document.getElementById('inputActualKM').value) || 0;
+                let waitMins = parseFloat(document.getElementById('inputWaitTime').value) || 0;
+                let tip = parseFloat(document.getElementById('inputTip').value) || 0;
             
-            document.getElementById('billBaseSlab').innerText = baseSlab.toFixed(2);
-            document.getElementById('billExtraKM').innerText = extraKms.toFixed(1);
-            document.getElementById('billExtraCost').innerText = extraCost.toFixed(2);
-            document.getElementById('billWaitMins').innerText = waitMins;
-            document.getElementById('billWaitCost').innerText = waitCost.toFixed(2);
-            document.getElementById('billSubtotal').innerText = subtotal.toFixed(2);
-            document.getElementById('billTax').innerText = gst.toFixed(2);
-            document.getElementById('billTipVal').innerText = tip.toFixed(2);
-            document.getElementById('billGrandTotal').innerText = grandTotal.toFixed(2);
-
-            document.getElementById('billInputSection').classList.add('hidden');
-            document.getElementById('billDisplaySection').classList.remove('hidden');
-            showToast("Bill Generated with 5% GST.", "success");
-        }
-
+                // 2. INTERNAL ARRIVAL CALCULATION (Silent)
+                // Prime Square, Omaxe City 1 Coordinates
+                const PRIME_SQUARE_COORDS = L.latLng(22.7628, 75.9234); 
+                let pickupLatLng = pickupMarker.getLatLng(); 
+                
+                // Distance from Prime Square to Customer Pickup
+                let arrivalDistMeters = PRIME_SQUARE_COORDS.distanceTo(pickupLatLng);
+                let arrivalKm = arrivalDistMeters / 1000;
+                
+                let arrivalFare = 0;
+                // Rule: 3km tak free, uske baad ₹10/km
+                if(arrivalKm > 3) {
+                    arrivalFare = (arrivalKm - 3) * 10;
+                }
+            
+                // 3. Trip Fare Calculation (Your Standard Slabs)
+                let baseSlab = 0; 
+                let extraKms = 0; 
+                let extraCost = 0;
+            
+                if(dropKM <= 5) { 
+                    baseSlab = 100; 
+                } else if(dropKM <= 10) { 
+                    baseSlab = 180; 
+                } else if(dropKM <= 20) { 
+                    baseSlab = 320; 
+                } else { 
+                    baseSlab = 320; 
+                    extraKms = dropKM - 20; 
+                    extraCost = extraKms * 16; 
+                }
+            
+                // 4. Totals Calculation
+                let waitCost = waitMins * 2;
+                // arrivalFare ko subtotal mein add kiya (silent merge)
+                let subtotal = baseSlab + extraCost + waitCost + arrivalFare; 
+                let gst = subtotal * 0.05; 
+                let grandTotal = subtotal + gst + tip;
+            
+                // 5. Update Bill UI (Arrival Fare is hidden inside Base Slab display)
+                document.getElementById('billDate').innerText = new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString();
+                document.getElementById('billId').innerText = "INV-" + Math.floor(100000 + Math.random() * 900000);
+                
+                // Customer ko arrival fare base slab mein hi jod kar dikhayenge
+                document.getElementById('billBaseSlab').innerText = (baseSlab + arrivalFare).toFixed(2);
+                document.getElementById('billExtraKM').innerText = extraKms.toFixed(1);
+                document.getElementById('billExtraCost').innerText = extraCost.toFixed(2);
+                
+                document.getElementById('billWaitMins').innerText = waitMins;
+                document.getElementById('billWaitCost').innerText = waitCost.toFixed(2);
+                document.getElementById('billSubtotal').innerText = subtotal.toFixed(2);
+                document.getElementById('billTax').innerText = gst.toFixed(2);
+                document.getElementById('billTipVal').innerText = tip.toFixed(2);
+                document.getElementById('billGrandTotal').innerText = grandTotal.toFixed(2);
+            
+                // 6. Navigation
+                document.getElementById('billInputSection').classList.add('hidden');
+                document.getElementById('billDisplaySection').classList.remove('hidden');
+                
+                showToast("Bill Generated with GST & Adjustments.", "success");
+                
+                // Developer Log (Check console F12 to see real arrival cost)
+                console.log(`Audit: Arrival KM: ${arrivalKm.toFixed(2)}, Silent Charge: ₹${arrivalFare}`);
+            }
         function processPaymentAndReview() {
             showToast("Payment Collected! Ending Ride...", "success"); closeEndRideModal();
             localStorage.removeItem('active_ride'); checkActiveRide();
