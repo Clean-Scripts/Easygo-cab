@@ -174,7 +174,7 @@
         </section>
         
         <!-- About Section -->
-        <section id="about" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white rounded-3xl shadow-2xl p-10"><h2 class="text-4xl font-black text-blue-900 border-l-8 border-blue-600 pl-4">📖 The EasyGo Journey</h2><p class="text-xl mt-6 font-medium leading-relaxed">Founded by <strong>Nishant Jaiswal</strong>, based at <strong>Omaxe City 1, Indore</strong>. Our premium white Citroen C3 offers unmatched comfort for city rides and outstation tours. No surge pricing, 100% transparent fare calculation, and premium service across Madhya Pradesh. We prioritize customer safety, cleanliness, and punctuality.</p><p class="mt-4 text-lg"><i class="fas fa-car text-blue-600"></i> Vehicle: Citroen C3 (Premium Suspension) | <i class="fas fa-id-card"></i> Private Vehicle Number: MP09 XY 1234</p></div></section>
+        <section id="about" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white rounded-3xl shadow-2xl p-10"><h2 class="text-4xl font-black text-blue-900 border-l-8 border-blue-600 pl-4">📖 The EasyGo Journey</h2><p class="text-xl mt-6 font-medium leading-relaxed">Founded by <strong>Nishant Jaiswal</strong>, based at <strong>Omaxe City 1, Indore</strong>. Our premium white Citroen C3 offers unmatched comfort for city rides and outstation tours. No surge pricing, 100% transparent fare calculation, and premium service across Madhya Pradesh. We prioritize customer safety, cleanliness and punctuality.</p><p class="mt-4 text-lg"><i class="fas fa-car text-blue-600"></i> Vehicle: Citroen C3 <i class="fas fa-id-card"></i></p></div></section>
         
         <!-- Privacy Policy - Detailed -->
         <section id="privacy" class="page-section max-w-6xl mx-auto px-5 py-16">
@@ -213,7 +213,7 @@
 
     <footer class="bg-slate-900 text-slate-300 py-12 border-t-8 border-blue-600 text-center">
         <p class="text-2xl font-black text-white">EasyGo Cabs</p>
-        <p class="mt-2"><i class="fas fa-map-marker-alt"></i> Omaxe City 1, Indore | <i class="fab fa-whatsapp"></i> +91 76518 37322 | MP09 XY 1234</p>
+        <p class="mt-2"><i class="fas fa-map-marker-alt"></i> Omaxe City 1, Indore | <i class="fab fa-whatsapp"></i> +91 76518 37322 </p>
         <p class="text-xs mt-6">© 2026 EasyGo | Premium Rides | All Rights Reserved</p>
     </footer>
 
@@ -565,8 +565,46 @@
     function loginUI(mob,n){ document.getElementById('loginBtn').classList.add('hidden'); document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('displayUserName').innerHTML=n.toUpperCase(); document.getElementById('customerPhone').value=mob; document.getElementById('customerNameField').value=n; }
     function logout(){ localStorage.clear(); location.reload(); }
     
-    function handleBooking(e){ e.preventDefault(); if(!localStorage.getItem('easygo_user')){ openLoginModal(); showToast("Please login first","error"); return; } let sub=document.getElementById('submitBtn'); let otp=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('bookingOTP').value=otp; sub.innerHTML='<i class="fas fa-spinner fa-spin"></i> Booking...'; sub.disabled=true; let fd=new FormData(document.getElementById('bookingForm')); fd.append('action','bookRide'); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Ride Booked! OTP: "+otp,"success"); let rideData={ name:localStorage.getItem('easygo_name'), phone:localStorage.getItem('easygo_user'), pickup:document.getElementById('pickup').value, drop:document.getElementById('drop').value, otp:otp, date:document.getElementById('date').value, time:document.getElementById('time').value }; localStorage.setItem('active_ride',JSON.stringify(rideData)); checkActiveRide(); sub.innerHTML='%F0%9F%9A%80 BOOK NOW !! <i class="fas fa-arrow-right"></i>'; sub.disabled=false; let msg = `%F0%9F%9F%A2 *EASYGO NEW RIDE BOOKING* %F0%9F%9F%A2%0A%0A%F0%9F%91%A4 *Customer:* ${rideData.name}%0A%F0%9F%93%9E *Phone:* +91 ${rideData.phone}%0A%F0%9F%93%8D *Pickup:* ${rideData.pickup}%0A%F0%9F%8F%81 *Drop:* ${rideData.drop}%0A%F0%9F%93%85 *Date:* ${rideData.date}%0A%E2%8F%B0 *Time:* ${rideData.time}%0A%F0%9F%94%90 *OTP:* ${otp}%0A%0A%F0%9F%9A%97 *Vehicle:* Citroen C3 (White)%0A%F0%9F%91%A8%E2%80%8D%E2%9C%88%EF%B8%8F *Driver:* Please confirm ride`; window.open(`https://wa.me/917651837322?text=${encodeURIComponent(msg)}`,'_blank'); }).catch(()=>{ sub.innerHTML='%F0%9F%9A%80 BOOK NOW !!'; sub.disabled=false; showToast("Booking error","error"); }); }
-    
+function handleBooking(e){ 
+    e.preventDefault(); 
+    if(!localStorage.getItem('easygo_user')){ 
+        openLoginModal(); 
+        showToast("Please Login First","error"); 
+        return; 
+    } 
+    let sub=document.getElementById('submitBtn'); 
+    let otp=Math.floor(100000+Math.random()*900000).toString(); 
+    document.getElementById('bookingOTP').value=otp; 
+    sub.innerHTML='<i class="fas fa-spinner fa-spin"></i> Booking...'; 
+    sub.disabled=true; 
+    let fd=new FormData(document.getElementById('bookingForm')); 
+    fd.append('action','bookRide'); 
+    fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ 
+        showToast("Ride Booked! OTP: "+otp,"success"); 
+        let rideData={ 
+            name:localStorage.getItem('easygo_name'), 
+            phone:localStorage.getItem('easygo_user'), 
+            pickup:document.getElementById('pickup').value, 
+            drop:document.getElementById('drop').value, 
+            otp:otp, 
+            date:document.getElementById('date').value, 
+            time:document.getElementById('time').value 
+        }; 
+        localStorage.setItem('active_ride',JSON.stringify(rideData)); 
+        checkActiveRide(); 
+        sub.innerHTML='🚀 BOOK NOW !! <i class="fas fa-arrow-right"></i>'; 
+        sub.disabled=false; 
+        
+        let msg = ` *EASYGO NEW RIDE BOOKING* \n\n👤 Customer: ${rideData.name}\n📞 Phone: +91 ${rideData.phone}\n📍 Pickup: ${rideData.pickup}\n🏁 Drop: ${rideData.drop}\n📅 Date: ${rideData.date}\n⏰ Time: ${rideData.time}\n🔐 OTP: ${otp}\n\n🚗 Vehicle: Citroen C3 (White)\n👨‍✈️ Driver: Please confirm ride`;
+        
+        window.open(`https://wa.me/917651837322?text=${msg}`, '_blank');
+        
+    }).catch(()=>{ 
+        sub.innerHTML='🚀 BOOK NOW !!'; 
+        sub.disabled=false; 
+        showToast("Booking error","error"); 
+    }); 
+}    
     function checkActiveRide(){ let active=localStorage.getItem('active_ride'); if(active){ let d=JSON.parse(active); document.getElementById('activeRideBanner').classList.remove('hidden'); document.getElementById('activeRideRoute').innerHTML=`${d.pickup.substring(0,25)} → ${d.drop.substring(0,25)}`; document.getElementById('activeRideOTP').innerHTML=d.otp; } else document.getElementById('activeRideBanner').classList.add('hidden'); }
     function endRideProcess(){ document.getElementById('billModal').classList.add('active'); let ride=JSON.parse(localStorage.getItem('active_ride')||'{}'); document.getElementById('billCustomerName').innerHTML=ride.name||'Guest'; document.getElementById('billPickup').innerHTML=ride.pickup||'N/A'; document.getElementById('billDrop').innerHTML=ride.drop||'N/A'; document.getElementById('billDate').innerHTML=new Date().toLocaleDateString(); document.getElementById('billTime').innerHTML=new Date().toLocaleTimeString(); }
     
@@ -623,7 +661,7 @@
     function submitReview(){ let name=localStorage.getItem('easygo_name')||"Guest"; let rating=document.getElementById('ratingValue').value; let comment=document.getElementById('reviewText').value; let fd=new FormData(); fd.append('action','addReview'); fd.append('Name',name); fd.append('Rating',rating); fd.append('Comment',comment); fd.append('Date',new Date().toLocaleDateString()); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Thanks for review!","success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); }).catch(()=>showToast("Review failed","error")); }
     
     function toggleFaq(btn){ let item=btn.closest('.faq-item'); item.classList.toggle('active'); }
-    function buildFaq(){ let faqs=[{q:"%F0%9F%92%B0 How is fare calculated?",a:"Base slab: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320. Beyond 20km: ₹16/km extra. + 5% GST + ₹2/min wait time + arrival charges from Prime Square."},{q:"%E2%8F%B0%EF%B8%8F What are waiting time charges?",a:"₹2 per minute (₹1 per 30 seconds) after driver arrives at your pickup location."},{q:"%F0%9F%94%90 How does OTP security work?",a:"6-digit OTP appears ONLY on your EasyGo dashboard. Driver never receives OTP. Ride starts only when you share OTP with driver."},{q:"%F0%9F%9A%AD Can I eat or smoke inside?",a:"Strictly prohibited. ₹500 cleaning fee applies if interior is soiled."},{q:"%F0%9F%93%9E What is cancellation policy?",a:"Free cancellation up to 15 mins before pickup. Late cancellation: ₹50."},{q:"%F0%9F%9A%97 Is this a private vehicle?",a:"Yes, private vehicle number MP09 XY 1234. Fully insured and well-maintained Citroen C3."},{q:"%F0%9F%93%8D What if my pickup is far from Prime Square?",a:"Arrival charges apply: ₹10/km for distance beyond 3km from Prime Square to your pickup."}]; let html=''; faqs.forEach((faq,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl transition hover:text-blue-700" onclick="toggleFaq(this)"><span>${i+1}. ${faq.q}</span><i class="fas fa-chevron-down faq-icon transition-transform"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 bg-slate-50 p-4 rounded-xl">${faq.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
+    function buildFaq(){ let faqs=[{q:"%F0%9F%92%B0 How is fare calculated?",a:"Base slab: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320. Beyond 20km: ₹16/km extra. + 5% GST + ₹2/min wait time + arrival charges from Prime Square."},{q:"%E2%8F%B0%EF%B8%8F What are waiting time charges?",a:"₹2 per minute (₹1 per 30 seconds) after driver arrives at your pickup location."},{q:"%F0%9F%94%90 How does OTP security work?",a:"6-digit OTP appears ONLY on your EasyGo dashboard. Driver never receives OTP. Ride starts only when you share OTP with driver."},{q:"%F0%9F%9A%AD Can I eat or smoke inside?",a:"Strictly prohibited. ₹500 cleaning fee applies if interior is soiled."},{q:"%F0%9F%93%9E What is cancellation policy?",a:"Free cancellation up to 15 mins before pickup. Late cancellation: ₹50."},{q:"%F0%9F%9A%97 Is this a private vehicle?",a:"Yes, private vehicle. Fully insured and well-maintained Citroen C3."},{q:"%F0%9F%93%8D What if my pickup is far from Prime Square?",a:"Arrival charges apply: ₹10/km for distance beyond 3km from Prime Square to your pickup."}]; let html=''; faqs.forEach((faq,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl transition hover:text-blue-700" onclick="toggleFaq(this)"><span>${i+1}. ${faq.q}</span><i class="fas fa-chevron-down faq-icon transition-transform"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 bg-slate-50 p-4 rounded-xl">${faq.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
     
     window.onload=()=>{ 
         initMap(); 
