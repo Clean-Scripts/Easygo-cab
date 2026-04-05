@@ -1028,7 +1028,7 @@
                                 <span class="text-[10px] font-black text-red-500 uppercase tracking-tighter italic">Live Tracking</span>
                                 <span class="text-[10px] font-bold text-slate-400">Available via App</span>
                             </div>
-                            <button onclick="bookTourPackage('${t.Destination}', '${t.Price}')" class="bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase transition-all shadow-lg border-b-4 border-black hover:border-blue-900 active:transform active:scale-95">
+                            <button onclick="('${t.Destination}', '${t.Price}')" class="bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase transition-all shadow-lg border-b-4 border-black hover:border-blue-900 active:transform active:scale-95">
                                 Book Now <i class="fas fa-chevron-right ml-2"></i>
                             </button>
                         </div>
@@ -1079,6 +1079,70 @@
             if(typeof updateLiveEstimate === "function") {
                 updateLiveEstimate();
             }
+        }
+
+        // 1. Live Estimate Box Create aur Update karne ka function
+        function updateLiveEstimate() {
+            // Agar koi package select nahi hai ya pickup set nahi hai toh return kar jao
+            if (selectedPackageBasePrice === 0 || !pickupMarker) return;
+        
+            const PRIME_SQUARE_COORDS = L.latLng(22.7628, 75.9234);
+            let pickupLatLng = pickupMarker.getLatLng();
+            let arrivalDist = (PRIME_SQUARE_COORDS.distanceTo(pickupLatLng) / 1000);
+            
+            let arrivalFare = 0;
+            if(arrivalDist > 3) {
+                arrivalFare = (arrivalDist - 3) * 10;
+            }
+        
+            let estimatedTotal = selectedPackageBasePrice + arrivalFare;
+            let gst = estimatedTotal * 0.05;
+            let finalWithGst = Math.round(estimatedTotal + gst);
+        
+            // Live Estimate Box check ya create karo
+            let estimateDiv = document.getElementById('liveEstimateBox');
+            if(!estimateDiv) {
+                estimateDiv = document.createElement('div');
+                estimateDiv.id = 'liveEstimateBox';
+                document.getElementById('bookingForm').appendChild(estimateDiv);
+            }
+        
+            estimateDiv.innerHTML = `
+                <div class="bg-blue-900 text-white p-5 rounded-2xl mt-6 border-b-8 border-yellow-400 shadow-2xl animate-pulse">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-[10px] uppercase font-black tracking-widest text-blue-300">Updated Package Estimate</p>
+                        <i class="fas fa-calculator text-yellow-400"></i>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-4xl font-black text-white">₹${finalWithGst}*</span>
+                            <p class="text-[9px] font-bold text-blue-200 mt-1">*Includes Base, Arrival & 5% GST</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[11px] font-bold text-yellow-400">Arrival: ₹${arrivalFare.toFixed(0)}</p>
+                            <p class="text-[11px] font-bold text-slate-300">Base: ₹${selectedPackageBasePrice}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 2. Map markers ke event listeners mein updateLiveEstimate ko attach karo
+        // Is code ko apne initMap function ke andar jahan markers define hain wahan update kar do:
+        pickupMarker.on('dragend', function(e) { 
+            let ll = e.target.getLatLng(); 
+            reverseGeocode(ll, 'pickup'); 
+            calculateMapDistance(); 
+            updateMapLinks(ll.lat, ll.lng, 'pickup');
+            updateLiveEstimate(); // <--- Ye line add karni hai
+        });
+        
+        // 3. Search suggestions click hone par bhi updateLiveEstimate call karo
+        // searchLocation function ke andar div.onclick mein jahan pickup point set hota hai:
+        if(type === 'pickup') { 
+            pickupMarker.setLatLng(latlng); 
+            updateMapLinks(place.lat, place.lon, 'pickup');
+            updateLiveEstimate(); // <--- Ye line add karni hai
         }
     </script>
 </body>
