@@ -233,7 +233,14 @@
         <section id="tours" class="page-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="text-center mb-16">
                 <h1 class="text-6xl font-black text-slate-900 mb-6 tracking-tight uppercase">Explore MP with EasyGo</h1>
-                <p class="text-2xl text-gray-700 max-w-3xl mx-auto font-bold leading-relaxed">Discover the hidden gems, majestic falls, and spiritual centers around Indore in the comfort of our Citroen C3.</p>
+                <div class="max-w-4xl mx-auto bg-yellow-50 border-l-8 border-yellow-400 p-6 rounded-2xl shadow-sm">
+                    <p class="text-xl text-slate-800 font-bold leading-relaxed">
+                        Discover Majestic Falls and Spiritual Centers. 
+                    </p>
+                    <p class="text-sm mt-3 text-red-600 font-black uppercase tracking-widest">
+                        <i class="fas fa-info-circle mr-2"></i> Important: Listed prices are "Base Estimates". Final fare varies based on your actual pickup location and dead mileage from Prime Square.
+                    </p>
+                </div>
             </div>
 
             <div class="flex flex-wrap justify-center gap-4 mb-16 border-b-4 border-slate-200 pb-8">
@@ -984,18 +991,19 @@
             container.innerHTML = '';
             
             if(toursList.length === 0) {
-                container.innerHTML = '<p class="col-span-full text-center text-xl font-bold text-slate-500 mt-10">No packages found for this season.</p>';
+                container.innerHTML = '<p class="col-span-full text-center text-xl font-bold text-slate-500 mt-10">No packages found for this selection.</p>';
                 return;
             }
-
+        
             toursList.forEach(t => {
                 let seasonBadge = 'bg-slate-800 text-white';
                 if(t.Season.toLowerCase().includes('monsoon')) seasonBadge = 'bg-blue-500 text-white';
                 if(t.Season.toLowerCase().includes('winter')) seasonBadge = 'bg-cyan-500 text-slate-900';
                 if(t.Season.toLowerCase().includes('summer')) seasonBadge = 'bg-yellow-400 text-slate-900';
-
+        
                 let div = document.createElement('div');
-                div.className = 'bg-white rounded-[2rem] overflow-hidden shadow-2xl border-2 border-slate-100 group flex flex-col';
+                div.className = 'bg-white rounded-[2rem] overflow-hidden shadow-2xl border-2 border-slate-100 group flex flex-col transition-all hover:shadow-blue-200/50';
+                
                 div.innerHTML = `
                     <div class="h-64 overflow-hidden relative bg-slate-800">
                         <img src="${t.ImageURL}" alt="${t.Destination}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100" onerror="this.src='https://images.unsplash.com/photo-1601058268499-e52658b8bb88?q=80&w=800&auto=format&fit=crop'">
@@ -1006,13 +1014,22 @@
                     <div class="p-8 bg-white flex-grow flex flex-col">
                         <h3 class="text-3xl font-black text-slate-900 tracking-wide uppercase mb-3">${t.Destination}</h3>
                         <p class="text-slate-600 text-base font-bold leading-relaxed mb-6 flex-grow">${t.Description}</p>
-                        <div class="flex justify-between items-end mt-auto">
-                            <div>
-                                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Expected Package</p>
-                                <p class="text-2xl font-black text-blue-700">₹${t.Price}</p>
+                        
+                        <div class="bg-slate-50 p-4 rounded-2xl mb-6 border-l-4 border-blue-600">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimated Base Package</p>
+                            <div class="flex items-baseline">
+                                <span class="text-3xl font-black text-blue-700">₹${t.Price}</span>
+                                <span class="text-[10px] font-bold text-slate-500 ml-2">*Price varies by pickup</span>
                             </div>
-                            <button onclick="bookTourPackage('${t.Destination}')" class="bg-slate-900 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-black text-sm uppercase transition-colors shadow-md border-b-4 border-black hover:border-blue-900">
-                                Book Now
+                        </div>
+        
+                        <div class="flex justify-between items-center mt-auto">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] font-black text-red-500 uppercase tracking-tighter italic">Live Tracking</span>
+                                <span class="text-[10px] font-bold text-slate-400">Available via App</span>
+                            </div>
+                            <button onclick="bookTourPackage('${t.Destination}', '${t.Price}')" class="bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase transition-all shadow-lg border-b-4 border-black hover:border-blue-900 active:transform active:scale-95">
+                                Book Now <i class="fas fa-chevron-right ml-2"></i>
                             </button>
                         </div>
                     </div>
@@ -1020,7 +1037,6 @@
                 container.appendChild(div);
             });
         }
-
         function filterTours(season) {
             // Update Buttons
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -1034,12 +1050,35 @@
             }
         }
 
-        function bookTourPackage(destination) {
+    // Variable to store the package price globally
+        let selectedPackageBasePrice = 0;
+
+        function bookTourPackage(destination, basePrice) {
+            // 1. Store the price for live calculation
+            selectedPackageBasePrice = parseFloat(basePrice) || 0;
+            
+            // 2. Navigation to Home
             showPage('home');
+            
+            // 3. Auto-fill the destination
             document.getElementById('drop').value = destination + ", Madhya Pradesh";
-            showToast("Tour selected! Fill pickup details.", "success");
+            
+            // 4. Show Notification
+            showToast(`Package: ${destination} (Base: ₹${basePrice}). Set your pickup for final estimate.`, "success");
+            
+            // 5. Trigger Map Search for Destination
             searchLocation(destination, 'drop');
-            window.scrollTo(0, document.getElementById('bookingForm').offsetTop - 100);
+            
+            // 6. Scroll to Form
+            window.scrollTo({
+                top: document.getElementById('bookingForm').offsetTop - 100,
+                behavior: 'smooth'
+            });
+        
+            // 7. Initial Estimate (Agar pickup pehle se set hai toh update ho jayega)
+            if(typeof updateLiveEstimate === "function") {
+                updateLiveEstimate();
+            }
         }
     </script>
 </body>
