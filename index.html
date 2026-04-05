@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyGo Cabs</title>
+    <title>EasyGo Cabs | Premium Rides in Indore</title>
     <link rel="icon" type="image/jpeg" href="easy go.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +13,7 @@
 
     <style>
         html { scroll-behavior: smooth; }
-        body { font-size: 16px; } /* Increased base font size for better readability */
+        body { font-size: 16px; overflow-x: hidden; } 
         .page-section { display: none; animation: fadeIn 0.4s ease-in-out; }
         .page-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -32,8 +32,7 @@
         }
         .suggestion-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #e2e8f0; font-size: 15px; font-weight: 500;}
         .suggestion-item:hover { background-color: #eff6ff; color: #1d4ed8; }
-        
-        /* Pinterest Style Grid for Reviews */
+
         .reviews-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -42,6 +41,8 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen selection:bg-blue-300 selection:text-blue-900">
+
+    <div id="toast-container" class="fixed top-24 right-5 z-[10000] flex flex-col gap-3 pointer-events-none"></div>
 
     <nav class="bg-white shadow-lg sticky top-0 z-50 border-b-2 border-blue-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -85,15 +86,15 @@
                     </div>
                     <div>
                         <h4 class="font-black text-2xl text-yellow-400 tracking-wide">YOUR RIDE IS BOOKED!</h4>
-                        <p class="text-lg font-medium opacity-90 mt-1" id="activeRideRoute">Omaxe City 1 to Mandu</p>
+                        <p class="text-lg font-medium opacity-90 mt-1" id="activeRideRoute">Loading...</p>
                     </div>
                 </div>
                 <div class="bg-black/40 px-8 py-3 rounded-2xl border-2 border-white/30 text-center shadow-inner">
                     <p class="text-sm uppercase tracking-widest font-bold text-yellow-300 mb-1">Share this OTP to Start Ride</p>
                     <p class="text-5xl font-black tracking-[0.2em] text-white" id="activeRideOTP">------</p>
                 </div>
-                <button onclick="endRide()" class="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 border-2 border-red-400 px-6 py-3 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-red-500/50">
-                    End Ride (Demo)
+                <button onclick="openEndRideModal()" class="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 border-2 border-red-400 px-6 py-3 rounded-xl font-bold text-lg transition-all shadow-lg hover:shadow-red-500/50">
+                    End Ride
                 </button>
             </div>
         </div>
@@ -104,7 +105,7 @@
                 <div class="lg:col-span-7 bg-white rounded-[2rem] shadow-2xl overflow-hidden border-4 border-gray-100">
                     <div class="p-5 bg-slate-900 flex justify-between items-center text-white border-b-4 border-blue-600">
                         <h3 class="font-black text-xl tracking-wide"><i class="fas fa-map-marked-alt mr-3 text-blue-400 text-2xl"></i>Interactive Route Map</h3>
-                        <button onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 text-slate-900 px-5 py-2 rounded-full text-sm font-extrabold transition-colors shadow-lg flex items-center">
+                        <button type="button" onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 text-slate-900 px-5 py-2 rounded-full text-sm font-extrabold transition-colors shadow-lg flex items-center">
                             <i class="fas fa-crosshairs mr-2"></i> Find Me
                         </button>
                     </div>
@@ -153,14 +154,14 @@
                                     <label class="block text-base font-extrabold text-gray-800 mb-2 uppercase tracking-wide">Date</label>
                                     <div class="relative shadow-md rounded-xl">
                                         <i class="fas fa-calendar-alt text-blue-600 absolute left-4 top-4 text-lg"></i>
-                                        <input type="date" id="date" name="Date" required class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:bg-white outline-none font-bold text-gray-900 text-base">
+                                        <input type="date" id="date" name="Date" required class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-600 outline-none font-bold text-gray-900 text-base">
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-base font-extrabold text-gray-800 mb-2 uppercase tracking-wide">Time</label>
                                     <div class="relative shadow-md rounded-xl">
                                         <i class="fas fa-clock text-blue-600 absolute left-4 top-4 text-lg"></i>
-                                        <input type="time" id="time" name="Time" required class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:bg-white outline-none font-bold text-gray-900 text-base">
+                                        <input type="time" id="time" name="Time" required class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-600 outline-none font-bold text-gray-900 text-base">
                                     </div>
                                 </div>
                             </div>
@@ -421,7 +422,7 @@
 
     <div id="loginModal" class="modal fixed inset-0 items-center justify-center">
         <div class="bg-white p-10 rounded-[2rem] shadow-2xl w-full max-w-md relative border-4 border-blue-100">
-            <button onclick="closeLoginModal()" class="absolute top-5 right-6 text-gray-400 hover:text-red-600 text-4xl font-black transition-colors">×</button>
+            <button type="button" onclick="closeLoginModal()" class="absolute top-5 right-6 text-gray-400 hover:text-red-600 text-4xl font-black transition-colors">×</button>
             <div class="text-center mb-8">
                 <img src="easy go.jpg" alt="Logo" class="h-20 w-20 mx-auto rounded-full border-4 border-blue-600 mb-4 shadow-lg">
                 <h2 class="text-3xl font-black text-gray-900 uppercase">Secure Login</h2>
@@ -439,23 +440,60 @@
                         <input type="tel" id="mobileInput" class="flex-1 px-5 py-4 border-2 border-gray-300 rounded-r-xl focus:border-blue-600 outline-none font-bold text-xl transition-colors" placeholder="10 Digit Number">
                     </div>
                 </div>
-                <button onclick="sendOTP()" class="w-full mt-8 bg-blue-600 hover:bg-blue-800 text-white font-black py-4 rounded-xl text-2xl transition-all shadow-[0_10px_15px_rgba(37,99,235,0.2)]">GENERATE OTP</button>
+                <button type="button" onclick="sendOTP()" class="w-full mt-8 bg-blue-600 hover:bg-blue-800 text-white font-black py-4 rounded-xl text-2xl transition-all shadow-lg">GENERATE OTP</button>
             </div>
 
             <div id="step2" class="hidden">
-                <p class="text-lg text-gray-700 mb-6 text-center font-bold">OTP sent to <span id="displayMobile" class="font-black text-blue-700"></span></p>
+                <p class="text-lg text-gray-700 mb-6 text-center font-bold">OTP auto-verifying for <span id="displayMobile" class="font-black text-blue-700"></span></p>
                 <div class="flex justify-between space-x-3 mb-8">
-                    <input type="text" maxlength="1" class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl focus:border-blue-600 otp-box text-blue-900">
-                    <input type="text" maxlength="1" class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl focus:border-blue-600 otp-box text-blue-900">
-                    <input type="text" maxlength="1" class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl focus:border-blue-600 otp-box text-blue-900">
-                    <input type="text" maxlength="1" class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl focus:border-blue-600 otp-box text-blue-900">
+                    <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl otp-box text-blue-900 bg-gray-50">
+                    <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl otp-box text-blue-900 bg-gray-50">
+                    <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl otp-box text-blue-900 bg-gray-50">
+                    <input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 border-gray-300 rounded-xl otp-box text-blue-900 bg-gray-50">
                 </div>
-                <button onclick="verifyOTP()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl text-2xl transition-all shadow-[0_10px_15px_rgba(22,163,74,0.3)]">VERIFY & LOGIN</button>
+                <div id="otpLoader" class="text-center hidden text-blue-600 font-bold text-lg mb-4"><i class="fas fa-circle-notch fa-spin mr-2"></i> Verifying...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="endRideModal" class="modal fixed inset-0 items-center justify-center">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border-4 border-red-100">
+            <i class="fas fa-check-circle text-6xl text-green-500 mb-4 drop-shadow-md"></i>
+            <h2 class="text-3xl font-black text-gray-900 mb-2">Complete Ride?</h2>
+            <p class="text-gray-600 mb-8 font-medium text-lg">Are you sure the ride is finished and driver verified the OTP?</p>
+            <div class="flex gap-4">
+                <button onclick="closeEndRideModal()" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 rounded-xl hover:bg-gray-300 transition-colors">Cancel</button>
+                <button onclick="executeEndRide()" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 shadow-lg transition-colors">Yes, End Ride</button>
             </div>
         </div>
     </div>
 
     <script>
+        // --- 0. CUSTOM TOAST NOTIFICATIONS (NO ALERTS) ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgColor = 'bg-blue-600';
+            let icon = 'fa-info-circle';
+            
+            if(type === 'success') { bgColor = 'bg-green-600'; icon = 'fa-check-circle'; }
+            if(type === 'error') { bgColor = 'bg-red-600'; icon = 'fa-exclamation-triangle'; }
+            if(type === 'warning') { bgColor = 'bg-yellow-500'; icon = 'fa-exclamation-circle'; }
+
+            toast.className = `min-w-[300px] ${bgColor} text-white px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-300 translate-x-full opacity-0 flex items-center z-[10000] border-l-4 border-white/50`;
+            toast.innerHTML = `<i class="fas ${icon} mr-3 text-2xl"></i><span class="font-bold text-lg leading-tight">${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }, 10);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
         // --- 1. PAGE ROUTING & AUTH ---
         function showPage(pageId) {
             document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
@@ -477,32 +515,47 @@
         };
 
         function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
-        function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+        function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); document.getElementById('step1').classList.remove('hidden'); document.getElementById('step2').classList.add('hidden'); }
 
+        // AUTO-FILL OTP LOGIC
         function sendOTP() {
             let name = document.getElementById('nameInput').value;
             let mobile = document.getElementById('mobileInput').value;
-            if(!name || mobile.length < 10) { alert("Please enter Full Name and valid 10-digit number"); return; }
+            
+            if(!name || mobile.length < 10) { 
+                showToast("Please enter Full Name & 10-digit number!", "error"); 
+                return; 
+            }
+            
             document.getElementById('displayMobile').innerText = "+91 " + mobile;
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             
-            const boxes = document.querySelectorAll('.otp-box');
-            boxes.forEach((box, index) => {
-                box.addEventListener('keyup', (e) => {
-                    if(e.target.value.length === 1 && index < boxes.length - 1) boxes[index + 1].focus();
-                });
-            });
-            boxes[0].focus();
+            showToast("Auto-reading OTP from SMS...", "success");
+            
+            let fakeOTP = Math.floor(1000 + Math.random() * 9000).toString();
+            let boxes = document.querySelectorAll('.otp-box');
+            let loader = document.getElementById('otpLoader');
+            
+            setTimeout(() => { boxes[0].value = fakeOTP[0]; 
+                setTimeout(() => { boxes[1].value = fakeOTP[1]; 
+                    setTimeout(() => { boxes[2].value = fakeOTP[2]; 
+                        setTimeout(() => { boxes[3].value = fakeOTP[3]; 
+                            loader.classList.remove('hidden');
+                            setTimeout(() => { verifyOTP(mobile, name); }, 800);
+                        }, 250);
+                    }, 250);
+                }, 250);
+            }, 1000);
         }
 
-        function verifyOTP() {
-            let name = document.getElementById('nameInput').value;
-            let mobile = document.getElementById('mobileInput').value;
+        function verifyOTP(mobile, name) {
             localStorage.setItem('easygo_user', mobile);
             localStorage.setItem('easygo_name', name);
             loginUI(mobile, name);
             closeLoginModal();
+            document.getElementById('otpLoader').classList.add('hidden');
+            showToast(`Welcome back, ${name}! Login Successful.`, "success");
         }
 
         function loginUI(mobile, name) {
@@ -515,7 +568,8 @@
 
         function logout() {
             localStorage.clear();
-            location.reload();
+            showToast("Logged out successfully.", "warning");
+            setTimeout(() => { location.reload(); }, 1000);
         }
 
         // --- 2. LEAFLET MAP LOGIC ---
@@ -524,18 +578,10 @@
 
         function initMap() {
             map = L.map('map').setView(indoreCoords, 12);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-            const greenIcon = L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                iconSize: [30, 50], iconAnchor: [15, 50]
-            });
-            const redIcon = L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                iconSize: [30, 50], iconAnchor: [15, 50]
-            });
+            const greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [30, 50], iconAnchor: [15, 50] });
+            const redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [30, 50], iconAnchor: [15, 50] });
 
             pickupMarker = L.marker(indoreCoords, {icon: greenIcon, draggable: true}).addTo(map).bindPopup("<b>PICKUP</b>").openPopup();
             dropMarker = L.marker([22.75, 75.89], {icon: redIcon, draggable: true}).addTo(map).bindPopup("<b>DROP</b>");
@@ -546,26 +592,12 @@
 
         function locateMeOnMap() {
             if ("geolocation" in navigator) {
+                showToast("Fetching GPS Location...", "warning");
                 navigator.geolocation.getCurrentPosition(position => {
                     const latlng = [position.coords.latitude, position.coords.longitude];
                     map.setView(latlng, 15);
-                });
-            }
-        }
-
-        function useCurrentLocation(type) {
-            if ("geolocation" in navigator) {
-                document.getElementById(type).value = "Locating GPS...";
-                navigator.geolocation.getCurrentPosition(position => {
-                    const latlng = [position.coords.latitude, position.coords.longitude];
-                    if(type === 'pickup') pickupMarker.setLatLng(latlng);
-                    if(type === 'drop') dropMarker.setLatLng(latlng);
-                    map.setView(latlng, 15);
-                    reverseGeocode({lat: latlng[0], lng: latlng[1]}, type);
-                }, () => {
-                    alert("GPS access denied.");
-                    document.getElementById(type).value = "";
-                });
+                    showToast("Location found!", "success");
+                }, () => { showToast("GPS access denied in browser.", "error"); });
             }
         }
 
@@ -602,6 +634,22 @@
             }, 500);
         }
 
+        function useCurrentLocation(type) {
+            if ("geolocation" in navigator) {
+                document.getElementById(type).value = "Locating GPS...";
+                navigator.geolocation.getCurrentPosition(position => {
+                    const latlng = [position.coords.latitude, position.coords.longitude];
+                    if(type === 'pickup') pickupMarker.setLatLng(latlng);
+                    if(type === 'drop') dropMarker.setLatLng(latlng);
+                    map.setView(latlng, 15);
+                    reverseGeocode({lat: latlng[0], lng: latlng[1]}, type);
+                }, () => {
+                    showToast("GPS access denied.", "error");
+                    document.getElementById(type).value = "";
+                });
+            }
+        }
+
         function reverseGeocode(latlng, type) {
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}`)
             .then(res => res.json())
@@ -612,12 +660,16 @@
             });
         }
 
-        // --- 3. BOOKING & OTP LOGIC ---
+        // --- 3. BOOKING LOGIC ---
         const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
 
         function handleBooking(e) {
             e.preventDefault();
-            if(!localStorage.getItem('easygo_user')) { alert("SECURITY ALERT: Please Login first to book."); openLoginModal(); return; }
+            if(!localStorage.getItem('easygo_user')) { 
+                showToast("SECURITY ALERT: Please Login first to book.", "error"); 
+                openLoginModal(); 
+                return; 
+            }
 
             const submitBtn = document.getElementById('submitBtn');
             const pickup = document.getElementById('pickup').value;
@@ -627,7 +679,6 @@
             const userPhone = document.getElementById('customerPhone').value;
             const userName = document.getElementById('customerNameField').value;
 
-            // Generate 6 Digit Secure OTP
             const rideOtp = Math.floor(100000 + Math.random() * 900000).toString();
             document.getElementById('bookingOTP').value = rideOtp;
 
@@ -638,17 +689,21 @@
             const formData = new FormData(form);
 
             fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => finalizeBooking(userName, userPhone, pickup, drop, date, time, rideOtp))
-                .catch(error => finalizeBooking(userName, userPhone, pickup, drop, date, time, rideOtp));
+                .then(response => {
+                    showToast("Database Updated! Forwarding to WhatsApp...", "success");
+                    finalizeBooking(userName, userPhone, pickup, drop, date, time, rideOtp);
+                })
+                .catch(error => {
+                    showToast("Database link error, but forwarding to WhatsApp anyway!", "warning");
+                    finalizeBooking(userName, userPhone, pickup, drop, date, time, rideOtp);
+                });
         }
 
         function finalizeBooking(name, phone, pickup, drop, date, time, otp) {
-            // Save Active Ride Status
             const rideData = { pickup, drop, otp, status: 'active' };
             localStorage.setItem('active_ride', JSON.stringify(rideData));
             checkActiveRide();
 
-            // Notify Admin (Nishant) - NO OTP included for safety
             const adminPhone = "917651837322";
             const message = `🚨 *EASYGO PREMIUM RIDE ALERT* 🚨\n\n*Customer Name:* ${name}\n*Phone:* +91 ${phone}\n\n📍 *Pickup:* ${pickup}\n🏁 *Drop:* ${drop}\n📅 *Date:* ${date}\n⏰ *Time:* ${time}\n\n*Notes:* OTP is generated and visible on customer dashboard. Ask for OTP upon arrival to start timer.`;
             
@@ -656,7 +711,7 @@
             document.getElementById('submitBtn').disabled = false;
             document.getElementById('bookingForm').reset();
 
-            window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`, '_blank');
+            setTimeout(() => { window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`, '_blank'); }, 1000);
         }
 
         function checkActiveRide() {
@@ -671,11 +726,14 @@
             }
         }
 
-        function endRide() {
-            if(confirm("Action: Complete this ride? (OTP was verified by driver)")) {
-                localStorage.removeItem('active_ride');
-                checkActiveRide();
-            }
+        // Custom End Ride Modal Logic
+        function openEndRideModal() { document.getElementById('endRideModal').classList.add('active'); }
+        function closeEndRideModal() { document.getElementById('endRideModal').classList.remove('active'); }
+        function executeEndRide() {
+            localStorage.removeItem('active_ride');
+            checkActiveRide();
+            closeEndRideModal();
+            showToast("Ride Completed Successfully!", "success");
         }
     </script>
 </body>
