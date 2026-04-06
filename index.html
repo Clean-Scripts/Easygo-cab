@@ -12,7 +12,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-size: 16px; overflow-x: hidden; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); font-family: 'Inter', system-ui, sans-serif; }
+        body { font-size: 16px; overflow-x: hidden; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden !important; width: 100% !important; }
         
         /* ========== ANIMATIONS ========== */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -72,18 +72,19 @@
         input:focus, select:focus, textarea:focus { transform: scale(1.01); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
         
         .glow-on-hover:hover { box-shadow: 0 0 20px rgba(59,130,246,0.5); }
-        /* CSS - apne style tag me daalo */
         #mobileMenu {
             position: fixed !important;
             top: 0 !important;
             right: 0 !important;
             width: 280px !important;
+            max-width: 85vw !important;
             height: 100% !important;
             background: white !important;
             z-index: 9999 !important;
             transform: translateX(100%) !important;
             transition: transform 0.3s ease-in-out !important;
             overflow-y: auto !important;
+            overflow-x: hidden !important;
             box-shadow: -5px 0 20px rgba(0,0,0,0.2) !important;
         }
         #mobileMenu.open {
@@ -113,10 +114,8 @@
             border-bottom: 1px solid #e2e8f0 !important;
             text-align: left !important;
             cursor: pointer !important;
-        }
-        .mobile-nav-btn i {
-            width: 24px !important;
-            color: #2563eb !important;
+            white-space: nowrap !important;
+            overflow-x: hidden !important;
         }
     
         @media (max-width: 768px) { .tours-container, .reviews-container { grid-template-columns: 1fr; } }
