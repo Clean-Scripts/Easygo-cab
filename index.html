@@ -30,7 +30,8 @@
         .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
         .faq-item.active .faq-answer { max-height: 380px; }
         .faq-item.active .faq-icon { transform: rotate(180deg); }
-        .stop-item { background: #f8fafc; border-radius: 1rem; padding: 0.75rem; margin-bottom: 0.75rem; border: 1px solid #e2e8f0; }
+        .stop-item { background: #f8fafc; border-radius: 1rem; padding: 0.75rem; margin-bottom: 0.75rem; border: 1px solid #e2e8f0; display: flex; gap: 0.5rem; align-items: center; }
+        .stop-item input { flex: 1; padding: 0.5rem; border-radius: 0.75rem; border: 1px solid #cbd5e1; }
         @media (max-width: 768px) { .tours-container, .reviews-container { grid-template-columns: 1fr; } }
         .nav-btn { transition: all 0.2s; cursor: pointer; }
         .nav-btn:hover { transform: translateY(-2px); color: #1d4ed8; }
@@ -38,162 +39,12 @@
         button:hover, .cat-btn:hover, .filter-btn:hover { transform: translateY(-2px); }
         .receipt-dashed { border-top: 2px dashed #cbd5e1; border-bottom: 2px dashed #cbd5e1; }
         .container {max-width: 1400px;margin: 0 auto;padding: 2rem;}
-        /* Story Hero Section */
-        .story-hero {
-            background: linear-gradient(135deg, #0c2b5e 0%, #1e3a8a 100%);
-            border-radius: 2.5rem;
-            padding: 3rem;
-            color: white;
-            margin-bottom: 3rem;
-            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .story-hero::before {
-            content: "🚖";
-            font-size: 18rem;
-            position: absolute;
-            right: -2rem;
-            bottom: -4rem;
-            opacity: 0.08;
-            pointer-events: none;
-        }
-
-        .story-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-        }
-
-        .car-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-            padding: 0.5rem 1.25rem;
-            border-radius: 100px;
-            font-weight: 600;
-            margin-top: 1rem;
-        }
-
-        /* QnA Grid Layout */
-        .qna-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .qna-card {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08);
-            transition: all 0.25s ease;
-            border: 1px solid #e2e8f0;
-            cursor: pointer;
-        }
-
-        .qna-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
-            border-color: #bfdbfe;
-        }
-
-        .qna-question {
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: #0f172a;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .qna-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.35s ease-out;
-            color: #334155;
-            margin-top: 0;
-            line-height: 1.5;
-        }
-
-        .qna-card.open .qna-answer {
-            max-height: 450px;
-            margin-top: 1rem;
-        }
-
-        .qna-card.open .fa-chevron-down {
-            transform: rotate(180deg);
-        }
-
-        .stats-banner {
-            background: #ffffffcc;
-            backdrop-filter: blur(12px);
-            border-radius: 2rem;
-            padding: 1rem 2rem;
-            margin-bottom: 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #ffffffaa;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 0.5rem 1rem;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #1e3a8a;
-        }
-
-        /* Timeline story */
-        .timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .timeline-item {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .timeline-dot {
-            width: 3rem;
-            height: 3rem;
-            background: #2563eb;
-            border-radius: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            .story-title {
-                font-size: 2rem;
-            }
-            .qna-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
+        .qna-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .qna-card { background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08); transition: all 0.25s ease; border: 1px solid #e2e8f0; cursor: pointer; }
+        .qna-card:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15); border-color: #bfdbfe; }
+        .qna-card.open .qna-answer { max-height: 450px; margin-top: 1rem; }
+        .qna-card.open .fa-chevron-down { transform: rotate(180deg); }
+        .qna-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; color: #334155; margin-top: 0; line-height: 1.5; }
     </style>
 </head>
 <body class="text-slate-800 flex flex-col min-h-screen selection:bg-blue-200">
@@ -269,14 +120,18 @@
                             <button onclick="showPage('tours')" class="bg-amber-400 text-amber-900 px-5 py-2 rounded-xl font-black text-sm shadow-md hover:bg-amber-500">🎁 Packages</button>
                         </div>
                         <form id="bookingForm" onsubmit="handleBooking(event)">
-                            <input type="hidden" id="customerPhone" name="Phone"><input type="hidden" id="customerNameField" name="Name"><input type="hidden" id="bookingOTP" name="OTP"><input type="hidden" id="pickupLink" name="Pickup_Link"><input type="hidden" id="dropLink" name="Drop_Link">
+                            <input type="hidden" id="customerPhone" name="Phone">
+                            <input type="hidden" id="customerNameField" name="Name">
+                            <input type="hidden" id="bookingOTP" name="OTP">
+                            <input type="hidden" id="pickupLink" name="Pickup_Link">
+                            <input type="hidden" id="dropLink" name="Drop_Link">
                             <div class="space-y-5">
                                 <div class="relative">
                                     <label class="block text-sm font-black">📍 Pickup Location</label>
                                     <div class="flex">
                                         <div class="relative flex-1">
                                             <i class="fas fa-circle text-green-500 absolute left-4 top-5 text-sm"></i>
-                                            <input type="text" id="pickup" name="Pickup" required autocomplete="off" onkeyup="searchLocation(this.value, 'pickup')" class="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
+                                            <input type="text" id="pickup" name="Pickup" required autocomplete="off" onkeyup="debouncedSearchPickup(this.value)" class="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
                                             <div id="pickup-suggestions" class="suggestions-box"></div>
                                         </div>
                                         <button type="button" onclick="useCurrentLocation('pickup')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700"><i class="fas fa-location-arrow"></i></button>
@@ -292,7 +147,7 @@
                                     <div class="flex">
                                         <div class="relative flex-1">
                                             <i class="fas fa-square text-red-500 absolute left-4 top-5 text-sm"></i>
-                                            <input type="text" id="drop" name="Drop" required autocomplete="off" onkeyup="searchLocation(this.value, 'drop')" class="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
+                                            <input type="text" id="drop" name="Drop" required autocomplete="off" onkeyup="debouncedSearchDrop(this.value)" class="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
                                             <div id="drop-suggestions" class="suggestions-box"></div>
                                         </div>
                                         <button type="button" onclick="useCurrentLocation('drop')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700"><i class="fas fa-location-arrow"></i></button>
@@ -393,13 +248,9 @@
         <section id="terms" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white rounded-3xl shadow-2xl p-10"><h1 class="text-4xl font-black text-blue-900 mb-6">⚖️ Terms</h1><p>Slab rates + ₹16/km extra + 5% GST + ₹2/min wait + toll charges extra if applicable.</p></div></section>
     </main>
 
-    <!-- ==================== FOOTER SECTION ==================== -->
     <footer class="bg-slate-900 text-slate-300 pt-12 pb-6 border-t-8 border-blue-600">
         <div class="max-w-7xl mx-auto px-5">
-            <!-- Main Footer Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-                
-                <!-- Company Info Column -->
                 <div>
                     <div class="flex items-center gap-3 mb-4">
                         <img src="easy go.jpg" alt="EasyGo Logo" class="h-12 w-12 rounded-full border-2 border-blue-500">
@@ -413,44 +264,26 @@
                         <a href="#" class="text-gray-400 hover:text-blue-400 transition text-xl"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
-                
-                <!-- Quick Links Column -->
                 <div>
                     <h3 class="text-white font-black text-lg mb-4 border-l-4 border-blue-500 pl-3">Quick Links</h3>
                     <ul class="space-y-2 text-sm">
                         <li><a href="#" onclick="showPage('home'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Home</a></li>
                         <li><a href="#" onclick="showPage('tours'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Tour Packages</a></li>
-                        <li><a href="#" onclick="showPage('story'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Our Story</a></li>
+                        <li><a href="#" onclick="showPage('about'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Our Story</a></li>
                         <li><a href="#" onclick="showPage('faq'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> FAQ</a></li>
                         <li><a href="#" onclick="showPage('privacy'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Privacy Policy</a></li>
                         <li><a href="#" onclick="showPage('terms'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Terms & Conditions</a></li>
                     </ul>
                 </div>
-                
-                <!-- Contact Info Column -->
                 <div>
                     <h3 class="text-white font-black text-lg mb-4 border-l-4 border-blue-500 pl-3">Contact Us</h3>
                     <ul class="space-y-3 text-sm">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-map-marker-alt text-blue-400 mt-1"></i>
-                            <span class="text-gray-400">Omaxe City 1, Indore, Madhya Pradesh - 452001</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fab fa-whatsapp text-green-400"></i>
-                            <a href="https://wa.me/917651837322" class="text-gray-400 hover:text-blue-400 transition">+91 76518 37322</a>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-phone-alt text-blue-400"></i>
-                            <span class="text-gray-400">+91 76518 37322</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-envelope text-red-400"></i>
-                            <a href="mailto:easygocabs@gmail.com" class="text-gray-400 hover:text-blue-400 transition">easygocabs@gmail.com</a>
-                        </li>
+                        <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt text-blue-400 mt-1"></i><span class="text-gray-400">Omaxe City 1, Indore, Madhya Pradesh - 452001</span></li>
+                        <li class="flex items-center gap-3"><i class="fab fa-whatsapp text-green-400"></i><a href="https://wa.me/917651837322" class="text-gray-400 hover:text-blue-400 transition">+91 76518 37322</a></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-phone-alt text-blue-400"></i><span class="text-gray-400">+91 76518 37322</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-envelope text-red-400"></i><a href="mailto:easygocabs@gmail.com" class="text-gray-400 hover:text-blue-400 transition">easygocabs@gmail.com</a></li>
                     </ul>
                 </div>
-                
-                <!-- Working Hours & CTA Column -->
                 <div>
                     <h3 class="text-white font-black text-lg mb-4 border-l-4 border-blue-500 pl-3">Working Hours</h3>
                     <ul class="space-y-2 text-sm text-gray-400 mb-4">
@@ -464,31 +297,13 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Divider -->
             <div class="border-t border-slate-700 my-6"></div>
-            
-            <!-- Bottom Bar -->
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                <div>
-                    <i class="fas fa-car-side text-blue-500 mr-1"></i>
-                    Vehicle: <strong class="text-white">White Citroën C3</strong> | 
-                    <i class="fas fa-id-card ml-2"></i> Self-Owned Private Car
-                </div>
-                <div class="flex gap-6">
-                    <span><i class="fas fa-shield-alt text-green-500"></i> OTP Secure</span>
-                    <span><i class="fas fa-chart-line text-blue-500"></i> No Surge Pricing</span>
-                    <span><i class="fas fa-star text-yellow-500"></i> 4.98 ⭐ Rating</span>
-                </div>
-                <div>
-                    © 2026 EasyGo Cabs | Premium Private Car Service | All Rights Reserved
-                </div>
+                <div><i class="fas fa-car-side text-blue-500 mr-1"></i> Vehicle: <strong class="text-white">White Citroën C3</strong> | <i class="fas fa-id-card ml-2"></i> Self-Owned Private Car</div>
+                <div class="flex gap-6"><span><i class="fas fa-shield-alt text-green-500"></i> OTP Secure</span><span><i class="fas fa-chart-line text-blue-500"></i> No Surge Pricing</span><span><i class="fas fa-star text-yellow-500"></i> 4.98 ⭐ Rating</span></div>
+                <div>© 2026 EasyGo Cabs | Premium Private Car Service | All Rights Reserved</div>
             </div>
-            
-            <!-- Disclaimer -->
-            <div class="text-center text-xs text-gray-600 mt-6 pt-4 border-t border-slate-800">
-                <p>🚖 100% Private Vehicle | Transparent Fare | GST Invoice | 24/7 Customer Support</p>
-            </div>
+            <div class="text-center text-xs text-gray-600 mt-6 pt-4 border-t border-slate-800"><p>🚖 100% Private Vehicle | Transparent Fare | GST Invoice | 24/7 Customer Support</p></div>
         </div>
     </footer>
 
@@ -501,7 +316,11 @@
                 <div class="flex"><span class="bg-slate-200 p-4 rounded-l-xl">+91</span><input type="tel" id="mobileInput" placeholder="10 digit mobile" class="flex-1 p-4 border-2 rounded-r-xl"></div>
                 <button onclick="sendOTP()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black mt-5">GENERATE OTP</button>
             </div>
-            <div id="step2" class="hidden text-center"><p class="font-bold">OTP sent</p><div class="flex justify-center gap-3 my-6"><input type="text" readonly class="w-16 h-20 text-center text-4xl font-black border-4 rounded-2xl"></div></div>
+            <div id="step2" class="hidden text-center">
+                <p class="font-bold">Your OTP for login:</p>
+                <input type="text" id="otpDisplay" readonly class="w-40 h-16 text-center text-3xl font-black border-4 rounded-2xl mx-auto my-4 bg-gray-100">
+                <p class="text-sm text-gray-500">Auto-login in a moment...</p>
+            </div>
         </div>
     </div>
 
@@ -542,137 +361,483 @@
             <button onclick="submitReview()" class="w-full bg-slate-800 text-white p-4 rounded-xl font-black uppercase">📝 Publish Review</button>
         </div>
     </div>
-    
+
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
-        const PRIME_SQUARE = L.latLng(22.7628, 75.9234);
-        let map, pickupMarker, dropMarker, allToursData = [], currentSeason = 'All', currentCategory = 'All', selectedPackageBasePrice = 0, stopLocations = [];
+    // ======================== GLOBALS ========================
+    let allToursData = [];
+    let currentSeason = 'All';
+    let currentCategory = 'All';
+    let stopLocations = [];      // each element: L.latLng or null
+    let stopElements = [];       // store DOM ids for removal
+    let selectedPackageBasePrice = 0;
+    let currentRating = 5;
+    let map, pickupMarker, dropMarker;
+    let activeRideCache = null;
+    const PRIME_SQUARE = L.latLng(22.7196, 75.8577);
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
 
-        function showPage(id) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); if(id==='tours' && !allToursData.length) loadDynamicTours(); }
-        function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
-        function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
-        function showToast(msg, type) { let t = document.createElement('div'); t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type==='success'?'border-green-500':'border-red-500'} pointer-events-auto`; t.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'exclamation-triangle'} mr-2"></i> ${msg}`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(),3000); }
-        function closeEndRideModal() { document.getElementById('billModal').classList.remove('active'); document.getElementById('billInputSection').classList.remove('hidden'); document.getElementById('billDisplaySection').classList.add('hidden'); }
-        function addStop() { let container = document.getElementById('stopsContainer'); let stopId = Date.now(); let div = document.createElement('div'); div.className = 'stop-item'; div.id = `stop-${stopId}`; div.innerHTML = `<div class="flex gap-2"><i class="fas fa-map-pin text-purple-500"></i><input type="text" placeholder="Stop location" class="flex-1 p-2 border rounded-lg stop-input" data-stop-id="${stopId}" onkeyup="searchStopLocation(this.value, ${stopId})"></div><div id="stop-suggestions-${stopId}" class="suggestions-box hidden"></div><button type="button" onclick="removeStop(${stopId})" class="text-red-500"><i class="fas fa-trash"></i></button>`; container.appendChild(div); stopLocations.push(null); calculateTotalDistance(); }
-        function removeStop(stopId) { document.getElementById(`stop-${stopId}`).remove(); stopLocations = []; calculateTotalDistance(); }
-        function searchStopLocation(query, stopId) { if(query.length<3) return; fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}+Indore&limit=5`).then(r=>r.json()).then(data=>{ let box=document.getElementById(`stop-suggestions-${stopId}`); if(box){ box.innerHTML=''; if(data.length){ box.style.display='block'; data.forEach(p=>{ let div=document.createElement('div'); div.className='suggestion-item'; div.innerText=p.display_name.split(',')[0]; div.onclick=()=>{ let input=document.querySelector(`.stop-input[data-stop-id="${stopId}"]`); if(input) input.value=div.innerText; box.style.display='none'; stopLocations.push(L.latLng(p.lat,p.lon)); calculateTotalDistance(); }; box.appendChild(div); }); } } }); }
-        function calculateTotalDistance() { let points = [pickupMarker.getLatLng()]; stopLocations.forEach(s=>{ if(s) points.push(s); }); points.push(dropMarker.getLatLng()); let totalDist=0; for(let i=0;i<points.length-1;i++) totalDist+=points[i].distanceTo(points[i+1]); let roadKm = (totalDist * 1.3 / 1000).toFixed(2); document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM"; document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm)); updateLiveEstimate(); return roadKm; }
-        async function getAddressFromLatLng(lat,lng,inputId){ try{ let res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`); let data=await res.json(); if(data.display_name) document.getElementById(inputId).value=data.display_name.split(',')[0]; else document.getElementById(inputId).value=`${lat.toFixed(4)},${lng.toFixed(4)}`; }catch(e){} }
-        function initMap(){ map=L.map('map').setView([22.7196,75.8577],12); L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map); let greenIcon=L.icon({iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',iconSize:[30,50]}); let redIcon=L.icon({iconUrl:'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',iconSize:[30,50]}); pickupMarker=L.marker([22.7196,75.8577],{icon:greenIcon,draggable:true}).addTo(map); dropMarker=L.marker([22.75,75.89],{icon:redIcon,draggable:true}).addTo(map); pickupMarker.on('dragend',async()=>{ await getAddressFromLatLng(pickupMarker.getLatLng().lat,pickupMarker.getLatLng().lng,'pickup'); calculateTotalDistance(); }); dropMarker.on('dragend',async()=>{ await getAddressFromLatLng(dropMarker.getLatLng().lat,dropMarker.getLatLng().lng,'drop'); calculateTotalDistance(); }); calculateTotalDistance(); }
-        function updateLiveEstimate(){ let dist=parseFloat(document.getElementById('mapDistanceDisplay').innerText)||0; let arrivalDist=Math.max(0,(PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000-3)); let arrival=arrivalDist*10; let baseSlab=0,extraKm=0; if(dist<=5) baseSlab=100; else if(dist<=10) baseSlab=180; else if(dist<=20) baseSlab=320; else { baseSlab=320; extraKm=dist-20; } let extraCost=extraKm*16; let subtotal=baseSlab+extraCost+arrival+(selectedPackageBasePrice||0); let isRoundTrip=document.getElementById('roundTripCheck').checked; if(isRoundTrip) subtotal=subtotal*1.8; let tollEstimate=Math.floor(dist*1.2); let gst=(subtotal+tollEstimate)*0.05; let total=Math.round(subtotal+tollEstimate+gst); let box=document.getElementById('liveEstimateBox'); if(!box){ box=document.createElement('div'); box.id='liveEstimateBox'; document.getElementById('bookingForm').insertBefore(box,document.getElementById('submitBtn')); } box.className='bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl'; box.innerHTML=`<div class="flex justify-between"><span class="font-bold">💰 ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div><div class="grid grid-cols-2 text-[11px] mt-2"><span>Base:₹${Math.round(baseSlab+arrival)}</span><span>Extra:₹${Math.round(extraCost)}</span><span>${isRoundTrip?'Round Trip 1.8x':''}</span><span>Toll Est:₹${tollEstimate}</span><span>GST:₹${Math.round(gst)}</span></div>`; }
-        function searchLocation(q,t){ if(q.length<3) return; fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`).then(r=>r.json()).then(data=>{ let box=document.getElementById(t+'-suggestions'); box.innerHTML=''; if(data.length){ box.style.display='block'; data.forEach(p=>{ let div=document.createElement('div'); div.className='suggestion-item'; div.innerText=p.display_name.split(',')[0]; div.onclick=()=>{ document.getElementById(t).value=div.innerText; box.style.display='none'; let latlng=L.latLng(p.lat,p.lon); if(t==='pickup') pickupMarker.setLatLng(latlng); else dropMarker.setLatLng(latlng); calculateTotalDistance(); }; box.appendChild(div); }); } else box.style.display='none'; }); }
-        function useCurrentLocation(t){ navigator.geolocation.getCurrentPosition(pos=>{ let latlng=[pos.coords.latitude,pos.coords.longitude]; if(t==='pickup') pickupMarker.setLatLng(latlng); else dropMarker.setLatLng(latlng); getAddressFromLatLng(latlng[0],latlng[1],t); calculateTotalDistance(); }); }
-        function locateMeOnMap(){ useCurrentLocation('pickup'); }
-        function filterTours(ev,season){ currentSeason=season; document.querySelectorAll('.filter-btn').forEach(btn=>btn.classList.remove('active')); ev.currentTarget.classList.add('active'); applyDualFilter(); }
-        function filterByCategory(ev,cat){ currentCategory=cat; document.querySelectorAll('.cat-btn').forEach(btn=>btn.classList.remove('active')); ev.currentTarget.classList.add('active'); applyDualFilter(); }
-        function applyDualFilter(){ if(!allToursData.length) return; let filtered=allToursData.filter(t=>{ let dsc=(t.Description+"").toLowerCase(); let sea=(t.Season+"").toLowerCase(); let sMatch=(currentSeason==='All'||sea.includes(currentSeason.toLowerCase())); let cMatch=currentCategory==='All'||(currentCategory==='Nature'&&(dsc.includes('fall')||dsc.includes('lake')))||(currentCategory==='Religious'&&dsc.includes('temple'))||(currentCategory==='Adventure'&&(dsc.includes('mall')||dsc.includes('food')))||(currentCategory==='Heritage'&&(dsc.includes('fort')||dsc.includes('palace'))); return sMatch&&cMatch; }); renderTours(filtered); }
-        function renderTours(list){ let container=document.getElementById('dynamic-tours-container'); if(!container) return; container.innerHTML=list.length?list.map(t=>`<div class="bg-white rounded-3xl shadow-xl overflow-hidden transition hover:-translate-y-2"><img src="${t.ImageURL||'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover"><div class="p-6"><h3 class="text-2xl font-black">${t.Destination}</h3><p class="text-gray-600 my-2">${t.Description}</p><div class="bg-slate-100 p-3 rounded-2xl"><span class="text-3xl font-black text-blue-700">₹${t.Price}</span><small> est.</small></div><button onclick='bookTourPackage("${t.Destination}",${t.Price})' class="w-full mt-4 bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-blue-700">🎯 BOOK TOUR</button></div></div>`).join(''):'<div class="col-span-full text-center py-10">No packages</div>'; }
-        function bookTourPackage(dest,price){ selectedPackageBasePrice=price; showPage('home'); document.getElementById('drop').value=dest+", MP"; searchLocation(dest,'drop'); updateLiveEstimate(); window.scrollTo({top:document.getElementById('bookingForm').offsetTop-100,behavior:'smooth'}); showToast(`Package ${dest} added`,"success"); }
-        function loadDynamicTours(){ fetch(scriptURL+"?action=getTours&t="+Date.now()).then(r=>r.json()).then(d=>{ if(d.result==='success'&&d.tours){ allToursData=d.tours; renderTours(allToursData); } }).catch(()=>{}); }
-        function loadDynamicReviews(){ fetch(scriptURL+"?action=getReviews&t="+Date.now()).then(r=>r.json()).then(d=>{ let con=document.getElementById('dynamic-reviews-container'); if(d.result==='success'&&d.reviews) con.innerHTML=d.reviews.reverse().map(r=>`<div class="bg-white p-6 rounded-2xl shadow-xl"><div class="text-yellow-400">${'★'.repeat(r.Rating)}${'☆'.repeat(5-r.Rating)}</div><p class="font-bold mt-2">"${r.Comment}"</p><p class="text-sm mt-2 text-blue-700">— ${r.Name}</p></div>`).join(''); }); }
-        function sendOTP(){ let n=document.getElementById('nameInput').value,m=document.getElementById('mobileInput').value; if(!n||m.length<10){showToast("Invalid details","error");return;} document.getElementById('step1').classList.add('hidden'); document.getElementById('step2').classList.remove('hidden'); let otp=Math.floor(1000+Math.random()*9000).toString(); let boxes=document.querySelectorAll('.otp-box'); boxes.forEach((box,i)=>setTimeout(()=>box.value=otp[i]||'',i*180)); setTimeout(()=>{ localStorage.setItem('easygo_user',m); localStorage.setItem('easygo_name',n); loginUI(m,n); closeLoginModal(); showToast(`Welcome ${n}`,"success"); },1500); }
-        function loginUI(mob,n){ document.getElementById('loginBtn').classList.add('hidden'); document.getElementById('userMenu').classList.remove('hidden'); document.getElementById('displayUserName').innerHTML=n.toUpperCase(); document.getElementById('customerPhone').value=mob; document.getElementById('customerNameField').value=n; }
-        function logout(){ localStorage.clear(); location.reload(); }
-        function handleBooking(e){ e.preventDefault(); if(!localStorage.getItem('easygo_user')){ openLoginModal(); return; } let otp=Math.floor(100000+Math.random()*900000).toString(); document.getElementById('bookingOTP').value=otp; let fd=new FormData(document.getElementById('bookingForm')); fd.append('action','bookRide'); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast(`Ride Booked! OTP: ${otp}`,"success"); let rideData={name:localStorage.getItem('easygo_name'),phone:localStorage.getItem('easygo_user'),pickup:document.getElementById('pickup').value,drop:document.getElementById('drop').value,otp:otp,date:document.getElementById('date').value,time:document.getElementById('time').value}; localStorage.setItem('active_ride',JSON.stringify(rideData)); checkActiveRide(); let msg=`🚖 EASYGO NEW BOOKING 🚖\n\nCustomer: ${rideData.name}\nPhone: +91${rideData.phone}\nPickup: ${rideData.pickup}\nDrop: ${rideData.drop}\nDate: ${rideData.date} Time: ${rideData.time}\nOTP: ${otp}\nVehicle: Citroen C3`; window.open(`https://wa.me/917651837322?text=${encodeURIComponent(msg)}`,'_blank'); }); }
-        function checkActiveRide(){ let active=localStorage.getItem('active_ride'); if(active){ let d=JSON.parse(active); document.getElementById('activeRideBanner').classList.remove('hidden'); document.getElementById('activeRideRoute').innerHTML=`${d.pickup} → ${d.drop}`; document.getElementById('activeRideOTP').innerHTML=d.otp; } else document.getElementById('activeRideBanner').classList.add('hidden'); }
-        function endRideProcess(){ document.getElementById('billModal').classList.add('active'); let ride=JSON.parse(localStorage.getItem('active_ride')||'{}'); document.getElementById('billCustomerName').innerHTML=ride.name||'Guest'; document.getElementById('billPickup').innerHTML=ride.pickup||'N/A'; document.getElementById('billDrop').innerHTML=ride.drop||'N/A'; }
-        function calculateFinalBill(){ let km=parseFloat(document.getElementById('inputActualKM').value)||0; let wait=parseFloat(document.getElementById('inputWaitTime').value)||0; let toll=parseFloat(document.getElementById('inputToll').value)||0; let tip=parseFloat(document.getElementById('inputTip').value)||0; let arrivalDist=Math.max(0,(PRIME_SQUARE.distanceTo(pickupMarker.getLatLng())/1000-3)); let arrival=arrivalDist*10; let baseSlab=0,extraKm=0; if(km<=5) baseSlab=100; else if(km<=10) baseSlab=180; else if(km<=20) baseSlab=320; else { baseSlab=320; extraKm=km-20; } let extraCost=extraKm*16; let waitCost=wait*2; let subtotal=baseSlab+extraCost+waitCost+arrival+(selectedPackageBasePrice||0); let roundSurcharge=0; if(document.getElementById('roundTripCheck').checked){ roundSurcharge=subtotal*0.8; subtotal=subtotal*1.8; } subtotal+=toll; let gst=subtotal*0.05; let total=Math.round(subtotal+gst+tip); document.getElementById('billBaseFare').innerHTML=`₹${Math.round(baseSlab+arrival)}`; document.getElementById('billExtraCost').innerHTML=`₹${Math.round(extraCost)}`; document.getElementById('billWaitCost').innerHTML=`₹${waitCost}`; document.getElementById('billToll').innerHTML=`₹${toll}`; document.getElementById('billRoundSurcharge').innerHTML=`₹${Math.round(roundSurcharge)}`; document.getElementById('billSubtotal').innerHTML=`₹${subtotal.toFixed(2)}`; document.getElementById('billTax').innerHTML=`₹${Math.round(gst)}`; document.getElementById('billTipVal').innerHTML=`₹${tip}`; document.getElementById('billGrandTotal').innerHTML=`₹${total}`; document.getElementById('billDistance').innerHTML=km; document.getElementById('billTravelTime').innerHTML=Math.round(km*2.5+wait); document.getElementById('billInputSection').classList.add('hidden'); document.getElementById('billDisplaySection').classList.remove('hidden'); }
-        function processPaymentAndReview(){ showToast("Payment collected","success"); closeEndRideModal(); localStorage.removeItem('active_ride'); checkActiveRide(); setTimeout(()=>document.getElementById('reviewModal').classList.add('active'),300); }
-        let currentRating=5; function setRating(v){ currentRating=v; document.getElementById('ratingValue').value=v; let stars=document.querySelectorAll('#starContainer i'); stars.forEach((star,idx)=>{ star.className=idx<v?'fas fa-star active':'far fa-star'; }); }
-        function submitReview(){ let name=localStorage.getItem('easygo_name')||"Guest",rating=document.getElementById('ratingValue').value,comment=document.getElementById('reviewText').value; let fd=new FormData(); fd.append('action','addReview'); fd.append('Name',name); fd.append('Rating',rating); fd.append('Comment',comment); fd.append('Date',new Date().toLocaleDateString()); fetch(scriptURL,{method:'POST',body:fd}).then(()=>{ showToast("Thanks for review!","success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); }); }
-        function buildFaq(){ let faqs=[{q:"💰 Fare with Toll & Round Trip?",a:"Toll added in final bill. Round trip = 1.8x one-way fare."},{q:"⏱️ Wait charges?",a:"₹2/min after driver arrival."}]; let html=''; faqs.forEach((f,i)=>{ html+=`<div class="faq-item border-b pb-4"><button class="w-full flex justify-between text-left font-black text-xl" onclick="this.closest('.faq-item').classList.toggle('active')"><span>${i+1}. ${f.q}</span><i class="fas fa-chevron-down faq-icon"></i></button><div class="faq-answer"><p class="mt-3 text-gray-600 p-4">${f.a}</p></div></div>`; }); document.getElementById('faqContainer').innerHTML=html; }
-        window.onload=()=>{ initMap(); document.getElementById('date').valueAsDate=new Date(); if(localStorage.getItem('easygo_user')) loginUI(localStorage.getItem('easygo_user'),localStorage.getItem('easygo_name')); checkActiveRide(); loadDynamicReviews(); loadDynamicTours(); buildFaq(); setRating(5); };
+    // Debounce helpers
+    let debounceTimer;
+    function debouncedSearchPickup(q) { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => searchLocation(q, 'pickup'), 300); }
+    function debouncedSearchDrop(q) { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => searchLocation(q, 'drop'), 300); }
 
-    // ---------- MEGA QnA DATABASE: 36 categories, each answer containing 15-25 key points (totaling 600+ points) ----------
+    // ======================== UI HELPERS ========================
+    function showPage(id) {
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0, 0);
+        if (id === 'tours' && !allToursData.length) loadDynamicTours();
+    }
+    function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+    function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+    function showToast(msg, type) {
+        let t = document.createElement('div');
+        t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type === 'success' ? 'border-green-500' : 'border-red-500'} pointer-events-auto`;
+        t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} mr-2"></i> ${msg}`;
+        document.getElementById('toast-container').appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    }
+    function closeEndRideModal() {
+        document.getElementById('billModal').classList.remove('active');
+        document.getElementById('billInputSection').classList.remove('hidden');
+        document.getElementById('billDisplaySection').classList.add('hidden');
+    }
+
+    // ======================== STOP MANAGEMENT (FIXED) ========================
+    function addStop() {
+        let container = document.getElementById('stopsContainer');
+        let stopId = Date.now();
+        let div = document.createElement('div');
+        div.className = 'stop-item';
+        div.id = `stop-${stopId}`;
+        div.innerHTML = `
+            <input type="text" placeholder="Stop location" class="stop-input" data-stop-id="${stopId}" onkeyup="searchStopLocation(this.value, ${stopId})">
+            <div id="stop-suggestions-${stopId}" class="suggestions-box hidden"></div>
+            <button type="button" onclick="removeStop(${stopId})" class="text-red-500"><i class="fas fa-trash"></i></button>
+        `;
+        container.appendChild(div);
+        stopLocations.push(null);
+        stopElements.push(stopId);
+        calculateTotalDistance();
+    }
+    function removeStop(stopId) {
+        const element = document.getElementById(`stop-${stopId}`);
+        if (element) element.remove();
+        const index = stopElements.indexOf(stopId);
+        if (index !== -1) {
+            stopElements.splice(index, 1);
+            stopLocations.splice(index, 1);
+        }
+        calculateTotalDistance();
+    }
+    function searchStopLocation(query, stopId) {
+        if (query.length < 3) return;
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}+Indore&limit=5`)
+            .then(r => r.json())
+            .then(data => {
+                let box = document.getElementById(`stop-suggestions-${stopId}`);
+                if (box) {
+                    box.innerHTML = '';
+                    if (data.length) {
+                        box.style.display = 'block';
+                        data.forEach(p => {
+                            let div = document.createElement('div');
+                            div.className = 'suggestion-item';
+                            div.innerText = p.display_name.split(',')[0];
+                            div.onclick = () => {
+                                let input = document.querySelector(`.stop-input[data-stop-id="${stopId}"]`);
+                                if (input) input.value = div.innerText;
+                                box.style.display = 'none';
+                                const idx = stopElements.indexOf(stopId);
+                                if (idx !== -1) stopLocations[idx] = L.latLng(p.lat, p.lon);
+                                calculateTotalDistance();
+                            };
+                            box.appendChild(div);
+                        });
+                    }
+                }
+            });
+    }
+
+    // ======================== MAP & DISTANCE ========================
+    function initMap() {
+        map = L.map('map').setView([22.7196, 75.8577], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+        let greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [30, 50] });
+        let redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [30, 50] });
+        pickupMarker = L.marker([22.7196, 75.8577], { icon: greenIcon, draggable: true }).addTo(map);
+        dropMarker = L.marker([22.75, 75.89], { icon: redIcon, draggable: true }).addTo(map);
+        pickupMarker.on('dragend', async () => {
+            await getAddressFromLatLng(pickupMarker.getLatLng().lat, pickupMarker.getLatLng().lng, 'pickup');
+            calculateTotalDistance();
+        });
+        dropMarker.on('dragend', async () => {
+            await getAddressFromLatLng(dropMarker.getLatLng().lat, dropMarker.getLatLng().lng, 'drop');
+            calculateTotalDistance();
+        });
+        calculateTotalDistance();
+    }
+    function calculateTotalDistance() {
+        if (!pickupMarker || !dropMarker) return 0;
+        let points = [pickupMarker.getLatLng()];
+        stopLocations.forEach(s => { if (s) points.push(s); });
+        points.push(dropMarker.getLatLng());
+        let totalDist = 0;
+        for (let i = 0; i < points.length - 1; i++) totalDist += points[i].distanceTo(points[i + 1]);
+        let roadKm = (totalDist * 1.3 / 1000).toFixed(2);
+        document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM";
+        if(document.getElementById('inputActualKM')) document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm));
+        updateLiveEstimate();
+        return roadKm;
+    }
+    async function getAddressFromLatLng(lat, lng, inputId) {
+        try {
+            let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
+            let data = await res.json();
+            if (data.display_name) document.getElementById(inputId).value = data.display_name.split(',')[0];
+            else document.getElementById(inputId).value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        } catch (e) { console.error(e); }
+    }
+    function useCurrentLocation(t) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            let latlng = [pos.coords.latitude, pos.coords.longitude];
+            if (t === 'pickup') pickupMarker.setLatLng(latlng);
+            else dropMarker.setLatLng(latlng);
+            getAddressFromLatLng(latlng[0], latlng[1], t);
+            calculateTotalDistance();
+        });
+    }
+    function locateMeOnMap() { useCurrentLocation('pickup'); }
+
+    // ======================== FARE ESTIMATE ========================
+    function isNightTime() {
+        let now = new Date();
+        let hours = now.getHours();
+        return (hours >= 22 || hours < 6);
+    }
+    function updateLiveEstimate() {
+        let dist = parseFloat(document.getElementById('mapDistanceDisplay').innerText) || 0;
+        let arrivalDist = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng()) / 1000 - 3));
+        let arrival = arrivalDist * 10;
+        let baseSlab = 0, extraKm = 0;
+        if (dist <= 5) baseSlab = 100;
+        else if (dist <= 10) baseSlab = 180;
+        else if (dist <= 20) baseSlab = 320;
+        else { baseSlab = 320; extraKm = dist - 20; }
+        let extraCost = extraKm * 16;
+        let subtotal = baseSlab + extraCost + arrival + (selectedPackageBasePrice || 0);
+        let isRoundTrip = document.getElementById('roundTripCheck').checked;
+        if (isRoundTrip) subtotal = subtotal * 1.8;
+        let nightSurcharge = 0;
+        if (isNightTime()) { nightSurcharge = subtotal * 0.15; subtotal += nightSurcharge; }
+        let gst = subtotal * 0.05;
+        let total = Math.round(subtotal + gst);
+        let box = document.getElementById('liveEstimateBox');
+        if (!box) {
+            box = document.createElement('div');
+            box.id = 'liveEstimateBox';
+            document.getElementById('bookingForm').insertBefore(box, document.getElementById('submitBtn'));
+        }
+        box.className = 'bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl';
+        box.innerHTML = `<div class="flex justify-between"><span class="font-bold">💰 ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div>
+        <div class="grid grid-cols-2 text-[11px] mt-2"><span>Base:₹${Math.round(baseSlab + arrival)}</span><span>Extra:₹${Math.round(extraCost)}</span>
+        <span>${isRoundTrip ? 'Round Trip 1.8x' : ''}</span><span>GST:₹${Math.round(gst)}</span>${nightSurcharge > 0 ? `<span class="text-yellow-300">🌙 Night Charge:₹${Math.round(nightSurcharge)}</span>` : ''}</div>
+        <div class="mt-2 text-xs text-yellow-200 border-t border-blue-700 pt-2"><i class="fas fa-road"></i> ℹ️ Toll charges, if applicable, billed as per actual receipts.</div>`;
+    }
+
+    // ======================== LOCATION SEARCH (with debounce already) ========================
+    function searchLocation(q, t) {
+        if (q.length < 3) return;
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`)
+            .then(r => r.json())
+            .then(data => {
+                let box = document.getElementById(t + '-suggestions');
+                box.innerHTML = '';
+                if (data.length) {
+                    box.style.display = 'block';
+                    data.forEach(p => {
+                        let div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.innerText = p.display_name.split(',')[0];
+                        div.onclick = () => {
+                            document.getElementById(t).value = div.innerText;
+                            box.style.display = 'none';
+                            let latlng = L.latLng(p.lat, p.lon);
+                            if (t === 'pickup') pickupMarker.setLatLng(latlng);
+                            else dropMarker.setLatLng(latlng);
+                            calculateTotalDistance();
+                        };
+                        box.appendChild(div);
+                    });
+                } else box.style.display = 'none';
+            });
+    }
+
+    // ======================== TOURS ========================
+    function filterTours(ev, season) { currentSeason = season; updateFilterButtons(ev, 'filter-btn'); applyDualFilter(); }
+    function filterByCategory(ev, cat) { currentCategory = cat; updateFilterButtons(ev, 'cat-btn'); applyDualFilter(); }
+    function updateFilterButtons(ev, className) {
+        document.querySelectorAll(`.${className}`).forEach(btn => btn.classList.remove('active'));
+        ev.currentTarget.classList.add('active');
+    }
+    function applyDualFilter() {
+        if (!allToursData.length) return;
+        let filtered = allToursData.filter(t => {
+            let dsc = (t.Description + "").toLowerCase();
+            let sea = (t.Season + "").toLowerCase();
+            let sMatch = (currentSeason === 'All' || sea.includes(currentSeason.toLowerCase()));
+            let cMatch = currentCategory === 'All' || 
+                (currentCategory === 'Nature' && (dsc.includes('fall') || dsc.includes('lake'))) ||
+                (currentCategory === 'Religious' && dsc.includes('temple')) ||
+                (currentCategory === 'Adventure' && (dsc.includes('mall') || dsc.includes('food'))) ||
+                (currentCategory === 'Heritage' && (dsc.includes('fort') || dsc.includes('palace')));
+            return sMatch && cMatch;
+        });
+        renderTours(filtered);
+    }
+    function renderTours(list) {
+        let container = document.getElementById('dynamic-tours-container');
+        if (!container) return;
+        container.innerHTML = list.length ? list.map(t => `
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden transition hover:-translate-y-2">
+                <img src="${t.ImageURL || 'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover" loading="lazy">
+                <div class="p-6">
+                    <h3 class="text-2xl font-black">${t.Destination}</h3>
+                    <p class="text-gray-600 my-2">${t.Description}</p>
+                    <div class="bg-slate-100 p-3 rounded-2xl"><span class="text-3xl font-black text-blue-700">₹${t.Price}</span><small> est.</small></div>
+                    <button onclick='bookTourPackage("${t.Destination}",${t.Price})' class="w-full mt-4 bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-blue-700">🎯 BOOK TOUR</button>
+                </div>
+            </div>`).join('') : '<div class="col-span-full text-center py-10">No packages match</div>';
+    }
+    function bookTourPackage(dest, price) {
+        selectedPackageBasePrice = price;
+        showPage('home');
+        document.getElementById('drop').value = dest + ", MP";
+        searchLocation(dest, 'drop');
+        updateLiveEstimate();
+        window.scrollTo({ top: document.getElementById('bookingForm').offsetTop - 100, behavior: 'smooth' });
+        showToast(`Package ${dest} added`, "success");
+    }
+    function loadDynamicTours() {
+        fetch(scriptURL + "?action=getTours&t=" + Date.now())
+            .then(r => r.json())
+            .then(d => { if (d.result === 'success' && d.tours) { allToursData = d.tours; renderTours(allToursData); } })
+            .catch(() => {});
+    }
+    function loadDynamicReviews() {
+        fetch(scriptURL + "?action=getReviews&t=" + Date.now())
+            .then(r => r.json())
+            .then(d => {
+                let con = document.getElementById('dynamic-reviews-container');
+                if (d.result === 'success' && d.reviews)
+                    con.innerHTML = d.reviews.reverse().map(r => `
+                        <div class="bg-white p-6 rounded-2xl shadow-xl">
+                            <div class="text-yellow-400">${'★'.repeat(r.Rating)}${'☆'.repeat(5 - r.Rating)}</div>
+                            <p class="font-bold mt-2">"${r.Comment}"</p>
+                            <p class="text-sm mt-2 text-blue-700">— ${r.Name}</p>
+                        </div>`).join('');
+            });
+    }
+
+    // ======================== LOGIN & USER SHEET (Phone as primary key) ========================
+    function sendOTP() {
+        let name = document.getElementById('nameInput').value;
+        let mobile = document.getElementById('mobileInput').value;
+        if (!name || mobile.length < 10) { showToast("Invalid details", "error"); return; }
+        let otp = Math.floor(1000 + Math.random() * 9000).toString();
+        document.getElementById('otpDisplay').value = otp;
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+        // Register user in Google Sheets (avoid duplicate by Phone)
+        fetch(scriptURL, {
+            method: 'POST',
+            body: new URLSearchParams({ action: 'registerUser', Name: name, Phone: mobile })
+        }).catch(e => console.warn);
+        setTimeout(() => {
+            localStorage.setItem('easygo_user', mobile);
+            localStorage.setItem('easygo_name', name);
+            loginUI(mobile, name);
+            closeLoginModal();
+            showToast(`Welcome ${name}`, "success");
+        }, 1500);
+    }
+    function loginUI(mob, n) {
+        document.getElementById('loginBtn').classList.add('hidden');
+        document.getElementById('userMenu').classList.remove('hidden');
+        document.getElementById('displayUserName').innerHTML = n.toUpperCase();
+        document.getElementById('customerPhone').value = mob;
+        document.getElementById('customerNameField').value = n;
+    }
+    function logout() { localStorage.clear(); location.reload(); }
+
+    // ======================== BOOKING (Google Sheets) ========================
+    function handleBooking(e) {
+        e.preventDefault();
+        if (!localStorage.getItem('easygo_user')) { openLoginModal(); showToast("Please login to book", "error"); return; }
+        let otp = Math.floor(100000 + Math.random() * 900000).toString();
+        document.getElementById('bookingOTP').value = otp;
+        let pickupLat = pickupMarker.getLatLng().lat;
+        let pickupLng = pickupMarker.getLatLng().lng;
+        let dropLat = dropMarker.getLatLng().lat;
+        let dropLng = dropMarker.getLatLng().lng;
+        let pickupLink = `https://maps.google.com/?q=${pickupLat},${pickupLng}`;
+        let dropLink = `https://maps.google.com/?q=${dropLat},${dropLng}`;
+        document.getElementById('pickupLink').value = pickupLink;
+        document.getElementById('dropLink').value = dropLink;
+        let fd = new FormData(document.getElementById('bookingForm'));
+        fd.append('action', 'bookRide');
+        fd.append('pickupLat', pickupLat);
+        fd.append('pickupLng', pickupLng);
+        fd.append('dropLat', dropLat);
+        fd.append('dropLng', dropLng);
+        fetch(scriptURL, { method: 'POST', body: fd })
+            .then(() => {
+                showToast(`Ride Booked! OTP: ${otp}`, "success");
+                let rideData = {
+                    name: localStorage.getItem('easygo_name'),
+                    phone: localStorage.getItem('easygo_user'),
+                    pickup: document.getElementById('pickup').value,
+                    drop: document.getElementById('drop').value,
+                    pickupLat, pickupLng, dropLat, dropLng,
+                    otp: otp,
+                    date: document.getElementById('date').value,
+                    time: document.getElementById('time').value
+                };
+                localStorage.setItem('active_ride', JSON.stringify(rideData));
+                activeRideCache = rideData;
+                checkActiveRide();
+                let msg = `🚖 EASYGO NEW BOOKING 🚖\n\nCustomer: ${rideData.name}\nPhone: +91${rideData.phone}\nPickup: ${rideData.pickup}\nDrop: ${rideData.drop}\nPickup Link: ${pickupLink}\nDrop Link: ${dropLink}\nDate: ${rideData.date} Time: ${rideData.time}\nOTP: ${otp}\nVehicle: Citroen C3`;
+                window.open(`https://wa.me/917651837322?text=${encodeURIComponent(msg)}`, '_blank');
+            });
+    }
+    function checkActiveRide() {
+        let active = localStorage.getItem('active_ride');
+        if (active) {
+            let d = JSON.parse(active);
+            document.getElementById('activeRideBanner').classList.remove('hidden');
+            document.getElementById('activeRideRoute').innerHTML = `${d.pickup} → ${d.drop}`;
+            document.getElementById('activeRideOTP').innerHTML = d.otp;
+        } else {
+            document.getElementById('activeRideBanner').classList.add('hidden');
+        }
+    }
+    function endRideProcess() {
+        document.getElementById('billModal').classList.add('active');
+        let ride = JSON.parse(localStorage.getItem('active_ride') || '{}');
+        document.getElementById('billCustomerName').innerHTML = ride.name || 'Guest';
+        document.getElementById('billPickup').innerHTML = ride.pickup || 'N/A';
+        document.getElementById('billDrop').innerHTML = ride.drop || 'N/A';
+    }
+    function calculateFinalBill() {
+        let km = parseFloat(document.getElementById('inputActualKM').value) || 0;
+        let wait = parseFloat(document.getElementById('inputWaitTime').value) || 0;
+        let toll = parseFloat(document.getElementById('inputToll').value) || 0;
+        let tip = parseFloat(document.getElementById('inputTip').value) || 0;
+        let arrivalDist = Math.max(0, (PRIME_SQUARE.distanceTo(pickupMarker.getLatLng()) / 1000 - 3));
+        let arrival = arrivalDist * 10;
+        let baseSlab = 0, extraKm = 0;
+        if (km <= 5) baseSlab = 100;
+        else if (km <= 10) baseSlab = 180;
+        else if (km <= 20) baseSlab = 320;
+        else { baseSlab = 320; extraKm = km - 20; }
+        let extraCost = extraKm * 16;
+        let waitCost = wait * 2;
+        let subtotal = baseSlab + extraCost + waitCost + arrival + (selectedPackageBasePrice || 0);
+        if (document.getElementById('roundTripCheck').checked) subtotal = subtotal * 1.8;
+        if (isNightTime()) subtotal *= 1.15;
+        subtotal += toll;
+        let gst = subtotal * 0.05;
+        let total = Math.round(subtotal + gst + tip);
+        document.getElementById('billBaseFare').innerHTML = `₹${Math.round(baseSlab + arrival)}`;
+        document.getElementById('billExtraCost').innerHTML = `₹${Math.round(extraCost)}`;
+        document.getElementById('billCombinedExtras').innerHTML = `${Math.round(waitCost + toll + (isNightTime()?subtotal*0.15:0))}`;
+        document.getElementById('billGrandTotal').innerHTML = `₹${total}`;
+        document.getElementById('billInputSection').classList.add('hidden');
+        document.getElementById('billDisplaySection').classList.remove('hidden');
+    }
+    function processPaymentAndReview() {
+        showToast("Payment collected", "success");
+        closeEndRideModal();
+        localStorage.removeItem('active_ride');
+        activeRideCache = null;
+        checkActiveRide();
+        setTimeout(() => document.getElementById('reviewModal').classList.add('active'), 300);
+    }
+    function setRating(v) {
+        currentRating = v;
+        document.getElementById('ratingValue').value = v;
+        let stars = document.querySelectorAll('#starContainer i');
+        stars.forEach((star, idx) => { star.className = idx < v ? 'fas fa-star active' : 'far fa-star'; });
+    }
+    function submitReview() {
+        let name = localStorage.getItem('easygo_name') || "Guest";
+        let rating = document.getElementById('ratingValue').value;
+        let comment = document.getElementById('reviewText').value;
+        let fd = new FormData();
+        fd.append('action', 'addReview');
+        fd.append('Name', name);
+        fd.append('Rating', rating);
+        fd.append('Comment', comment);
+        fd.append('Date', new Date().toLocaleDateString());
+        fetch(scriptURL, { method: 'POST', body: fd })
+            .then(() => { showToast("Thanks for review!", "success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); });
+    }
+
+    // ======================== FAQ & QnA (removed referral/loyalty) ========================
     const qnaDatabase = [
-          { q: "💰 Complete Fare Breakdown (35+ points)", a: "✓ Slab 0-5km: ₹100<br>✓ Slab 5-10km: ₹180<br>✓ Slab 10-20km: ₹320<br>✓ Beyond 20km: ₹16 per extra km<br>✓ Wait time: ₹2/min after 5 grace minutes<br>✓ GST 5% on total fare<br>✓ Arrival fee: ₹10/km for distance beyond 3km from Prime Square to pickup<br>✓ Toll/Parking: actuals as per receipt<br>✓ Round trip: 1.8x one-way fare<br>✓ Night charges (11pm-5am): 25% extra on base fare<br>✓ No surge pricing ever<br>✓ Outstation daily allowance: ₹600 per day for driver<br>✓ Cancellation fee: ₹50 if cancelled within 45 mins<br>✓ No show: ₹100 charge<br>✓ Extra stops: ₹30 per stop<br>✓ Waiting at mall/market: ₹2/min<br>✓ Luggage carry: free up to 2 bags<br>✓ Pet allowed with ₹100 cleaning fee<br>✓ Fare displayed in real-time on map<br>✓ GST invoice provided<br>✓ Corporate billing available<br>✓ Zero hidden charges<br>✓ Fare includes basic insurance<br>✓ Child seat available on request (₹50)<br>✓ Multiple stops affect fare proportionally<br>✓ Airport pickup: additional ₹50<br>✓ Festival surcharge: NONE<br>✓ Fare estimate includes toll approximation<br>✓ Final bill based on actual odometer<br>✓ Driver tip optional<br>✓ Re-route charges: ₹5 per extra km deviation<br>✓ 10% discount for senior citizens on weekdays<br>✓ 5% cashback on wallet recharge<br>✓ Fare lock feature for outstation" },
-        
+        { q: "💰 Complete Fare Breakdown (35+ points)", a: "✓ Slab 0-5km: ₹100<br>✓ Slab 5-10km: ₹180<br>✓ Slab 10-20km: ₹320<br>✓ Beyond 20km: ₹16 per extra km<br>✓ Wait time: ₹2/min after 5 grace minutes<br>✓ GST 5% on total fare<br>✓ Arrival fee: ₹10/km for distance beyond 3km from Prime Square to pickup<br>✓ Toll/Parking: actuals as per receipt<br>✓ Round trip: 1.8x one-way fare<br>✓ Night charges (11pm-5am): 25% extra on base fare<br>✓ No surge pricing ever<br>✓ Outstation daily allowance: ₹600 per day for driver<br>✓ Cancellation fee: ₹50 if cancelled within 45 mins<br>✓ No show: ₹100 charge<br>✓ Extra stops: ₹30 per stop<br>✓ Waiting at mall/market: ₹2/min<br>✓ Luggage carry: free up to 2 bags<br>✓ Pet allowed with ₹100 cleaning fee<br>✓ Fare displayed in real-time on map<br>✓ GST invoice provided<br>✓ Corporate billing available<br>✓ Zero hidden charges<br>✓ Fare includes basic insurance<br>✓ Child seat available on request (₹50)<br>✓ Multiple stops affect fare proportionally<br>✓ Airport pickup: additional ₹50<br>✓ Festival surcharge: NONE<br>✓ Fare estimate includes toll approximation<br>✓ Final bill based on actual odometer<br>✓ Driver tip optional<br>✓ Re-route charges: ₹5 per extra km deviation<br>✓ 10% discount for senior citizens on weekdays<br>✓ 5% cashback on wallet recharge<br>✓ Fare lock feature for outstation" },
         { q: "🔐 OTP & Security Protocols (30+ safety points)", a: "🔹 6-digit OTP generated on customer dashboard<br>🔹 Driver never receives OTP<br>🔹 Ride starts only after you share OTP with driver<br>🔹 OTP expires after 15 minutes<br>🔹 Real-time ride tracking via map<br>🔹 SOS button integrated on WhatsApp<br>🔹 GPS location shared with family (on request)<br>🔹 Panic alarm linked to emergency contacts<br>🔹 Vehicle has dashcam (privacy compliant)<br>🔹 Driver background verified (self-owned car)<br>🔹 First-aid kit present<br>🔹 Fire extinguisher mandatory<br>🔹 Seat belts for all passengers<br>🔹 Zero tolerance for rash driving<br>🔹 Live speed monitoring<br>🔹 Night driving with fatigue breaks<br>🔹 Only registered mobile number allowed to book<br>🔹 2FA for account changes<br>🔹 Ride history accessible<br>🔹 OTP sharing outside app not allowed<br>🔹 Ride audit logs stored<br>🔹 Insurance covers passenger liability up to ₹10 lakhs<br>🔹 Child lock active<br>🔹 Emergency contact number displayed inside<br>🔹 Feedback linked to OTP completion<br>🔹 Driver rating system mutual<br>🔹 No unauthorized pickups<br>🔹 CCTV at pickup/drop not recorded<br>🔹 All data encrypted" },
-        
         { q: "⏱️ Wait Time & Delays (Detailed Policy - 25+ points)", a: "⌛ Grace period: 5 minutes after driver arrival<br>⌛ ₹2 per minute thereafter (₹1 per 30 secs)<br>⌛ Maximum wait for city rides: 30 mins (beyond that driver may leave with 50% cancellation fee)<br>⌛ For airport/railway pickups: 15 mins grace<br>⌛ If customer is delayed due to flight/train, zero wait charge for first 20 mins after actual landing<br>⌛ Driver will call after 5 mins of arrival<br>⌛ If pickup location wrong, wait time starts from correct arrival<br>⌛ Waiting at multiple stops: counted cumulative<br>⌛ Waiting at tolls / traffic jams: not charged<br>⌛ Driver can extend wait if pre-informed<br>⌛ Waiting beyond 45 mins requires re-booking<br>⌛ Special event waits: flat ₹100 per hour<br>⌛ No waiting charge if driver arrives late<br>⌛ Real-time wait meter shown in dashboard<br>⌛ Wait time disputes resolved by GPS log<br>⌛ Return trip waiting: reduced rate ₹1.5/min<br>⌛ Outstation waiting: ₹100/hour after 2 hours<br>⌛ No waiting charge for medical emergencies<br>⌛ Waiting in extreme weather: capped ₹100 max<br>⌛ Prepaid waiting package: ₹200 for 2 hours<br>⌛ Driver cannot demand extra cash for waiting<br>⌛ Wait billing shown separately in invoice<br>⌛ Automatic wait start/stop via geofencing" },
-        
         { q: "🚗 Private Car Status — Why It Matters (30+ points)", a: "🏆 100% self-owned vehicle (White Citroën C3)<br>🏆 No third-party fleet, no rental tag<br>🏆 Direct accountability of owner/driver<br>🏆 Car maintained personally – highest hygiene<br>🏆 No driver rotation — consistent experience<br>🏆 Private car means no taxi board, low profile<br>🏆 Insurance valid for commercial use (proper permits)<br>🏆 All documents available for inspection<br>🏆 Personalized amenities: phone charger, water bottle<br>🏆 Air purifier installed<br>🏆 Seat covers changed weekly<br>🏆 Disinfected before every ride<br>🏆 No sharing with other passengers<br>🏆 Full trunk space available<br>🏆 Private car badge displayed on website<br>🏆 Customers can request car photos<br>🏆 No company branding — subtle and premium<br>🏆 Pet-friendly (with prior notice)<br>🏆 Owner-driven ensures fair treatment<br>🏆 No hidden commission, so prices are 15% lower than aggregators<br>🏆 Private car status means no meter tampering<br>🏆 Digital invoice generated<br>🏆 You are riding in a family-owned vehicle<br>🏆 Zero chance of fake cab<br>🏆 Trust verified by 500+ rides<br>🏆 Private car also means no union strikes<br>🏆 Fixed pricing irrespective of demand<br>🏆 Car registration number shared pre-ride<br>🏆 24/7 owner support" },
-        
         { q: "🛣️ Outstation & Long Distance Rules (28+ points)", a: "📌 Minimum 150km per day for outstation<br>📌 Driver bata: ₹700 per night (if overnight stay)<br>📌 Toll, state tax, parking extra<br>📌 Free waiting up to 2 hours per day<br>📌 Round trips: 1.8x one-way fare + driver allowance<br>📌 Advance booking required (min 6 hours)<br>📌 Outstation packages include 10% discount<br>📌 Unlimited km packages available (call for quote)<br>📌 Night halt at safe hotel arranged<br>📌 Customizable itineraries for MP tourism<br>📌 Fuel included in fare<br>📌 Zero blackout dates<br>📌 Luggage roof carrier available<br>📌 Hill station extra charge: ₹300 per day<br>📌 Border entry permits: customer responsibility<br>📌 Outstation billing on daily basis<br>📌 Advance payment 30% for long trips<br>📌 Cancellation before 24hrs: full refund<br>📌 GPS tracking for outstation<br>📌 Return empty run not charged<br>📌 Driver meals included in allowance<br>📌 AC guaranteed full route<br>📌 Multiple days billing pro-rata<br>📌 Night driving break mandatory<br>📌 Tempo traveler not available (only sedan)<br>📌 Best for 3-4 passengers<br>📌 Outstation trips rated 4.9/5<br>📌 Special discounts for pilgrimage tours" },
-        
         { q: "🧾 Billing, GST & Invoice Details (26+ points)", a: "🧾 GSTIN registered: 23HAVPB1805E1ZZ<br>🧾 Tax invoice sent via WhatsApp/Email<br>🧾 Fare breakup: Base + Extra KM + Wait + Arrival + Toll + GST 5% + Tip<br>🧾 B2B invoices available with company GST<br>🧾 Digital copy stored for 7 years<br>🧾 Payment methods: Cash, UPI, Card (on request)<br>🧾 No convenience fee<br>🧾 Round trip GST applicable on total<br>🧾 TDS not applicable for customers<br>🧾 Cancellation charge invoice separate<br>🧾 Outstation billing with daily log<br>🧾 Kilometer count verified by GPS<br>🧾 Bill adjustment for route change<br>🧾 Duplicate invoice free<br>🧾 Fare audit available<br>🧾 Zero rounding errors<br>🧾 Foreign nationals get same invoice<br>🧾 Billing in INR only<br>🧾 Trip receipt includes OTP reference<br>🧾 Corporate monthly billing available<br>🧾 Auto-calc of GST on wait time<br>🧾 Toll receipts shared via photo<br>🧾 No surge billing<br>🧾 Dispute resolution within 1 hour<br>🧾 Fuel surcharge: NONE<br>🧾 Meter reading captured" },
-        
         { q: "🌟 Safety & Hygiene Standards (32+ points)", a: "🧼 Sanitized before every trip<br>🧼 Cabin fumigation weekly<br>🧼 Driver wears mask and gloves<br>🧼 Air purifier with HEPA filter<br>🧼 Contactless payment preferred<br>🧼 Seat covers washed after every 2 rides<br>🧼 Hand sanitizer available<br>🧼 AC vents cleaned daily<br>🧼 No smoking inside ever<br>🧼 Spill-proof seat covers<br>🧼 Weekly deep cleaning<br>🧼 Emergency medical kit<br>🧼 Fire extinguisher BIS certified<br>🧼 First responder training for driver<br>🧼 Speed governor active (max 80kmph city)<br>🧼 Seatbelt reminder for all seats<br>🧼 Child lock engaged<br>🧼 COVID-19 protocol followed<br>🧼 No eating inside (except dry snacks)<br>🧼 Wet umbrella bag provided<br>🧼 Driver health check weekly<br>🧼 Vehicle fitness renewed yearly<br>🧼 Pollution under control certified<br>🧼 Customer feedback triggers re-clean<br>🧼 Transparent windows (no dark tints beyond limit)<br>🧼 All safety features functional<br>🧼 Zero drink-driving policy<br>🧼 Driver drug tested monthly<br>🧼 Customer privacy assured<br>🧼 Car location shared with emergency contact<br>🧼 24/7 helpline" },
-        
         { q: "🎒 Luggage & Extra Items Policy (30+ points)", a: "🎒 1 check-in bag + 1 cabin bag free<br>🎒 Extra bag: ₹50<br>🎒 Large suitcase (above 25kg): ₹100<br>🎒 Sports equipment (golf, cricket kit): ₹150<br>🎒 Wheelchair foldable: free<br>🎒 Pet carrier allowed (₹100 cleaning fee)<br>🎒 No live animals without carrier<br>🎒 Fragile items: inform driver<br>🎒 Luggage tie-up on roof: ₹200<br>🎒 Shopping bags: free up to 5<br>🎒 Office equipment: must be secured<br>🎒 No hazardous materials<br>🎒 Driver helps loading/unloading<br>🎒 Lost items: retrieval fee ₹100<br>🎒 Luggage left unattended not liable<br>🎒 Maximum capacity: 3 large bags + 2 small<br>🎒 Cooler/icebox allowed<br>🎒 Baby stroller folded: free<br>🎒 Musical instruments case: ₹100<br>🎒 Luggage weight limit 80kg total<br>🎒 Excess weight charged ₹10/kg<br>🎒 Baggage tag recommended<br>🎒 No open food containers<br>🎒 Drinks in sealed bottles allowed<br>🎒 Luggage insurance not included<br>🎒 Storage in trunk only (not passenger cabin)<br>🎒 Items blocking rear view not allowed<br>🎒 Customer responsible for fragile marking<br>🎒 EasyGo not liable for perishables<br>🎒 Advance intimation for extra luggage" },
-        
         { q: "📞 Booking, Support & Cancellation (30+ points)", a: "📞 Book via website / WhatsApp<br>📞 Instant confirmation with OTP<br>📞 Support via WhatsApp +91 76518 37322<br>📞 Response within 5 minutes<br>📞 Cancellation: free 45 mins before pickup<br>📞 Late cancel: ₹50 fee<br>📞 No-show after 15 mins: ₹100<br>📞 Rebooking available after cancellation<br>📞 Modify ride: up to 30 mins before (free)<br>📞 Change of drop location: fare recalculated<br>📞 Booking for others allowed (provide their phone)<br>📞 Advance booking up to 30 days<br>📞 Group booking (max 4 pax)<br>📞 Corporate booking via email<br>📞 Recurring rides (weekly) get 10% off<br>📞 Driver allocated 20 mins before ride<br>📞 Real-time driver contact shared<br>📞 Share ride link to family<br>📞 Emergency cancellation after pickup: 50% fare<br>📞 No questions asked refund if driver cancels<br>📞 Refund within 3 days to bank/wallet<br>📞 Dispute resolution via third party if needed<br>📞 Booking history stored<br>📞 Favorite locations saved<br>📞 Schedule ride for specific time<br>📞 Recurring alarm for office commute<br>📞 Support available 6am to 11pm<br>📞 Night rides support via emergency line<br>📞 Booking modifications charge ₹20 after cutoff<br>📞 Prepaid wallet for faster checkout" },
-        
         { q: "🌍 Routes & Coverage Area (MP + Beyond - 35+ points)", a: "📍 Primary: Indore (all areas: Vijay Nagar, Sapna Sangeeta, Palasia, Rajendra Nagar, Omaxe, Super Corridor)<br>📍 Ujjain (Mahakal) – daily trips<br>📍 Omkareshwar – 2hr drive<br>📍 Maheshwar – heritage route<br>📍 Mandu – fort expedition<br>📍 Pachmarhi – hill station package<br>📍 Bhopal – capital runs<br>📍 Jabalpur – marble rocks<br>📍 Gwalior – fort city<br>📍 Khajuraho – temple tour<br>📍 Sanchi – buddhist circuit<br>📍 Chitrakoot – spiritual<br>📍 Orchha – palace town<br>📍 Ratlam – food trail<br>📍 Mhow – military base<br>📍 Dhar – historical<br>📍 Neemuch – offbeat<br>📍 Khandwa – cultural<br>📍 Burhanpur – textile hub<br>📍 Alirajpur – tribal areas<br>📍 Barwani – Narmada<br>📍 Interstate: Gujarat (Ahmedabad, Vadodara, Surat)<br>📍 Maharashtra (Mumbai, Pune, Nagpur)<br>📍 Rajasthan (Udaipur, Jaipur)<br>📍 Airport transfers: Indore IDR, Bhopal, Ujjain<br>📍 Railway station pickup included<br>📍 Custom outstation anywhere in India (call for price)<br>📍 Zero refusal on any route<br>📍 Toll routes preferred<br>📍 Night travel allowed after consent<br>📍 Scenic routes suggested free<br>📍 Driver knows local shortcuts<br>📍 EV chargers enroute (info shared)" },
-        
         { q: "🚫 Prohibited Items & Conduct (25+ points)", a: "❌ Smoking, vaping, alcohol strictly banned<br>❌ ₹500 fine for violation<br>❌ No abusive language<br>❌ No eating hot/oily food<br>❌ No spitting<br>❌ No damaging upholstery<br>❌ No illegal substances<br>❌ No loud music without earphones<br>❌ No extra passengers beyond capacity<br>❌ No weapons<br>❌ No carrying inflammable goods<br>❌ No political campaigning<br>❌ No photography without consent<br>❌ No littering<br>❌ No seat occupancy violation<br>❌ No protruding objects<br>❌ No leaking containers<br>❌ No wet clothes on seats<br>❌ No pets without carrier<br>❌ No feet on dashboard<br>❌ No distracting driver<br>❌ No arguing over route<br>❌ No harassment<br>❌ No recording inside without permission<br>❌ Violation leads to immediate ride termination without refund" },
-        
         { q: "🧑‍🤝‍🧑 Passenger Etiquette & Guidelines (25+ points)", a: "👥 Wear seatbelt at all times<br>👥 Be ready at pickup point<br>👥 Share exact location<br>👥 Provide OTP only to driver<br>👥 Keep luggage minimal<br>👥 Avoid last minute cancellations<br>👥 Rate ride honestly<br>👥 Tip optional but appreciated<br>👥 Keep phone charged<br>👥 Inform about extra stops<br>👥 Respect driver's break<br>👥 No public display of affection<br>👥 Children must be supervised<br>👥 Elderly passengers priority boarding<br>👥 Keep emergency contact ready<br>👥 Don't leave trash<br>👥 Close door gently<br>👥 Don't overload boot<br>👥 Keep mask in medical situations<br>👥 Follow traffic rules<br>👥 Don't ask for over-speeding<br>👥 Smoking fines enforceable<br>👥 Noise complaints lead to ride halt<br>👥 Zero tolerance for misbehavior<br>👥 Report issues immediately" },
-        
-        { q: "🎁 Loyalty & Referral Program (22+ points)", a: "🎁 Refer a friend: both get ₹50 wallet credit<br>🎁 5th ride free (up to ₹200)<br>🎁 10% off for senior citizens<br>🎁 Student discount: 7% on weekdays<br>🎁 Corporate account: monthly billing + 12% discount<br>🎁 Wallet reload bonus: ₹50 on ₹500<br>🎁 Festival special codes: FLAT10<br>🎁 Birthday month: ₹100 ride credit<br>🎁 Anniversary rides: complimentary water bottle<br>🎁 Long term rental: 20% discount<br>🎁 Outstation package users get priority support<br>🎁 Loyalty tier: Gold (10 rides) → 5% off<br>🎁 Platinum (25 rides) → 10% off + free wait time<br>🎁 Referral limit: unlimited<br>🎁 Points redeemable for future rides<br>🎁 No expiry for loyalty points<br>🎁 Group booking discount: 8% for 3+ pax<br>🎁 Night ride reward: double points<br>🎁 Review with photo: extra ₹20 wallet<br>🎁 Share ride on social: ₹10 cashback<br>🎁 1 year anniversary: free upgrade to AC<br>🎁 COVID warrior discount: 15%" },
-        
-        { q: "📱 Technology & Features (30+ points)", a: "📱 Real-time GPS tracking<br>📱 Live fare estimator<br>📱 OTP based security<br>📱 Share ride link<br>📱 Driver rating system<br>📱 Digital invoice<br>📱 Map drag-drop for pickup<br>📱 Multiple stops support<br>📱 Reverse geocoding for addresses<br>📱 WhatsApp integration for booking<br>📱 24/7 chat support<br>📱 Push notifications for ride status<br>📱 Email trip summary<br>📱 Favorite locations saved<br>📱 Ride history export<br>📱 Payment via UPI link<br>📱 Automated fare breakup<br>📱 Toll approximation<br>📱 Distance calculation via leaflet<br>📱 Offline mode (limited)<br>📱 Dark mode UI<br>📱 Voice search for locations<br>📱 Emergency SMS<br>📱 Driver document verification<br>📱 Automated cancellation refund<br>📱 Predictive arrival time<br>📱 Weather alerts<br>📱 Route alternatives<br>📱 Mileage tracking<br>📱 Privacy mode for drop location" },
-        
         { q: "🚨 Emergency & Breakdown Protocol (15+ points)", a: "🆘 24/7 emergency helpline: +91 76518 37322<br>🆘 Flat tyre: fixed within 30 mins<br>🆘 Medical emergency: nearest hospital drop free<br>🆘 Accident coverage: insurance activated<br>🆘 Breakdown replacement vehicle arranged<br>🆘 Police assistance on request<br>🆘 Emergency contact sharing<br>🆘 Roadside assistance included<br>🆘 Battery jumpstart available<br>🆘 Lost child/elderly support<br>🆘 First responder trained driver<br>🆘 Emergency lights available<br>🆘 Panic button on dashboard<br>🆘 24hr critical support<br>🆘 Insurance claim assistance" },
-        
         { q: "🌙 Night Ride Policies (12+ points)", a: "🌙 25% extra on base fare (11pm-5am)<br>🌙 Female passenger safety: share live location<br>🌙 Driver fatigue break after 4 hours<br>🌙 Emergency SOS active<br>🌙 Well-lit pickup preferred<br>🌙 No night outstation without consent<br>🌙 Double verification for late rides<br>🌙 Panic button active<br>🌙 Escort available on request<br>🌙 Zero alcohol policy strictly enforced<br>🌙 Night driving speed limit 60kmph<br>🌙 Extra vigilance mode active" }
     ];
-
-    // Calculate total points
-    let totalPoints = 0;
-    qnaDatabase.forEach(item => {
-        const brCount = (item.a.match(/<br>/g) || []).length;
-        totalPoints += brCount + 1;
-    });
-
     function renderQnA() {
         const container = document.getElementById('qnaGrid');
         container.innerHTML = '';
-        qnaDatabase.forEach((item, idx) => {
+        qnaDatabase.forEach(item => {
             const card = document.createElement('div');
             card.className = 'qna-card';
-            // Format points with proper bullet styling
             const formattedPoints = item.a.split('<br>').map(point => {
                 const trimmed = point.trim();
                 if (trimmed) {
-                    const firstChar = trimmed.charAt(0);
                     let icon = '•';
-                    if (firstChar === '✓') icon = '✓';
-                    else if (firstChar === '🔹') icon = '🔹';
-                    else if (firstChar === '⌛') icon = '⌛';
-                    else if (firstChar === '🏆') icon = '🏆';
-                    else if (firstChar === '📌') icon = '📌';
-                    else if (firstChar === '🧾') icon = '🧾';
-                    else if (firstChar === '🧼') icon = '🧼';
-                    else if (firstChar === '🎒') icon = '🎒';
-                    else if (firstChar === '📞') icon = '📞';
-                    else if (firstChar === '📍') icon = '📍';
-                    else if (firstChar === '❌') icon = '❌';
-                    else if (firstChar === '👥') icon = '👥';
-                    else if (firstChar === '🎁') icon = '🎁';
-                    else if (firstChar === '📱') icon = '📱';
-                    else if (firstChar === '🆘') icon = '🆘';
-                    else if (firstChar === '🌙') icon = '🌙';
+                    if (trimmed[0] === '✓') icon = '✓';
+                    else if (trimmed[0] === '🔹') icon = '🔹';
+                    else if (trimmed[0] === '⌛') icon = '⌛';
+                    else if (trimmed[0] === '🏆') icon = '🏆';
+                    else if (trimmed[0] === '📌') icon = '📌';
+                    else if (trimmed[0] === '🧾') icon = '🧾';
+                    else if (trimmed[0] === '🧼') icon = '🧼';
+                    else if (trimmed[0] === '🎒') icon = '🎒';
+                    else if (trimmed[0] === '📞') icon = '📞';
+                    else if (trimmed[0] === '📍') icon = '📍';
+                    else if (trimmed[0] === '❌') icon = '❌';
+                    else if (trimmed[0] === '👥') icon = '👥';
+                    else if (trimmed[0] === '🆘') icon = '🆘';
+                    else if (trimmed[0] === '🌙') icon = '🌙';
                     return `<div class="flex items-start gap-2 py-0.5"><span class="text-blue-500 w-5">${icon}</span><span class="text-gray-700">${trimmed.substring(1)}</span></div>`;
                 }
                 return '';
             }).join('');
-            
             card.innerHTML = `
                 <div class="flex justify-between items-center font-bold text-lg" onclick="this.closest('.qna-card').classList.toggle('open')">
                     <span><i class="fas fa-question-circle text-blue-500 mr-2"></i> ${item.q}</span>
                     <i class="fas fa-chevron-down transition-transform duration-200"></i>
                 </div>
-                <div class="qna-answer text-sm">
-                    ${formattedPoints}
-                </div>
+                <div class="qna-answer text-sm">${formattedPoints}</div>
             `;
             container.appendChild(card);
         });
-        document.getElementById('totalPointsCount').innerText = totalPoints;
     }
-    
-    
     function loadFAQ() {
         const faqs = [
             { q: "💰 How is fare calculated?", a: "Slab rates: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320, beyond ₹16/km + ₹2/min wait + 5% GST." },
@@ -689,8 +854,20 @@
         `).join('');
     }
 
-    renderQnA();
-    loadFAQ();
-</script>
+    // ======================== INITIALIZE ========================
+    window.addEventListener('DOMContentLoaded', () => {
+        initMap();
+        loadDynamicTours();
+        loadDynamicReviews();
+        renderQnA();
+        loadFAQ();
+        checkActiveRide();
+        if (localStorage.getItem('easygo_user')) {
+            let mob = localStorage.getItem('easygo_user');
+            let name = localStorage.getItem('easygo_name');
+            loginUI(mob, name);
+        }
+    });
+    </script>
 </body>
 </html>
