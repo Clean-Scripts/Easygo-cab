@@ -12,7 +12,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-size: 16px; overflow-x: hidden; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden !important; width: 100% !important; }
+        body { font-size: 16px; overflow-x: hidden; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); font-family: 'Inter', system-ui, sans-serif; }
         
         /* ========== ANIMATIONS ========== */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -77,15 +77,12 @@
             top: 0 !important;
             right: 0 !important;
             width: 280px !important;
-            max-width: 85vw !important;
             height: 100% !important;
             background: white !important;
             z-index: 9999 !important;
             transform: translateX(100%) !important;
-            transition: transform 0.3s ease-in-out !important;
+            transition: transform 0.3s ease !important;
             overflow-y: auto !important;
-            overflow-x: hidden !important;
-            box-shadow: -5px 0 20px rgba(0,0,0,0.2) !important;
         }
         #mobileMenu.open {
             transform: translateX(0) !important;
@@ -106,16 +103,11 @@
             gap: 12px !important;
             width: 100% !important;
             padding: 14px 20px !important;
-            font-size: 16px !important;
             font-weight: bold !important;
             color: #1e293b !important;
             background: white !important;
-            border: none !important;
             border-bottom: 1px solid #e2e8f0 !important;
-            text-align: left !important;
             cursor: pointer !important;
-            white-space: nowrap !important;
-            overflow-x: hidden !important;
         }
     
         @media (max-width: 768px) { .tours-container, .reviews-container { grid-template-columns: 1fr; } }
@@ -563,33 +555,16 @@
         if (id === 'tours' && !allToursData.length) loadDynamicTours();
     }
 
-        // JavaScript - apne script me daalo
+
+
         function openMobileMenu() {
-            var menu = document.getElementById('mobileMenu');
-            var overlay = document.getElementById('menuOverlay');
-            if (menu) menu.classList.add('open');
-            if (overlay) overlay.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+            document.getElementById('mobileMenu').classList.add('open');
+            document.getElementById('menuOverlay').style.display = 'block';
         }
-        
         function closeMobileMenu() {
-            var menu = document.getElementById('mobileMenu');
-            var overlay = document.getElementById('menuOverlay');
-            if (menu) menu.classList.remove('open');
-            if (overlay) overlay.style.display = 'none';
-            document.body.style.overflow = '';
+            document.getElementById('mobileMenu').classList.remove('open');
+            document.getElementById('menuOverlay').style.display = 'none';
         }
-        
-        // Event listeners - page load pe run karna
-        document.addEventListener('DOMContentLoaded', function() {
-            var menuBtn = document.getElementById('menuBtn');
-            var closeBtn = document.getElementById('closeMenuBtn');
-            var overlay = document.getElementById('menuOverlay');
-            
-            if (menuBtn) menuBtn.onclick = openMobileMenu;
-            if (closeBtn) closeBtn.onclick = closeMobileMenu;
-            if (overlay) overlay.onclick = closeMobileMenu;
-        });
 
         
     function showToast(msg, type) {
