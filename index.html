@@ -160,42 +160,14 @@
                   <button id="menuBtn">☰</button>
                     <div id="mobileMenu">
                         <button id="closeMenuBtn">✕</button>
-                        <button class="mobile-nav-btn" onclick="showPage('home'); closeMobileMenu();">🏠 Home</button>
-                        <button class="mobile-nav-btn" onclick="showPage('tours'); closeMobileMenu();">📍 Packages</button>
-                    </div>
-                    <div id="menuOverlay"></div>
-                    
-                    <!-- Mobile Sidebar Menu (Animated) -->
-                    <div id="mobileMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-2xl z-[1000] transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
-                        <div class="p-5">
-                            <div class="flex justify-between items-center mb-8">
-                                <span class="font-black text-xl text-blue-800">Menu</span>
-                                <button id="closeMenuBtn" class="text-2xl text-gray-600 hover:text-red-500">&times;</button>
-                            </div>
-                            <div class="flex flex-col space-y-4">
                                 <button onclick="showPage('home'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-home mr-3 w-6"></i> Home</button>
                                 <button onclick="showPage('tours'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-map-marked-alt mr-3 w-6"></i> Packages</button>
                                 <button onclick="showPage('about'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-book-open mr-3 w-6"></i> Story</button>
                                 <button onclick="showPage('faq'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-question-circle mr-3 w-6"></i> FAQ</button>
-                                <div class="border-t border-gray-200 my-2 pt-4">
-                                    <div id="mobileUserMenu" class="hidden">
-                                        <div class="bg-gradient-to-r from-slate-100 to-blue-50 p-3 rounded-xl mb-3">
-                                            <span id="mobileDisplayUserName" class="block text-base font-black text-slate-900"></span>
-                                            <span class="block text-xs font-bold text-green-600"><i class="fas fa-check-circle"></i> Verified</span>
-                                        </div>
-                                        <button onclick="logout(); closeMobileMenu();" class="w-full bg-red-500 text-white px-5 py-2 rounded-full font-bold hover:bg-red-700 transition-all">Logout</button>
-                                    </div>
-                                    <button id="mobileLoginBtn" onclick="openLoginModal(); closeMobileMenu();" class="w-full bg-gradient-to-r from-blue-700 to-blue-800 text-white px-5 py-2 rounded-full font-bold hover:from-blue-800 hover:to-blue-900 transition-all pulse-icon">Login</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>     
-                    <!-- Overlay for mobile menu -->
-                    <div id="menuOverlay" class="fixed inset-0 bg-black/50 z-[999] hidden lg:hidden transition-opacity duration-300"></div>
-            </div>
-        </div>
-    </nav>
-
+                    </div>
+                    <div id="menuOverlay"></div>
+                    
+                    
     <main class="flex-grow">
         <!-- Active Ride Banner -->
         <div id="activeRideBanner" class="hidden bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white shadow-2xl border-b-4 border-yellow-400 animate-pulse">
