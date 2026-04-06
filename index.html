@@ -25,10 +25,11 @@
         @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         
-        /* Purana hata kar ye daalein */
-        .page-section { display: none;width: 100%;opacity: 0;}
-        .page-section.active {display: block; animation: fadeInUp 0.5s ease forwards;opacity: 1;}
-        section {padding-top: 2rem; padding-bottom: 2rem;}
+        .page-section { display: none; width: 100% !important; min-width: 100%;}
+        .page-section.active {display: block !important; visibility: visible !important; opacity: 1 !important;}
+        /* Isse content bikhrega nahi */
+        main {display: block; width: 100%;}
+        
         
         .modal { display: none; background-color: rgba(2, 6, 23, 0.9); backdrop-filter: blur(12px); z-index: 9999; align-items: center; justify-content: center; }
         .modal.active { display: flex; animation: zoomIn 0.3s ease; }
