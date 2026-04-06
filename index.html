@@ -72,9 +72,25 @@
         input:focus, select:focus, textarea:focus { transform: scale(1.01); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
         
         .glow-on-hover:hover { box-shadow: 0 0 20px rgba(59,130,246,0.5); }
-        #mobileMenu {transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);}
-        #mobileMenu.open {transform: translateX(0);}
-        #menuOverlay {transition: opacity 0.3s ease;}
+        #mobileMenu {
+            background: white !important;
+            width: 280px !important;
+        }
+        .mobile-nav-btn {
+            color: #1e293b !important;
+            background: white !important;
+            font-weight: bold !important;
+        }
+        .mobile-nav-btn i {
+            color: #2563eb !important;
+        }
+        #mobileMenu .bg-blue-700 {
+            background: #1e3a8a !important;
+        }
+        #mobileMenu .bg-blue-700 span, 
+        #mobileMenu .bg-blue-700 button {
+            color: white !important;
+        }
     
         @media (max-width: 768px) { .tours-container, .reviews-container { grid-template-columns: 1fr; } }
     </style>
@@ -545,6 +561,20 @@
         if (id === 'tours' && !allToursData.length) loadDynamicTours();
     }
 
+            function openMobileMenu() {
+                document.getElementById('mobileMenu').classList.add('open');
+                document.getElementById('menuOverlay').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            function closeMobileMenu() {
+                document.getElementById('mobileMenu').classList.remove('open');
+                document.getElementById('menuOverlay').style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            // event listeners
+            document.getElementById('menuBtn')?.addEventListener('click', openMobileMenu);
+            document.getElementById('closeMenuBtn')?.addEventListener('click', closeMobileMenu);
+            document.getElementById('menuOverlay')?.addEventListener('click', closeMobileMenu);
     function showToast(msg, type) {
         let t = document.createElement('div');
         t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type === 'success' ? 'border-green-500' : 'border-red-500'} pointer-events-auto animate-fadeInUp`;
