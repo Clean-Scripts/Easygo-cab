@@ -117,7 +117,7 @@
                     </div>
                     
                     <!-- Mobile Hamburger Menu Button -->
-                    <button id="menuBtn" class="lg:hidden text-3xl text-blue-800 hover:text-blue-600 transition-all duration-300">
+                    <button id="menuBtn" onclick="openMobileMenu()" class="lg:hidden text-3xl text-blue-800 hover:text-blue-600 transition-all duration-300">
                         <i class="fas fa-bars"></i>
                     </button>
                     
@@ -147,7 +147,7 @@
                         </div>
                     </div>     
                     <!-- Overlay for mobile menu -->
-                    <div id="menuOverlay" class="fixed inset-0 bg-black/50 z-[999] hidden lg:hidden transition-opacity duration-300"></div>
+                    <div id="menuOverlay" onclick="closeMobileMenu()" class="fixed inset-0 bg-black/50 z-[999] hidden lg:hidden transition-opacity duration-300"></div>
             </div>
         </div>
     </nav>
@@ -752,7 +752,7 @@
         let container = document.getElementById('dynamic-tours-container');
         container.innerHTML = list.length ? list.map(t => `
             <div class="bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl">
-                <img src="${t.ImageURL || 'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover transition-transform duration-700 hover:scale-110" loading="lazy">
+                <img src="${t.ImageURL}" class="h-56 w-full object-cover transition-transform duration-700 hover:scale-110">
                 <div class="p-6">
                     <h3 class="text-2xl font-black">${t.Destination}</h3>
                     <p class="text-gray-600 my-2">${t.Description}</p>
