@@ -876,24 +876,24 @@
             showToast(`Welcome ${name}! 🚖`, "success");
         }, 1500);
     }
-   function loginUI(mob, n) {
-            // Desktop elements
+// Update the loginUI to sync mobile menu name
+        function loginUI(mob, n) {
+            // Desktop
             document.getElementById('loginBtn').classList.add('hidden');
             document.getElementById('userMenu').classList.remove('hidden');
-            document.getElementById('displayUserName').innerHTML = n.toUpperCase();
+            document.getElementById('displayUserName').innerText = n.toUpperCase();
+            
+            // Mobile
+            const mobUserDiv = document.getElementById('mobileUserMenu');
+            const mobLoginBtn = document.getElementById('mobileLoginBtn');
+            if(mobUserDiv) mobUserDiv.classList.remove('hidden');
+            if(mobLoginBtn) mobLoginBtn.classList.add('hidden');
+            if(document.getElementById('mobileDisplayUserName')) {
+                document.getElementById('mobileDisplayUserName').innerText = n.toUpperCase();
+            }
+            
             document.getElementById('customerPhone').value = mob;
             document.getElementById('customerNameField').value = n;
-            
-            // Mobile menu elements (add these lines)
-            const mobileUserMenu = document.getElementById('mobileUserMenu');
-            const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-            const mobileDisplayUserName = document.getElementById('mobileDisplayUserName');
-            
-            if (mobileUserMenu && mobileLoginBtn && mobileDisplayUserName) {
-                mobileUserMenu.classList.remove('hidden');
-                mobileLoginBtn.classList.add('hidden');
-                mobileDisplayUserName.innerHTML = n.toUpperCase();
-            }
         }
 
         function logout() { 
@@ -1170,25 +1170,7 @@ function saveInvoiceToSheet() {
             updateMobileUserUI();
         });
         
-        // Update the loginUI to sync mobile menu name
-        function loginUI(mob, n) {
-            // Desktop
-            document.getElementById('loginBtn').classList.add('hidden');
-            document.getElementById('userMenu').classList.remove('hidden');
-            document.getElementById('displayUserName').innerText = n.toUpperCase();
-            
-            // Mobile
-            const mobUserDiv = document.getElementById('mobileUserMenu');
-            const mobLoginBtn = document.getElementById('mobileLoginBtn');
-            if(mobUserDiv) mobUserDiv.classList.remove('hidden');
-            if(mobLoginBtn) mobLoginBtn.classList.add('hidden');
-            if(document.getElementById('mobileDisplayUserName')) {
-                document.getElementById('mobileDisplayUserName').innerText = n.toUpperCase();
-            }
-            
-            document.getElementById('customerPhone').value = mob;
-            document.getElementById('customerNameField').value = n;
-        }
+        
         
         // Update mobile user menu when logged in
         function updateMobileUserUI() {
