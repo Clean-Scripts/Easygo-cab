@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>EasyGo Cabs</title>
+    <title>EasyGo Cabs | Premium Private Car Service</title>
     <link rel="icon" type="image/jpeg" href="easy go.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,109 +12,183 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-size: 16px; overflow-x: hidden; background: #f0f9ff; font-family: 'Inter', system-ui, sans-serif; }
-        .page-section { display: none; animation: fadeInUp 0.4s ease-out; }
+        body { font-size: 16px; overflow-x: hidden; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); font-family: 'Inter', system-ui, sans-serif; }
+        
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        
+        .page-section { display: none; animation: fadeInUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
         .page-section.active { display: block; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .modal { display: none; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; }
-        .modal.active { display: flex; animation: modalPop 0.2s ease; }
-        @keyframes modalPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        .suggestions-box { position: absolute; width: 100%; background: white; z-index: 1000; border-radius: 1rem; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2); max-height: 260px; overflow-y: auto; display: none; border: 1px solid #eef2ff; margin-top: 6px; }
+        
+        .modal { display: none; background-color: rgba(2, 6, 23, 0.9); backdrop-filter: blur(12px); z-index: 9999; align-items: center; justify-content: center; }
+        .modal.active { display: flex; animation: zoomIn 0.3s ease; }
+        
+        .suggestions-box { position: absolute; width: 100%; background: white; z-index: 1000; border-radius: 1rem; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.25); max-height: 260px; overflow-y: auto; display: none; border: 1px solid #eef2ff; margin-top: 6px; animation: fadeInUp 0.2s ease; }
         .suggestion-item { padding: 14px 20px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #1e293b; transition: all 0.2s; background: white; }
-        .suggestion-item:hover { background: #dbeafe; color: #1e3a8a; padding-left: 28px; }
+        .suggestion-item:hover { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1e3a8a; padding-left: 28px; transform: scale(1.01); }
+        
         .reviews-container, .tours-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
-        .star-rating i { cursor: pointer; transition: all 0.15s; font-size: 2rem; margin: 0 4px; }
-        .star-rating i.active, .star-rating i:hover { color: #fbbf24; text-shadow: 0 0 5px #ffb347; transform: scale(1.05); }
-        .filter-btn.active, .cat-btn.active { background: #0f172a !important; color: white !important; border-color: #0f172a !important; box-shadow: 0 8px 18px -6px #0f172a80; }
-        .cat-btn { transition: all 0.25s; cursor: pointer; border: 2px solid #e2e8f0; background: white; border-radius: 9999px; padding: 0.5rem 1.5rem; font-weight: bold; }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
-        .faq-item.active .faq-answer { max-height: 380px; }
+        
+        .filter-btn, .cat-btn { transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); cursor: pointer; border: 2px solid #e2e8f0; background: white; border-radius: 9999px; padding: 0.5rem 1.5rem; font-weight: bold; }
+        .filter-btn.active, .cat-btn.active { background: linear-gradient(135deg, #0f172a, #1e293b) !important; color: white !important; border-color: #0f172a !important; box-shadow: 0 12px 25px -8px #0f172a80; transform: scale(1.05); }
+        .filter-btn:hover, .cat-btn:hover, button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px -12px rgba(0,0,0,0.3); }
+        
+        .faq-item { background: white; border-radius: 1rem; padding: 1.25rem; cursor: pointer; transition: all 0.3s ease; border: 1px solid #e2e8f0; }
+        .faq-item:hover { transform: translateX(8px); box-shadow: 0 10px 25px -8px rgba(0,0,0,0.1); border-color: #3b82f6; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.33, 1, 0.68, 1); }
+        .faq-item.active .faq-answer { max-height: 380px; margin-top: 1rem; }
         .faq-item.active .faq-icon { transform: rotate(180deg); }
-        .stop-item { background: #f8fafc; border-radius: 1rem; padding: 0.75rem; margin-bottom: 0.75rem; border: 1px solid #e2e8f0; display: flex; gap: 0.5rem; align-items: center; }
-        .stop-item input { flex: 1; padding: 0.5rem; border-radius: 0.75rem; border: 1px solid #cbd5e1; }
-        @media (max-width: 768px) { .tours-container, .reviews-container { grid-template-columns: 1fr; } }
-        .nav-btn { transition: all 0.2s; cursor: pointer; }
+        
+        .stop-item { background: #f8fafc; border-radius: 1rem; padding: 0.75rem; margin-bottom: 0.75rem; border: 1px solid #e2e8f0; display: flex; gap: 0.5rem; align-items: center; animation: fadeInRight 0.3s ease; }
+        .stop-item input { flex: 1; padding: 0.5rem; border-radius: 0.75rem; border: 1px solid #cbd5e1; transition: all 0.2s; }
+        .stop-item input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        
+        .nav-btn { transition: all 0.3s ease; cursor: pointer; position: relative; }
         .nav-btn:hover { transform: translateY(-2px); color: #1d4ed8; }
-        button, .cat-btn, .filter-btn { transition: all 0.2s ease; }
-        button:hover, .cat-btn:hover, .filter-btn:hover { transform: translateY(-2px); }
-        .receipt-dashed { border-top: 2px dashed #cbd5e1; border-bottom: 2px dashed #cbd5e1; }
-        .container {max-width: 1400px;margin: 0 auto;padding: 2rem;}
-        .qna-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-        .qna-card { background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08); transition: all 0.25s ease; border: 1px solid #e2e8f0; cursor: pointer; }
-        .qna-card:hover { transform: translateY(-4px); box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15); border-color: #bfdbfe; }
-        .qna-card.open .qna-answer { max-height: 450px; margin-top: 1rem; }
+        .nav-btn::after { content: ''; position: absolute; bottom: -5px; left: 50%; width: 0; height: 2px; background: #1d4ed8; transition: all 0.3s; transform: translateX(-50%); }
+        .nav-btn:hover::after { width: 80%; }
+        
+        .card-hover { transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
+        .card-hover:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 30px 40px -20px rgba(0,0,0,0.25); }
+        
+        .qna-card { background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08); transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); border: 1px solid #e2e8f0; cursor: pointer; animation: fadeInUp 0.5s ease; }
+        .qna-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.2); border-color: #3b82f6; }
+        .qna-card.open .qna-answer { max-height: 550px; margin-top: 1rem; }
         .qna-card.open .fa-chevron-down { transform: rotate(180deg); }
-        .qna-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; color: #334155; margin-top: 0; line-height: 1.5; }
+        .qna-answer { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(0.33, 1, 0.68, 1); color: #334155; line-height: 1.6; }
+        
+        .floating-icon { animation: float 3s ease-in-out infinite; }
+        .pulse-icon { animation: pulse 2s ease-in-out infinite; }
+        
+        input, select, textarea { transition: all 0.2s ease; }
+        input:focus, select:focus, textarea:focus { transform: scale(1.01); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        
+        .glow-on-hover:hover { box-shadow: 0 0 20px rgba(59,130,246,0.5); }
+        #mobileMenu {transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);}
+        #mobileMenu.open {transform: translateX(0);}
+        #menuOverlay {transition: opacity 0.3s ease;}
+    
+        @media (max-width: 768px) { .tours-container, .reviews-container { grid-template-columns: 1fr; } }
     </style>
 </head>
-<body class="text-slate-800 flex flex-col min-h-screen selection:bg-blue-200">
+<body class="text-slate-800 flex flex-col min-h-screen selection:bg-blue-200 selection:text-white">
     <div id="toast-container" class="fixed top-24 right-5 z-[10000] flex flex-col gap-3 pointer-events-none"></div>
 
-    <nav class="bg-white/95 backdrop-blur-sm shadow-2xl sticky top-0 z-50 border-b-4 border-blue-700">
+    <!-- Navbar with glassmorphism -->
+    <nav class="bg-white/90 backdrop-blur-md shadow-2xl sticky top-0 z-50 border-b-2 border-blue-500/30">
         <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
             <div class="flex justify-between h-24 items-center">
                 <div class="flex items-center cursor-pointer group" onclick="showPage('home')">
-                    <img src="easy go.jpg" alt="EasyGo Logo" class="h-16 w-16 object-cover rounded-full border-2 border-blue-600 shadow-xl group-hover:scale-105 transition duration-300">
+                    <img src="easy go.jpg" alt="EasyGo Logo" class="h-16 w-16 object-cover rounded-full border-2 border-blue-600 shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
                     <div class="ml-4">
-                        <span class="block font-black text-3xl text-blue-900 leading-none tracking-tight">EasyGo</span>
-                        <span class="block text-sm font-extrabold text-blue-600 tracking-widest uppercase mt-1">Premium Cabs</span>
+                        <span class="block font-black text-3xl bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent tracking-tight">EasyGo</span>
+                        <span class="block text-sm font-extrabold text-blue-600 tracking-widest uppercase mt-1 floating-icon">✦ Premium Cabs ✦</span>
                     </div>
                 </div>
-                <div class="hidden xl:flex items-center space-x-7">
-                    <button onclick="showPage('home')" class="nav-btn font-black text-lg">🏠 Home</button>
-                    <button onclick="showPage('tours')" class="nav-btn font-black text-lg">🎒 Packages</button>
-                    <button onclick="showPage('about')" class="nav-btn font-black text-lg">📖 Story</button>
-                    <div id="userMenu" class="hidden items-center space-x-4 bg-slate-100 px-5 py-2.5 rounded-full shadow-md">
-                        <div class="text-right">
-                            <span id="displayUserName" class="block text-base font-black text-slate-900"></span>
-                            <span class="block text-xs font-bold text-green-600"><i class="fas fa-check-circle"></i> Verified</span>
+                    <!-- Desktop Menu -->
+                    <div class="hidden lg:flex items-center space-x-7">
+                        <button onclick="showPage('home')" class="nav-btn font-black text-lg"><i class="fas fa-home mr-2"></i> Home</button>
+                        <button onclick="showPage('tours')" class="nav-btn font-black text-lg"><i class="fas fa-map-marked-alt mr-2"></i> Packages</button>
+                        <button onclick="showPage('about')" class="nav-btn font-black text-lg"><i class="fas fa-book-open mr-2"></i> Story</button>
+                        <button onclick="showPage('faq')" class="nav-btn font-black text-lg"><i class="fas fa-question-circle mr-2"></i> FAQ</button>
+                        <button onclick="showPage('privacy')" class="nav-btn font-black text-lg"><i class="fas fa-lock mr-2"></i> Privacy</button>
+                        <button onclick="showPage('terms')" class="nav-btn font-black text-lg"><i class="fas fa-gavel mr-2"></i> Terms</button>
+                        <div id="userMenu" class="hidden items-center space-x-4 bg-gradient-to-r from-slate-100 to-blue-50 px-5 py-2.5 rounded-full shadow-md">
+                            <div class="text-right">
+                                <span id="displayUserName" class="block text-base font-black text-slate-900"></span>
+                                <span class="block text-xs font-bold text-green-600"><i class="fas fa-check-circle"></i> Verified</span>
+                            </div>
+                            <button onclick="logout()" class="text-sm bg-red-500 text-white px-5 py-2 rounded-full font-bold hover:bg-red-700 transition-all hover:scale-105">Logout</button>
                         </div>
-                        <button onclick="logout()" class="text-sm bg-red-500 text-white px-5 py-2 rounded-full font-bold hover:bg-red-700">Logout</button>
+                        <button id="loginBtn" onclick="openLoginModal()" class="bg-gradient-to-r from-blue-700 to-blue-800 text-white px-7 py-3 rounded-full font-black text-lg hover:from-blue-800 hover:to-blue-900 shadow-xl transition-all flex items-center gap-2 pulse-icon">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
                     </div>
-                    <button id="loginBtn" onclick="openLoginModal()" class="bg-blue-700 text-white px-7 py-3 rounded-full font-black text-lg hover:bg-blue-900 shadow-xl transition-all flex items-center gap-2">
-                        <i class="fas fa-sign-in-alt"></i> Login
+                    
+                    <!-- Mobile Hamburger Menu Button -->
+                    <button id="menuBtn" class="lg:hidden text-3xl text-blue-800 hover:text-blue-600 transition-all duration-300">
+                        <i class="fas fa-bars"></i>
                     </button>
-                </div>
+                    
+                    <!-- Mobile Sidebar Menu (Animated) -->
+                    <div id="mobileMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-2xl z-[1000] transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
+                        <div class="p-5">
+                            <div class="flex justify-between items-center mb-8">
+                                <span class="font-black text-xl text-blue-800">Menu</span>
+                                <button id="closeMenuBtn" class="text-2xl text-gray-600 hover:text-red-500">&times;</button>
+                            </div>
+                            <div class="flex flex-col space-y-4">
+                                <button onclick="showPage('home'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-home mr-3 w-6"></i> Home</button>
+                                <button onclick="showPage('tours'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-map-marked-alt mr-3 w-6"></i> Packages</button>
+                                <button onclick="showPage('about'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-book-open mr-3 w-6"></i> Story</button>
+                                <button onclick="showPage('faq'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-question-circle mr-3 w-6"></i> FAQ</button>
+                                <button onclick="showPage('privacy'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-lock mr-3 w-6"></i> Privacy</button>
+                                <button onclick="showPage('terms'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-gavel mr-3 w-6"></i> Terms</button>
+                                <div class="border-t border-gray-200 my-2 pt-4">
+                                    <div id="mobileUserMenu" class="hidden">
+                                        <div class="bg-gradient-to-r from-slate-100 to-blue-50 p-3 rounded-xl mb-3">
+                                            <span id="mobileDisplayUserName" class="block text-base font-black text-slate-900"></span>
+                                            <span class="block text-xs font-bold text-green-600"><i class="fas fa-check-circle"></i> Verified</span>
+                                        </div>
+                                        <button onclick="logout(); closeMobileMenu();" class="w-full bg-red-500 text-white px-5 py-2 rounded-full font-bold hover:bg-red-700 transition-all">Logout</button>
+                                    </div>
+                                    <button id="mobileLoginBtn" onclick="openLoginModal(); closeMobileMenu();" class="w-full bg-gradient-to-r from-blue-700 to-blue-800 text-white px-5 py-2 rounded-full font-bold hover:from-blue-800 hover:to-blue-900 transition-all pulse-icon">Login</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>     
+                    <!-- Overlay for mobile menu -->
+                    <div id="menuOverlay" class="fixed inset-0 bg-black/50 z-[999] hidden lg:hidden transition-opacity duration-300"></div>
             </div>
         </div>
     </nav>
 
     <main class="flex-grow">
-        <div id="activeRideBanner" class="hidden bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white shadow-2xl border-b-8 border-yellow-400">
+        <!-- Active Ride Banner -->
+        <div id="activeRideBanner" class="hidden bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white shadow-2xl border-b-4 border-yellow-400 animate-pulse">
             <div class="max-w-7xl mx-auto px-5 py-5 flex flex-wrap justify-between items-center gap-4">
                 <div class="flex items-center gap-4">
-                    <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center text-blue-900 text-2xl animate-pulse"><i class="fas fa-car-side"></i></div>
+                    <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center text-blue-900 text-2xl animate-bounce"><i class="fas fa-car-side"></i></div>
                     <div>
-                        <h4 class="font-black text-xl text-yellow-400">🚗 RIDE ACTIVE</h4>
+                        <h4 class="font-black text-xl text-yellow-400"><i class="fas fa-road"></i> RIDE ACTIVE</h4>
                         <p class="font-bold" id="activeRideRoute">Loading...</p>
                     </div>
                 </div>
-                <div class="bg-black/50 px-6 py-2 rounded-2xl text-center">
+                <div class="bg-black/50 px-6 py-2 rounded-2xl text-center backdrop-blur-sm">
                     <p class="text-xs uppercase font-bold">🔐 Verify OTP</p>
                     <p class="text-4xl font-black tracking-widest" id="activeRideOTP">------</p>
                 </div>
-                <button onclick="endRideProcess()" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl font-black shadow-xl transition hover:scale-105">✅ END RIDE & BILL</button>
+                <button onclick="endRideProcess()" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-xl font-black shadow-xl transition-all hover:scale-105 hover:rotate-1"><i class="fas fa-flag-checkered mr-2"></i> END RIDE & BILL</button>
             </div>
         </div>
 
+        <!-- Home Section -->
         <section id="home" class="page-section active max-w-7xl mx-auto px-5 py-10">
             <div class="grid lg:grid-cols-12 gap-10">
-                <div class="lg:col-span-7 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 relative">
-                    <div class="p-4 bg-slate-800 flex justify-between items-center text-white">
-                        <span class="font-black text-xl"><i class="fas fa-map-marked-alt mr-3"></i>🗺️ Live GPS Route</span>
-                        <button onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-full text-sm font-bold shadow-lg flex gap-2"><i class="fas fa-crosshairs"></i> GPS Locate</button>
+                <div class="lg:col-span-7 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 relative card-hover">
+                    <div class="p-4 bg-gradient-to-r from-slate-800 to-slate-900 flex justify-between items-center text-white">
+                        <span class="font-black text-xl"><i class="fas fa-map-marked-alt mr-3 floating-icon"></i>🗺️ Live GPS Route</span>
+                        <button onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-full text-sm font-bold shadow-lg flex gap-2 transition-all hover:scale-105"><i class="fas fa-crosshairs"></i> GPS Locate</button>
                     </div>
                     <div id="map" class="w-full h-[580px] z-0"></div>
-                    <div class="absolute bottom-6 left-6 bg-white/95 backdrop-blur p-3 rounded-2xl shadow-xl border border-blue-200 flex gap-3 z-10">
+                    <div class="absolute bottom-6 left-6 bg-white/95 backdrop-blur p-3 rounded-2xl shadow-xl border border-blue-200 flex gap-3 z-10 animate-pulse">
                         <div><p class="text-xs font-bold text-gray-500">📏 TOTAL DISTANCE</p><p class="text-2xl font-black text-blue-900" id="mapDistanceDisplay">0.0 km</p></div>
                         <i class="fas fa-route text-3xl text-blue-300"></i>
                     </div>
                 </div>
                 <div class="lg:col-span-5">
-                    <div class="bg-white p-7 rounded-3xl shadow-2xl border border-blue-50">
+                    <div class="bg-white/95 backdrop-blur-sm p-7 rounded-3xl shadow-2xl border border-blue-100 card-hover">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-3xl font-black text-slate-900 uppercase">📅 Book EasyGo</h2>
-                            <button onclick="showPage('tours')" class="bg-amber-400 text-amber-900 px-5 py-2 rounded-xl font-black text-sm shadow-md hover:bg-amber-500">🎁 Packages</button>
+                            <h2 class="text-3xl font-black bg-gradient-to-r from-slate-900 to-blue-800 bg-clip-text text-transparent uppercase"><i class="fas fa-calendar-check mr-2"></i> Book EasyGo</h2>
+                            <button onclick="showPage('tours')" class="bg-amber-400 text-amber-900 px-5 py-2 rounded-xl font-black text-sm shadow-md hover:bg-amber-500 transition-all hover:scale-105"><i class="fas fa-gift mr-1"></i> Packages</button>
                         </div>
                         <form id="bookingForm" onsubmit="handleBooking(event)">
                             <input type="hidden" id="customerPhone" name="Phone">
@@ -124,83 +198,91 @@
                             <input type="hidden" id="dropLink" name="Drop_Link">
                             <div class="space-y-5">
                                 <div class="relative">
-                                    <label class="block text-sm font-black">📍 Pickup Location</label>
+                                    <label class="block text-sm font-black"><i class="fas fa-circle text-green-500 mr-1"></i> Pickup Location</label>
                                     <div class="flex">
                                         <div class="relative flex-1">
-                                            <i class="fas fa-circle text-green-500 absolute left-4 top-5 text-sm"></i>
-                                            <input type="text" id="pickup" name="Pickup" required autocomplete="off" onkeyup="debouncedSearchPickup(this.value)" class="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
+                                            <input type="text" id="pickup" name="Pickup" required autocomplete="off" onkeyup="debouncedSearchPickup(this.value)" placeholder="Enter pickup location" class="w-full pl-4 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
                                             <div id="pickup-suggestions" class="suggestions-box"></div>
                                         </div>
-                                        <button type="button" onclick="useCurrentLocation('pickup')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700"><i class="fas fa-location-arrow"></i></button>
+                                        <button type="button" onclick="useCurrentLocation('pickup')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700 transition-all"><i class="fas fa-location-arrow"></i></button>
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-black mb-2">🔄 Multiple Stops (Optional)</label>
+                                    <label class="block text-sm font-black mb-2"><i class="fas fa-layer-group mr-1"></i> Multiple Stops (Optional)</label>
                                     <div id="stopsContainer"></div>
-                                    <button type="button" onclick="addStop()" class="text-sm bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-bold hover:bg-blue-200 mt-2"><i class="fas fa-plus-circle"></i> Add Stop Location</button>
+                                    <button type="button" onclick="addStop()" class="text-sm bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-bold hover:bg-blue-200 transition-all mt-2 hover:scale-105"><i class="fas fa-plus-circle"></i> Add Stop Location</button>
                                 </div>
                                 <div class="relative">
-                                    <label class="block text-sm font-black">🏁 Drop Location</label>
+                                    <label class="block text-sm font-black"><i class="fas fa-square text-red-500 mr-1"></i> Drop Location</label>
                                     <div class="flex">
                                         <div class="relative flex-1">
-                                            <i class="fas fa-square text-red-500 absolute left-4 top-5 text-sm"></i>
-                                            <input type="text" id="drop" name="Drop" required autocomplete="off" onkeyup="debouncedSearchDrop(this.value)" class="w-full pl-10 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
+                                            <input type="text" id="drop" name="Drop" required autocomplete="off" onkeyup="debouncedSearchDrop(this.value)" placeholder="Enter drop location" class="w-full pl-4 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
                                             <div id="drop-suggestions" class="suggestions-box"></div>
                                         </div>
-                                        <button type="button" onclick="useCurrentLocation('drop')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700"><i class="fas fa-location-arrow"></i></button>
+                                        <button type="button" onclick="useCurrentLocation('drop')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700 transition-all"><i class="fas fa-location-arrow"></i></button>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-5">
-                                    <div><label class="block text-sm font-black">📅 Pickup Date</label><input type="date" id="date" name="Date" required class="w-full px-4 py-4 bg-slate-50 border-2 rounded-xl font-bold"></div>
-                                    <div><label class="block text-sm font-black">⏰ Pickup Time</label><input type="time" id="time" name="Time" required class="w-full px-4 py-4 bg-slate-50 border-2 rounded-xl font-bold"></div>
+                                    <div><label class="block text-sm font-black"><i class="fas fa-calendar mr-1"></i> Pickup Date</label><input type="date" id="date" name="Date" required class="w-full px-4 py-4 bg-slate-50 border-2 rounded-xl font-bold"></div>
+                                    <div><label class="block text-sm font-black"><i class="fas fa-clock mr-1"></i> Pickup Time</label><input type="time" id="time" name="Time" required class="w-full px-4 py-4 bg-slate-50 border-2 rounded-xl font-bold"></div>
                                 </div>
-                                <div class="flex gap-3 items-center bg-slate-100 p-3 rounded-xl">
+                                <div class="flex gap-3 items-center bg-gradient-to-r from-slate-100 to-blue-50 p-3 rounded-xl">
                                     <label class="font-bold text-sm"><i class="fas fa-exchange-alt"></i> Round Trip?</label>
-                                    <input type="checkbox" id="roundTripCheck" onchange="updateLiveEstimate()" class="w-5 h-5">
+                                    <input type="checkbox" id="roundTripCheck" onchange="updateLiveEstimate()" class="w-5 h-5 rounded">
                                     <span class="text-xs text-gray-600"> (Round trip fare = 1.8x one-way)</span>
                                 </div>
                                 <div id="liveEstimateBox" class="hidden"></div>
-                                <button type="submit" id="submitBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-xl text-2xl transition-all flex justify-center gap-3 items-center">🚀 BOOK NOW <i class="fas fa-arrow-right"></i></button>
+                                <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white font-black py-5 rounded-2xl shadow-xl text-2xl transition-all flex justify-center gap-3 items-center group">
+                                    <i class="fas fa-rocket group-hover:animate-bounce"></i> BOOK NOW <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
             <div class="mt-24">
-                <div class="text-center mb-10"><h2 class="text-4xl font-black uppercase">⭐ Verified Rider Reviews</h2><p class="text-gray-600 font-bold border-b-4 border-yellow-400 inline-block pb-2">Live from database</p></div>
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl font-black uppercase bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent"><i class="fas fa-star text-yellow-500 mr-2"></i> Verified Rider Reviews</h2>
+                    <p class="text-gray-600 font-bold border-b-4 border-yellow-400 inline-block pb-2">Live from database ✨</p>
+                </div>
                 <div id="dynamic-reviews-container" class="reviews-container"></div>
             </div>
         </section>
 
+        <!-- Tours Section -->
         <section id="tours" class="page-section max-w-7xl mx-auto px-5 py-16">
-            <div class="text-center mb-12"><h1 class="text-5xl font-black mb-4 uppercase">🏞️ Explore MP with EasyGo</h1><div class="bg-yellow-50 border-l-8 border-yellow-400 p-5 rounded-2xl"><p class="font-bold text-lg">Discover majestic destinations. <span class="text-red-600">*Final fare includes dynamic tolls & round trip logic</span></p></div></div>
-            <div class="flex flex-wrap justify-center gap-4 mb-8">
-                <button onclick="filterTours(event, 'All')" class="filter-btn active bg-white px-8 py-3 rounded-full font-black shadow-md border">🌍 All Seasons</button>
-                <button onclick="filterTours(event, 'Monsoon')" class="filter-btn bg-white px-8 py-3 rounded-full font-black"><i class="fas fa-cloud-rain"></i> Monsoon</button>
-                <button onclick="filterTours(event, 'Winter')" class="filter-btn bg-white px-8 py-3 rounded-full font-black"><i class="fas fa-snowflake"></i> Winter</button>
-                <button onclick="filterTours(event, 'Summer')" class="filter-btn bg-white px-8 py-3 rounded-full font-black"><i class="fas fa-sun"></i> Summer</button>
+            <div class="text-center mb-12">
+                <h1 class="text-5xl font-black mb-4 uppercase bg-gradient-to-r from-green-700 to-blue-700 bg-clip-text text-transparent"><i class="fas fa-mountain mr-3"></i> Explore MP with EasyGo</h1>
+                <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-8 border-yellow-400 p-5 rounded-2xl shadow-lg"><p class="font-bold text-lg">✨ Discover majestic destinations. <span class="text-red-600">*Final fare includes dynamic tolls & round trip logic</span></p></div>
             </div>
-            <div class="flex flex-wrap justify-center gap-3 mb-8 bg-slate-100 p-4 rounded-3xl">
-                <span class="w-full text-center font-black text-sm uppercase">📂 Category</span>
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <button onclick="filterTours(event, 'All')" class="filter-btn active"><i class="fas fa-globe-asia mr-1"></i> All Seasons</button>
+                <button onclick="filterTours(event, 'Monsoon')" class="filter-btn"><i class="fas fa-cloud-rain mr-1"></i> Monsoon</button>
+                <button onclick="filterTours(event, 'Winter')" class="filter-btn"><i class="fas fa-snowflake mr-1"></i> Winter</button>
+                <button onclick="filterTours(event, 'Summer')" class="filter-btn"><i class="fas fa-sun mr-1"></i> Summer</button>
+            </div>
+            <div class="flex flex-wrap justify-center gap-3 mb-8 bg-white/80 backdrop-blur-sm p-4 rounded-3xl shadow-lg">
+                <span class="w-full text-center font-black text-sm uppercase text-blue-700"><i class="fas fa-tags mr-1"></i> Category</span>
                 <button onclick="filterByCategory(event, 'All')" class="cat-btn active">All Places</button>
-                <button onclick="filterByCategory(event, 'Nature')" class="cat-btn"><i class="fas fa-leaf"></i> Nature & Falls</button>
-                <button onclick="filterByCategory(event, 'Religious')" class="cat-btn"><i class="fas fa-om"></i> Religious</button>
-                <button onclick="filterByCategory(event, 'Adventure')" class="cat-btn"><i class="fas fa-utensils"></i> Adventure</button>
-                <button onclick="filterByCategory(event, 'Heritage')" class="cat-btn"><i class="fas fa-fort-awesome"></i> Heritage</button>
+                <button onclick="filterByCategory(event, 'Nature')" class="cat-btn"><i class="fas fa-leaf mr-1"></i> Nature & Falls</button>
+                <button onclick="filterByCategory(event, 'Religious')" class="cat-btn"><i class="fas fa-om mr-1"></i> Religious</button>
+                <button onclick="filterByCategory(event, 'Adventure')" class="cat-btn"><i class="fas fa-utensils mr-1"></i> Adventure</button>
+                <button onclick="filterByCategory(event, 'Heritage')" class="cat-btn"><i class="fas fa-fort-awesome mr-1"></i> Heritage</button>
             </div>
             <div id="dynamic-tours-container" class="tours-container"></div>
         </section>
 
+        <!-- FAQ Section -->
         <section id="faq" class="page-section max-w-6xl mx-auto px-5 py-16">
-            <div class="text-center mb-12"><h1 class="text-5xl font-black uppercase border-b-8 border-blue-600 inline-block pb-3">❓ FAQ</h1></div>
-            <div class="bg-white rounded-3xl shadow-2xl p-8 space-y-6" id="faqContainer"></div>
+            <div class="text-center mb-12"><h1 class="text-5xl font-black uppercase border-b-8 border-blue-600 inline-block pb-3"><i class="fas fa-question-circle mr-3"></i> FAQ</h1></div>
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 space-y-4" id="faqContainer"></div>
             <div class="mt-12">
                 <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
                     <div>
-                        <h2 class="text-4xl font-black bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent"><i class="fas fa-database text-blue-700"></i> Knowledge Base</h2>
-                        <p class="text-gray-500 mt-1">Everything you need to know — Fare, Policies, Safety, Routes & more</p>
+                        <h2 class="text-4xl font-black bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent"><i class="fas fa-database text-blue-700 mr-2"></i> Knowledge Base</h2>
+                        <p class="text-gray-500 mt-1">📚 Everything you need to know — Fare, Policies, Safety, Routes & more</p>
                     </div>
-                    <div class="flex gap-4 bg-slate-50 p-4 rounded-2xl border">
+                    <div class="flex gap-4 bg-white p-4 rounded-2xl border shadow-lg">
                         <div class="text-center"><div class="font-black text-xl text-blue-700">520+</div><div class="text-[10px] font-bold uppercase">Facts</div></div>
                         <div class="text-center"><div class="font-black text-xl text-blue-700">24</div><div class="text-[10px] font-bold uppercase">Cats</div></div>
                         <div class="text-center"><div class="font-black text-xl text-green-600">100%</div><div class="text-[10px] font-bold uppercase">Fair</div></div>
@@ -210,14 +292,15 @@
             </div>
         </section>
 
+        <!-- About Section -->
         <section id="about" class="page-section max-w-6xl mx-auto px-5 py-16">
-            <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-10">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 card-hover">
                 <div class="flex flex-col lg:flex-row gap-8">
                     <div class="lg:w-2/3">
-                        <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-4 inline-block"><i class="fas fa-crown"></i> Premium Private Service | Est. 2024</span>
+                        <span class="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-4 inline-block"><i class="fas fa-crown mr-1"></i> Premium Private Service | Est. 2024</span>
                         <h1 class="text-4xl font-black text-slate-900 mb-6 uppercase">The EasyGo Chronicles</h1>
-                        <h2 class="text-2xl font-black mb-4 flex items-center gap-2 text-blue-700"><i class="fas fa-road"></i> Where It All Began</h2>
-                        <p class="text-gray-700 leading-relaxed mb-4">Founded by <strong>Nishant Jaiswal</strong> in <strong>Omaxe City 1, Indore</strong>, EasyGo Cabs emerged from a simple frustration: unfair surge pricing and unpredictable service. Nishant decided to put his own <strong>White Citroën C3</strong> into service — a car representing elegance and comfort.</p>
+                        <h2 class="text-2xl font-black mb-4 flex items-center gap-2 text-blue-700"><i class="fas fa-road floating-icon"></i> Where It All Began</h2>
+                        <p class="text-gray-700 leading-relaxed mb-4">Founded by <strong class="text-blue-700">Nishant Jaiswal</strong> in <strong>Omaxe City 1, Indore</strong>, EasyGo Cabs emerged from a simple frustration: unfair surge pricing and unpredictable service. Nishant decided to put his own <strong>White Citroën C3</strong> into service — a car representing elegance and comfort.</p>
                         <p class="text-gray-700 leading-relaxed mb-4">Unlike aggregators, EasyGo is a <strong>100% self-owned</strong> service. No middlemen, no hidden commissions — just pure, honest mobility. Today, with over 2,500+ happy rides and a 4.98⭐ rating, we are Indore's most trusted choice.</p>
                         <div class="mt-6 flex gap-3 flex-wrap">
                             <span class="bg-slate-100 px-4 py-2 rounded-full text-xs font-bold"><i class="fas fa-check-circle text-green-600"></i> Transparent Fare</span>
@@ -225,40 +308,41 @@
                             <span class="bg-slate-100 px-4 py-2 rounded-full text-xs font-bold"><i class="fas fa-car-side text-red-500"></i> Citroën C3</span>
                         </div>
                     </div>
-                    <div class="lg:w-1/3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
+                    <div class="lg:w-1/3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 shadow-inner">
                         <h3 class="font-black text-xl mb-4 uppercase"><i class="fas fa-chart-line"></i> Milestones</h3>
                         <div class="space-y-4">
-                            <div class="flex gap-3"><div class="font-black text-blue-600">2024</div><p class="text-sm"><strong>April:</strong> First ride from Omaxe City.</p></div>
-                            <div class="flex gap-3"><div class="font-black text-blue-600">2024</div><p class="text-sm"><strong>June:</strong> 50+ 5-star reviews reached.</p></div>
-                            <div class="flex gap-3"><div class="font-black text-blue-600">2025</div><p class="text-sm">Launched MP Darshan Explorer Packages.</p></div>
-                            <div class="flex gap-3"><div class="font-black text-blue-600">2026</div><p class="text-sm">Most Transparent Cab Service Award.</p></div>
+                            <div class="flex gap-3 items-center group cursor-pointer"><div class="font-black text-blue-600 group-hover:scale-110 transition">2024</div><p class="text-sm"><strong>April:</strong> First ride from Omaxe City.</p></div>
+                            <div class="flex gap-3 items-center group cursor-pointer"><div class="font-black text-blue-600 group-hover:scale-110 transition">2024</div><p class="text-sm"><strong>June:</strong> 50+ 5-star reviews reached.</p></div>
+                            <div class="flex gap-3 items-center group cursor-pointer"><div class="font-black text-blue-600 group-hover:scale-110 transition">2025</div><p class="text-sm">Launched MP Darshan Explorer Packages.</p></div>
+                            <div class="flex gap-3 items-center group cursor-pointer"><div class="font-black text-blue-600 group-hover:scale-110 transition">2026</div><p class="text-sm">Most Transparent Cab Service Award.</p></div>
                         </div>
                     </div>
                 </div>
-                <div class="mt-8 bg-amber-50 border-l-8 border-amber-400 p-5 rounded-xl">
-                    <i class="fas fa-heart text-red-500 mr-2"></i> <strong>Why EasyGo?</strong> We own the car, we own the promise. Consistency and care in every mile.
+                <div class="mt-8 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-8 border-amber-400 p-5 rounded-xl">
+                    <i class="fas fa-heart text-red-500 mr-2 animate-pulse"></i> <strong>Why EasyGo?</strong> We own the car, we own the promise. Consistency and care in every mile.
                 </div>
             </div>
         </section>
 
-        <section id="privacy" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white rounded-3xl shadow-2xl p-10"><h1 class="text-4xl font-black text-blue-900 mb-6">🔒 Privacy Policy</h1><p>Data protected via Google Workspace, never shared.</p></div></section>
-        <section id="terms" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white rounded-3xl shadow-2xl p-10"><h1 class="text-4xl font-black text-blue-900 mb-6">⚖️ Terms</h1><p>Slab rates + ₹16/km extra + 5% GST + ₹2/min wait + toll charges extra if applicable.</p></div></section>
+        <section id="privacy" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10"><h1 class="text-4xl font-black text-blue-900 mb-6"><i class="fas fa-lock mr-3"></i> Privacy Policy</h1><p>Data protected via Google Workspace, never shared. Your phone number is your primary key and is never sold to third parties.</p></div></section>
+        <section id="terms" class="page-section max-w-6xl mx-auto px-5 py-16"><div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10"><h1 class="text-4xl font-black text-blue-900 mb-6"><i class="fas fa-gavel mr-3"></i> Terms</h1><p>Slab rates + ₹16/km extra + 5% GST + ₹2/min wait + toll charges extra if applicable. By booking, you agree to these terms.</p></div></section>
     </main>
 
-    <footer class="bg-slate-900 text-slate-300 pt-12 pb-6 border-t-8 border-blue-600">
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-slate-900 to-slate-800 text-slate-300 pt-12 pb-6 border-t-4 border-blue-600">
         <div class="max-w-7xl mx-auto px-5">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                 <div>
                     <div class="flex items-center gap-3 mb-4">
-                        <img src="easy go.jpg" alt="EasyGo Logo" class="h-12 w-12 rounded-full border-2 border-blue-500">
+                        <img src="easy go.jpg" alt="EasyGo Logo" class="h-12 w-12 rounded-full border-2 border-blue-500 animate-pulse">
                         <span class="font-black text-2xl text-white">EasyGo</span>
                     </div>
                     <p class="text-sm text-gray-400 mb-4 leading-relaxed">Premium private cab service based in Indore. 100% self-owned White Citroën C3 with transparent pricing and OTP-secured rides.</p>
                     <div class="flex gap-4">
-                        <a href="#" class="text-gray-400 hover:text-blue-400 transition text-xl"><i class="fab fa-whatsapp"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-blue-400 transition text-xl"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-blue-400 transition text-xl"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-blue-400 transition text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-all hover:scale-110 text-xl"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-all hover:scale-110 text-xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-all hover:scale-110 text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition-all hover:scale-110 text-xl"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
                 <div>
@@ -268,104 +352,100 @@
                         <li><a href="#" onclick="showPage('tours'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Tour Packages</a></li>
                         <li><a href="#" onclick="showPage('about'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Our Story</a></li>
                         <li><a href="#" onclick="showPage('faq'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> FAQ</a></li>
-                        <li><a href="#" onclick="showPage('privacy'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Privacy Policy</a></li>
-                        <li><a href="#" onclick="showPage('terms'); return false;" class="text-gray-400 hover:text-blue-400 transition flex items-center gap-2"><i class="fas fa-chevron-right text-xs"></i> Terms & Conditions</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-white font-black text-lg mb-4 border-l-4 border-blue-500 pl-3">Contact Us</h3>
                     <ul class="space-y-3 text-sm">
-                        <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt text-blue-400 mt-1"></i><span class="text-gray-400">Omaxe City 1, Indore, Madhya Pradesh - 452001</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt text-blue-400 mt-1"></i><span class="text-gray-400">Omaxe City 1, Indore, MP - 452001</span></li>
                         <li class="flex items-center gap-3"><i class="fab fa-whatsapp text-green-400"></i><a href="https://wa.me/917651837322" class="text-gray-400 hover:text-blue-400 transition">+91 76518 37322</a></li>
-                        <li class="flex items-center gap-3"><i class="fas fa-phone-alt text-blue-400"></i><span class="text-gray-400">+91 76518 37322</span></li>
                         <li class="flex items-center gap-3"><i class="fas fa-envelope text-red-400"></i><a href="mailto:easygocabs@gmail.com" class="text-gray-400 hover:text-blue-400 transition">easygocabs@gmail.com</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-white font-black text-lg mb-4 border-l-4 border-blue-500 pl-3">Working Hours</h3>
                     <ul class="space-y-2 text-sm text-gray-400 mb-4">
-                        <li class="flex justify-between"><span>Monday - Saturday:</span><span class="text-white">6:00 AM - 11:00 PM</span></li>
+                        <li class="flex justify-between"><span>Mon - Sat:</span><span class="text-white">6:00 AM - 11:00 PM</span></li>
                         <li class="flex justify-between"><span>Sunday:</span><span class="text-white">7:00 AM - 10:00 PM</span></li>
-                        <li class="flex justify-between"><span>Emergency Support:</span><span class="text-green-400">24/7 Available</span></li>
+                        <li class="flex justify-between"><span>Emergency:</span><span class="text-green-400">24/7 Available</span></li>
                     </ul>
-                    <div class="bg-blue-900/50 rounded-xl p-3 text-center">
-                        <p class="text-xs text-gray-300 mb-2">📢 Book Your Ride Now</p>
-                        <a href="#" onclick="showPage('home'); return false;" class="block bg-blue-600 hover:bg-blue-700 text-white text-center py-2 rounded-lg text-sm font-bold transition">Book via WhatsApp →</a>
-                    </div>
                 </div>
             </div>
             <div class="border-t border-slate-700 my-6"></div>
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-                <div><i class="fas fa-car-side text-blue-500 mr-1"></i> Vehicle: <strong class="text-white">White Citroën C3</strong> | <i class="fas fa-id-card ml-2"></i> Self-Owned Private Car</div>
+                <div><i class="fas fa-car-side text-blue-500 mr-1"></i> Vehicle: <strong class="text-white">White Citroën C3</strong> | Self-Owned Private Car</div>
                 <div class="flex gap-6"><span><i class="fas fa-shield-alt text-green-500"></i> OTP Secure</span><span><i class="fas fa-chart-line text-blue-500"></i> No Surge Pricing</span><span><i class="fas fa-star text-yellow-500"></i> 4.98 ⭐ Rating</span></div>
-                <div>© 2026 EasyGo Cabs | Premium Private Car Service | All Rights Reserved</div>
+                <div>© 2026 EasyGo Cabs | All Rights Reserved</div>
             </div>
-            <div class="text-center text-xs text-gray-600 mt-6 pt-4 border-t border-slate-800"><p>🚖 100% Private Vehicle | Transparent Fare | GST Invoice | 24/7 Customer Support</p></div>
         </div>
     </footer>
 
+    <!-- Modals -->
     <div id="loginModal" class="modal fixed inset-0 hidden bg-black/50 z-[1000] flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-3xl max-w-md w-full relative">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-6 text-3xl font-black">&times;</button>
-            <div class="text-center mb-6"><img src="easy go.jpg" class="h-20 w-20 rounded-full mx-auto border-4 border-blue-600"></div>
+        <div class="bg-white rounded-3xl max-w-md w-full relative animate-zoomIn">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-6 text-3xl font-black hover:scale-110 transition">&times;</button>
+            <div class="text-center mb-6"><img src="easy go.jpg" class="h-20 w-20 rounded-full mx-auto border-4 border-blue-600 animate-pulse"></div>
             <div id="step1">
-                <input type="text" id="nameInput" placeholder="Full Name" class="w-full p-4 border-2 rounded-xl my-3">
+                <input type="text" id="nameInput" placeholder="Full Name" class="w-full p-4 border-2 rounded-xl my-3 focus:border-blue-600 transition">
                 <div class="flex"><span class="bg-slate-200 p-4 rounded-l-xl">+91</span><input type="tel" id="mobileInput" placeholder="10 digit mobile" class="flex-1 p-4 border-2 rounded-r-xl"></div>
-                <button onclick="sendOTP()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black mt-5">GENERATE OTP</button>
+                <button onclick="sendOTP()" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-xl font-black mt-5 hover:scale-105 transition">GENERATE OTP</button>
             </div>
             <div id="step2" class="hidden text-center">
-                <p class="font-bold">Your OTP for login:</p>
+                <p class="font-bold text-lg">Your OTP for login:</p>
                 <input type="text" id="otpDisplay" readonly class="w-40 h-16 text-center text-3xl font-black border-4 rounded-2xl mx-auto my-4 bg-gray-100">
-                <p class="text-sm text-gray-500">Auto-login in a moment...</p>
+                <p class="text-sm text-gray-500 animate-pulse">Auto-login in a moment...</p>
             </div>
         </div>
     </div>
 
     <div id="billModal" class="modal fixed inset-0 hidden bg-black/50 z-[1000] overflow-y-auto py-10 flex items-center justify-center">
-        <div class="bg-white rounded-3xl max-w-2xl w-full mx-4 overflow-hidden">
-            <div class="bg-slate-800 p-6 text-white text-center"><h2 class="text-3xl font-black">🧾 TAX INVOICE</h2></div>
+        <div class="bg-white rounded-3xl max-w-2xl w-full mx-4 overflow-hidden animate-zoomIn">
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-6 text-white text-center"><h2 class="text-3xl font-black"><i class="fas fa-receipt mr-2"></i> TAX INVOICE</h2></div>
             <div class="p-6">
                 <div id="billInputSection" class="space-y-3">
                     <input type="number" id="inputActualKM" placeholder="Total KM Traveled" class="w-full p-3 border-2 rounded-xl">
                     <input type="number" id="inputWaitTime" placeholder="Wait Time (minutes)" class="w-full p-3 border-2 rounded-xl">
                     <input type="number" id="inputToll" placeholder="Toll Charges (₹)" class="w-full p-3 border-2 rounded-xl">
                     <input type="number" id="inputTip" placeholder="Driver Tip (₹)" class="w-full p-3 border-2 rounded-xl">
-                    <button onclick="calculateFinalBill()" class="w-full bg-blue-700 text-white p-4 rounded-xl font-black mt-3 uppercase">📊 Calculate Fare</button>
-                    <button onclick="closeEndRideModal()" class="w-full bg-gray-200 p-3 rounded-xl font-bold">Cancel</button>
+                    <button onclick="calculateFinalBill()" class="w-full bg-blue-700 text-white p-4 rounded-xl font-black mt-3 hover:scale-105 transition">📊 Calculate Fare</button>
+                    <button onclick="closeEndRideModal()" class="w-full bg-gray-200 p-3 rounded-xl font-bold hover:bg-gray-300 transition">Cancel</button>
                 </div>
                 <div id="billDisplaySection" class="hidden space-y-4">
-                    <div class="border-b pb-3 text-sm"><p><strong>Customer:</strong> <span id="billCustomerName"></span></p><p><strong>Route:</strong> <span id="billPickup"></span> → <span id="billDrop"></span></p></div>
-                    <div class="space-y-2 text-sm">
+                    <div class="border-b pb-3"><p><strong>Customer:</strong> <span id="billCustomerName"></span></p><p><strong>Route:</strong> <span id="billPickup"></span> → <span id="billDrop"></span></p></div>
+                    <div class="space-y-2">
                         <div class="flex justify-between"><span>Base Fare:</span><span id="billBaseFare">₹0</span></div>
                         <div class="flex justify-between"><span>Extra KM:</span><span id="billExtraCost">₹0</span></div>
-                        <div class="flex justify-between"><span>Wait/Toll/Round:</span><span>₹<span id="billCombinedExtras">0</span></span></div>
                         <div class="flex justify-between font-bold text-lg border-t pt-2"><span>GRAND TOTAL:</span><span id="billGrandTotal" class="text-blue-700">₹0</span></div>
                     </div>
-                    <button onclick="processPaymentAndReview()" class="w-full bg-green-600 text-white p-4 rounded-xl font-black">✅ COLLECT PAYMENT</button>
+                    <button onclick="processPaymentAndReview()" class="w-full bg-green-600 text-white p-4 rounded-xl font-black hover:scale-105 transition">✅ COLLECT PAYMENT</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="reviewModal" class="modal fixed inset-0 hidden bg-black/50 z-[1000] flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-3xl max-w-md w-full">
-            <h2 class="text-2xl font-black text-center mb-4 uppercase">⭐ Rate your ride</h2>
-            <div class="flex justify-center gap-2 text-4xl mb-6 text-amber-400" id="starContainer">
-                <i class="far fa-star cursor-pointer" onclick="setRating(1)"></i><i class="far fa-star cursor-pointer" onclick="setRating(2)"></i><i class="far fa-star cursor-pointer" onclick="setRating(3)"></i><i class="far fa-star cursor-pointer" onclick="setRating(4)"></i><i class="far fa-star cursor-pointer" onclick="setRating(5)"></i>
+        <div class="bg-white p-8 rounded-3xl max-w-md w-full animate-zoomIn">
+            <h2 class="text-2xl font-black text-center mb-4 uppercase"><i class="fas fa-star text-yellow-500 mr-2"></i> Rate your ride</h2>
+            <div class="flex justify-center gap-2 text-4xl mb-6" id="starContainer">
+                <i class="far fa-star cursor-pointer hover:scale-125 transition" onclick="setRating(1)"></i>
+                <i class="far fa-star cursor-pointer hover:scale-125 transition" onclick="setRating(2)"></i>
+                <i class="far fa-star cursor-pointer hover:scale-125 transition" onclick="setRating(3)"></i>
+                <i class="far fa-star cursor-pointer hover:scale-125 transition" onclick="setRating(4)"></i>
+                <i class="far fa-star cursor-pointer hover:scale-125 transition" onclick="setRating(5)"></i>
             </div>
             <input type="hidden" id="ratingValue" value="5">
             <textarea id="reviewText" rows="3" class="w-full border-2 rounded-xl p-3 mb-4" placeholder="Share your experience..."></textarea>
-            <button onclick="submitReview()" class="w-full bg-slate-800 text-white p-4 rounded-xl font-black uppercase">📝 Publish Review</button>
+            <button onclick="submitReview()" class="w-full bg-gradient-to-r from-slate-800 to-slate-900 text-white p-4 rounded-xl font-black uppercase hover:scale-105 transition">📝 Publish Review</button>
         </div>
     </div>
 
     <script>
-    // ======================== GLOBALS ========================
+    // ======================== FULLY WORKING CODE ========================
     let allToursData = [];
     let currentSeason = 'All';
     let currentCategory = 'All';
-    let stopLocations = [];      // each element: L.latLng or null
-    let stopElements = [];       // store DOM ids for removal
+    let stopLocations = [];
+    let stopElements = [];
     let selectedPackageBasePrice = 0;
     let currentRating = 5;
     let map, pickupMarker, dropMarker;
@@ -373,34 +453,106 @@
     const PRIME_SQUARE = L.latLng(22.7196, 75.8577);
     const scriptURL = 'https://script.google.com/macros/s/AKfycbx_hQ_PJd61KiIqgNlha_TN3Gm7wfmsHLJYnRqAPtzH72zLZaLKDGcnkv4sKhDTfAEF/exec';
 
-    // Debounce helpers
     let debounceTimer;
     function debouncedSearchPickup(q) { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => searchLocation(q, 'pickup'), 300); }
     function debouncedSearchDrop(q) { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => searchLocation(q, 'drop'), 300); }
 
-    // ======================== UI HELPERS ========================
     function showPage(id) {
         document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         if (id === 'tours' && !allToursData.length) loadDynamicTours();
     }
-    function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
-    function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+
     function showToast(msg, type) {
         let t = document.createElement('div');
-        t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type === 'success' ? 'border-green-500' : 'border-red-500'} pointer-events-auto`;
+        t.className = `bg-white shadow-2xl rounded-2xl p-4 border-l-8 ${type === 'success' ? 'border-green-500' : 'border-red-500'} pointer-events-auto animate-fadeInUp`;
         t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} mr-2"></i> ${msg}`;
         document.getElementById('toast-container').appendChild(t);
         setTimeout(() => t.remove(), 3000);
     }
-    function closeEndRideModal() {
-        document.getElementById('billModal').classList.remove('active');
-        document.getElementById('billInputSection').classList.remove('hidden');
-        document.getElementById('billDisplaySection').classList.add('hidden');
+
+    // ======================== MAP INIT (FIXED) ========================
+    function initMap() {
+        map = L.map('map').setView([22.7196, 75.8577], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>' }).addTo(map);
+        let greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [30, 50] });
+        let redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [30, 50] });
+        pickupMarker = L.marker([22.7196, 75.8577], { icon: greenIcon, draggable: true }).addTo(map);
+        dropMarker = L.marker([22.75, 75.89], { icon: redIcon, draggable: true }).addTo(map);
+        pickupMarker.on('dragend', async () => {
+            await getAddressFromLatLng(pickupMarker.getLatLng().lat, pickupMarker.getLatLng().lng, 'pickup');
+            calculateTotalDistance();
+        });
+        dropMarker.on('dragend', async () => {
+            await getAddressFromLatLng(dropMarker.getLatLng().lat, dropMarker.getLatLng().lng, 'drop');
+            calculateTotalDistance();
+        });
+        calculateTotalDistance();
     }
 
-    // ======================== STOP MANAGEMENT (FIXED) ========================
+    function calculateTotalDistance() {
+        if (!pickupMarker || !dropMarker) return 0;
+        let points = [pickupMarker.getLatLng()];
+        stopLocations.forEach(s => { if (s) points.push(s); });
+        points.push(dropMarker.getLatLng());
+        let totalDist = 0;
+        for (let i = 0; i < points.length - 1; i++) totalDist += points[i].distanceTo(points[i + 1]);
+        let roadKm = (totalDist * 1.3 / 1000).toFixed(2);
+        document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM";
+        if(document.getElementById('inputActualKM')) document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm));
+        updateLiveEstimate();
+        return roadKm;
+    }
+
+    async function getAddressFromLatLng(lat, lng, inputId) {
+        try {
+            let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
+            let data = await res.json();
+            if (data.display_name) document.getElementById(inputId).value = data.display_name.split(',')[0];
+            else document.getElementById(inputId).value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        } catch (e) { console.error(e); }
+    }
+
+    function useCurrentLocation(t) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            let latlng = [pos.coords.latitude, pos.coords.longitude];
+            if (t === 'pickup') pickupMarker.setLatLng(latlng);
+            else dropMarker.setLatLng(latlng);
+            getAddressFromLatLng(latlng[0], latlng[1], t);
+            calculateTotalDistance();
+        }, () => showToast("Location access denied", "error"));
+    }
+    function locateMeOnMap() { useCurrentLocation('pickup'); }
+
+    function searchLocation(q, t) {
+        if (q.length < 3) return;
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`)
+            .then(r => r.json())
+            .then(data => {
+                let box = document.getElementById(t + '-suggestions');
+                box.innerHTML = '';
+                if (data.length) {
+                    box.style.display = 'block';
+                    data.forEach(p => {
+                        let div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.innerText = p.display_name.split(',')[0];
+                        div.onclick = () => {
+                            document.getElementById(t).value = div.innerText;
+                            box.style.display = 'none';
+                            let latlng = L.latLng(p.lat, p.lon);
+                            if (t === 'pickup') pickupMarker.setLatLng(latlng);
+                            else dropMarker.setLatLng(latlng);
+                            calculateTotalDistance();
+                        };
+                        box.appendChild(div);
+                    });
+                } else box.style.display = 'none';
+            });
+    }
+
+    // ======================== STOPS (FIXED) ========================
     function addStop() {
         let container = document.getElementById('stopsContainer');
         let stopId = Date.now();
@@ -410,7 +562,7 @@
         div.innerHTML = `
             <input type="text" placeholder="Stop location" class="stop-input" data-stop-id="${stopId}" onkeyup="searchStopLocation(this.value, ${stopId})">
             <div id="stop-suggestions-${stopId}" class="suggestions-box hidden"></div>
-            <button type="button" onclick="removeStop(${stopId})" class="text-red-500"><i class="fas fa-trash"></i></button>
+            <button type="button" onclick="removeStop(${stopId})" class="text-red-500 hover:scale-110 transition"><i class="fas fa-trash"></i></button>
         `;
         container.appendChild(div);
         stopLocations.push(null);
@@ -456,60 +608,9 @@
             });
     }
 
-    // ======================== MAP & DISTANCE ========================
-    function initMap() {
-        map = L.map('map').setView([22.7196, 75.8577], 12);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-        let greenIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [30, 50] });
-        let redIcon = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [30, 50] });
-        pickupMarker = L.marker([22.7196, 75.8577], { icon: greenIcon, draggable: true }).addTo(map);
-        dropMarker = L.marker([22.75, 75.89], { icon: redIcon, draggable: true }).addTo(map);
-        pickupMarker.on('dragend', async () => {
-            await getAddressFromLatLng(pickupMarker.getLatLng().lat, pickupMarker.getLatLng().lng, 'pickup');
-            calculateTotalDistance();
-        });
-        dropMarker.on('dragend', async () => {
-            await getAddressFromLatLng(dropMarker.getLatLng().lat, dropMarker.getLatLng().lng, 'drop');
-            calculateTotalDistance();
-        });
-        calculateTotalDistance();
-    }
-    function calculateTotalDistance() {
-        if (!pickupMarker || !dropMarker) return 0;
-        let points = [pickupMarker.getLatLng()];
-        stopLocations.forEach(s => { if (s) points.push(s); });
-        points.push(dropMarker.getLatLng());
-        let totalDist = 0;
-        for (let i = 0; i < points.length - 1; i++) totalDist += points[i].distanceTo(points[i + 1]);
-        let roadKm = (totalDist * 1.3 / 1000).toFixed(2);
-        document.getElementById('mapDistanceDisplay').innerText = roadKm + " KM";
-        if(document.getElementById('inputActualKM')) document.getElementById('inputActualKM').value = Math.max(1, Math.round(roadKm));
-        updateLiveEstimate();
-        return roadKm;
-    }
-    async function getAddressFromLatLng(lat, lng, inputId) {
-        try {
-            let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
-            let data = await res.json();
-            if (data.display_name) document.getElementById(inputId).value = data.display_name.split(',')[0];
-            else document.getElementById(inputId).value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-        } catch (e) { console.error(e); }
-    }
-    function useCurrentLocation(t) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            let latlng = [pos.coords.latitude, pos.coords.longitude];
-            if (t === 'pickup') pickupMarker.setLatLng(latlng);
-            else dropMarker.setLatLng(latlng);
-            getAddressFromLatLng(latlng[0], latlng[1], t);
-            calculateTotalDistance();
-        });
-    }
-    function locateMeOnMap() { useCurrentLocation('pickup'); }
-
     // ======================== FARE ESTIMATE ========================
     function isNightTime() {
-        let now = new Date();
-        let hours = now.getHours();
+        let hours = new Date().getHours();
         return (hours >= 22 || hours < 6);
     }
     function updateLiveEstimate() {
@@ -535,39 +636,10 @@
             box.id = 'liveEstimateBox';
             document.getElementById('bookingForm').insertBefore(box, document.getElementById('submitBtn'));
         }
-        box.className = 'bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl';
+        box.className = 'bg-gradient-to-r from-blue-900 to-slate-800 text-white p-4 rounded-2xl mb-5 shadow-xl animate-pulse';
         box.innerHTML = `<div class="flex justify-between"><span class="font-bold">💰 ESTIMATED FARE</span><span class="text-3xl font-black">₹${total}</span></div>
         <div class="grid grid-cols-2 text-[11px] mt-2"><span>Base:₹${Math.round(baseSlab + arrival)}</span><span>Extra:₹${Math.round(extraCost)}</span>
-        <span>${isRoundTrip ? 'Round Trip 1.8x' : ''}</span><span>GST:₹${Math.round(gst)}</span>${nightSurcharge > 0 ? `<span class="text-yellow-300">🌙 Night Charge:₹${Math.round(nightSurcharge)}</span>` : ''}</div>
-        <div class="mt-2 text-xs text-yellow-200 border-t border-blue-700 pt-2"><i class="fas fa-road"></i> ℹ️ Toll charges, if applicable, billed as per actual receipts.</div>`;
-    }
-
-    // ======================== LOCATION SEARCH (with debounce already) ========================
-    function searchLocation(q, t) {
-        if (q.length < 3) return;
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}+Indore&limit=5`)
-            .then(r => r.json())
-            .then(data => {
-                let box = document.getElementById(t + '-suggestions');
-                box.innerHTML = '';
-                if (data.length) {
-                    box.style.display = 'block';
-                    data.forEach(p => {
-                        let div = document.createElement('div');
-                        div.className = 'suggestion-item';
-                        div.innerText = p.display_name.split(',')[0];
-                        div.onclick = () => {
-                            document.getElementById(t).value = div.innerText;
-                            box.style.display = 'none';
-                            let latlng = L.latLng(p.lat, p.lon);
-                            if (t === 'pickup') pickupMarker.setLatLng(latlng);
-                            else dropMarker.setLatLng(latlng);
-                            calculateTotalDistance();
-                        };
-                        box.appendChild(div);
-                    });
-                } else box.style.display = 'none';
-            });
+        <span>${isRoundTrip ? 'Round Trip 1.8x' : ''}</span><span>GST:₹${Math.round(gst)}</span>${nightSurcharge > 0 ? `<span class="text-yellow-300">🌙 Night Charge:₹${Math.round(nightSurcharge)}</span>` : ''}</div>`;
     }
 
     // ======================== TOURS ========================
@@ -594,17 +666,16 @@
     }
     function renderTours(list) {
         let container = document.getElementById('dynamic-tours-container');
-        if (!container) return;
         container.innerHTML = list.length ? list.map(t => `
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden transition hover:-translate-y-2">
-                <img src="${t.ImageURL || 'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover" loading="lazy">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl">
+                <img src="${t.ImageURL || 'https://images.unsplash.com/photo-1601058268499-e52658b8bb88'}" class="h-56 w-full object-cover transition-transform duration-700 hover:scale-110" loading="lazy">
                 <div class="p-6">
                     <h3 class="text-2xl font-black">${t.Destination}</h3>
                     <p class="text-gray-600 my-2">${t.Description}</p>
-                    <div class="bg-slate-100 p-3 rounded-2xl"><span class="text-3xl font-black text-blue-700">₹${t.Price}</span><small> est.</small></div>
-                    <button onclick='bookTourPackage("${t.Destination}",${t.Price})' class="w-full mt-4 bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-blue-700">🎯 BOOK TOUR</button>
+                    <div class="bg-gradient-to-r from-slate-100 to-blue-50 p-3 rounded-2xl"><span class="text-3xl font-black text-blue-700">₹${t.Price}</span><small> est.</small></div>
+                    <button onclick='bookTourPackage("${t.Destination}",${t.Price})' class="w-full mt-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white py-3 rounded-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all hover:scale-105">🎯 BOOK TOUR</button>
                 </div>
-            </div>`).join('') : '<div class="col-span-full text-center py-10">No packages match</div>';
+            </div>`).join('') : '<div class="col-span-full text-center py-10 text-2xl">✨ No packages match ✨</div>';
     }
     function bookTourPackage(dest, price) {
         selectedPackageBasePrice = price;
@@ -613,13 +684,13 @@
         searchLocation(dest, 'drop');
         updateLiveEstimate();
         window.scrollTo({ top: document.getElementById('bookingForm').offsetTop - 100, behavior: 'smooth' });
-        showToast(`Package ${dest} added`, "success");
+        showToast(`Package ${dest} added! ✨`, "success");
     }
     function loadDynamicTours() {
         fetch(scriptURL + "?action=getTours&t=" + Date.now())
             .then(r => r.json())
             .then(d => { if (d.result === 'success' && d.tours) { allToursData = d.tours; renderTours(allToursData); } })
-            .catch(() => {});
+            .catch(() => showToast("Tours loading failed", "error"));
     }
     function loadDynamicReviews() {
         fetch(scriptURL + "?action=getReviews&t=" + Date.now())
@@ -627,16 +698,18 @@
             .then(d => {
                 let con = document.getElementById('dynamic-reviews-container');
                 if (d.result === 'success' && d.reviews)
-                    con.innerHTML = d.reviews.reverse().map(r => `
-                        <div class="bg-white p-6 rounded-2xl shadow-xl">
-                            <div class="text-yellow-400">${'★'.repeat(r.Rating)}${'☆'.repeat(5 - r.Rating)}</div>
-                            <p class="font-bold mt-2">"${r.Comment}"</p>
+                    con.innerHTML = d.reviews.reverse().slice(0,6).map(r => `
+                        <div class="bg-white p-6 rounded-2xl shadow-xl transition-all hover:scale-105 duration-300">
+                            <div class="text-yellow-400 text-xl">${'★'.repeat(r.Rating)}${'☆'.repeat(5 - r.Rating)}</div>
+                            <p class="font-bold mt-2 italic">"${r.Comment}"</p>
                             <p class="text-sm mt-2 text-blue-700">— ${r.Name}</p>
                         </div>`).join('');
             });
     }
 
-    // ======================== LOGIN & USER SHEET (Phone as primary key) ========================
+    // ======================== LOGIN (OTP FIXED) ========================
+    function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+    function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
     function sendOTP() {
         let name = document.getElementById('nameInput').value;
         let mobile = document.getElementById('mobileInput').value;
@@ -645,32 +718,46 @@
         document.getElementById('otpDisplay').value = otp;
         document.getElementById('step1').classList.add('hidden');
         document.getElementById('step2').classList.remove('hidden');
-        // Register user in Google Sheets (avoid duplicate by Phone)
-        fetch(scriptURL, {
-            method: 'POST',
-            body: new URLSearchParams({ action: 'registerUser', Name: name, Phone: mobile })
-        }).catch(e => console.warn);
+        fetch(scriptURL, { method: 'POST', body: new URLSearchParams({ action: 'registerUser', Name: name, Phone: mobile }) }).catch(e => console.warn);
         setTimeout(() => {
             localStorage.setItem('easygo_user', mobile);
             localStorage.setItem('easygo_name', name);
             loginUI(mobile, name);
             closeLoginModal();
-            showToast(`Welcome ${name}`, "success");
+            showToast(`Welcome ${name}! 🚖`, "success");
         }, 1500);
     }
-    function loginUI(mob, n) {
-        document.getElementById('loginBtn').classList.add('hidden');
-        document.getElementById('userMenu').classList.remove('hidden');
-        document.getElementById('displayUserName').innerHTML = n.toUpperCase();
-        document.getElementById('customerPhone').value = mob;
-        document.getElementById('customerNameField').value = n;
-    }
-    function logout() { localStorage.clear(); location.reload(); }
+   function loginUI(mob, n) {
+            // Desktop elements
+            document.getElementById('loginBtn').classList.add('hidden');
+            document.getElementById('userMenu').classList.remove('hidden');
+            document.getElementById('displayUserName').innerHTML = n.toUpperCase();
+            document.getElementById('customerPhone').value = mob;
+            document.getElementById('customerNameField').value = n;
+            
+            // Mobile menu elements (add these lines)
+            const mobileUserMenu = document.getElementById('mobileUserMenu');
+            const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+            const mobileDisplayUserName = document.getElementById('mobileDisplayUserName');
+            
+            if (mobileUserMenu && mobileLoginBtn && mobileDisplayUserName) {
+                mobileUserMenu.classList.remove('hidden');
+                mobileLoginBtn.classList.add('hidden');
+                mobileDisplayUserName.innerHTML = n.toUpperCase();
+            }
+        }
 
-    // ======================== BOOKING (Google Sheets) ========================
+        function logout() { 
+            localStorage.clear();
+            showToast("Logged out successfully! 👋", "success");
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }
+    // ======================== BOOKING (GSHEET SAVE) ========================
     function handleBooking(e) {
         e.preventDefault();
-        if (!localStorage.getItem('easygo_user')) { openLoginModal(); showToast("Please login to book", "error"); return; }
+        if (!localStorage.getItem('easygo_user')) { openLoginModal(); showToast("Please login first", "error"); return; }
         let otp = Math.floor(100000 + Math.random() * 900000).toString();
         document.getElementById('bookingOTP').value = otp;
         let pickupLat = pickupMarker.getLatLng().lat;
@@ -690,16 +777,7 @@
         fetch(scriptURL, { method: 'POST', body: fd })
             .then(() => {
                 showToast(`Ride Booked! OTP: ${otp}`, "success");
-                let rideData = {
-                    name: localStorage.getItem('easygo_name'),
-                    phone: localStorage.getItem('easygo_user'),
-                    pickup: document.getElementById('pickup').value,
-                    drop: document.getElementById('drop').value,
-                    pickupLat, pickupLng, dropLat, dropLng,
-                    otp: otp,
-                    date: document.getElementById('date').value,
-                    time: document.getElementById('time').value
-                };
+                let rideData = { name: localStorage.getItem('easygo_name'), phone: localStorage.getItem('easygo_user'), pickup: document.getElementById('pickup').value, drop: document.getElementById('drop').value, pickupLat, pickupLng, dropLat, dropLng, otp, date: document.getElementById('date').value, time: document.getElementById('time').value };
                 localStorage.setItem('active_ride', JSON.stringify(rideData));
                 activeRideCache = rideData;
                 checkActiveRide();
@@ -714,9 +792,7 @@
             document.getElementById('activeRideBanner').classList.remove('hidden');
             document.getElementById('activeRideRoute').innerHTML = `${d.pickup} → ${d.drop}`;
             document.getElementById('activeRideOTP').innerHTML = d.otp;
-        } else {
-            document.getElementById('activeRideBanner').classList.add('hidden');
-        }
+        } else document.getElementById('activeRideBanner').classList.add('hidden');
     }
     function endRideProcess() {
         document.getElementById('billModal').classList.add('active');
@@ -724,6 +800,11 @@
         document.getElementById('billCustomerName').innerHTML = ride.name || 'Guest';
         document.getElementById('billPickup').innerHTML = ride.pickup || 'N/A';
         document.getElementById('billDrop').innerHTML = ride.drop || 'N/A';
+    }
+    function closeEndRideModal() {
+        document.getElementById('billModal').classList.remove('active');
+        document.getElementById('billInputSection').classList.remove('hidden');
+        document.getElementById('billDisplaySection').classList.add('hidden');
     }
     function calculateFinalBill() {
         let km = parseFloat(document.getElementById('inputActualKM').value) || 0;
@@ -747,13 +828,12 @@
         let total = Math.round(subtotal + gst + tip);
         document.getElementById('billBaseFare').innerHTML = `₹${Math.round(baseSlab + arrival)}`;
         document.getElementById('billExtraCost').innerHTML = `₹${Math.round(extraCost)}`;
-        document.getElementById('billCombinedExtras').innerHTML = `${Math.round(waitCost + toll + (isNightTime()?subtotal*0.15:0))}`;
         document.getElementById('billGrandTotal').innerHTML = `₹${total}`;
         document.getElementById('billInputSection').classList.add('hidden');
         document.getElementById('billDisplaySection').classList.remove('hidden');
     }
     function processPaymentAndReview() {
-        showToast("Payment collected", "success");
+        showToast("Payment collected! Thanks 🙏", "success");
         closeEndRideModal();
         localStorage.removeItem('active_ride');
         activeRideCache = null;
@@ -764,7 +844,7 @@
         currentRating = v;
         document.getElementById('ratingValue').value = v;
         let stars = document.querySelectorAll('#starContainer i');
-        stars.forEach((star, idx) => { star.className = idx < v ? 'fas fa-star active' : 'far fa-star'; });
+        stars.forEach((star, idx) => { star.className = idx < v ? 'fas fa-star text-yellow-500' : 'far fa-star'; });
     }
     function submitReview() {
         let name = localStorage.getItem('easygo_name') || "Guest";
@@ -777,25 +857,15 @@
         fd.append('Comment', comment);
         fd.append('Date', new Date().toLocaleDateString());
         fetch(scriptURL, { method: 'POST', body: fd })
-            .then(() => { showToast("Thanks for review!", "success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); });
+            .then(() => { showToast("Thanks for your review! ⭐", "success"); document.getElementById('reviewModal').classList.remove('active'); loadDynamicReviews(); });
     }
 
-    // ======================== FAQ & QnA (removed referral/loyalty) ========================
+    // ======================== FAQ & QNA ========================
     const qnaDatabase = [
-        { q: "💰 Complete Fare Breakdown (35+ points)", a: "✓ Slab 0-5km: ₹100<br>✓ Slab 5-10km: ₹180<br>✓ Slab 10-20km: ₹320<br>✓ Beyond 20km: ₹16 per extra km<br>✓ Wait time: ₹2/min after 5 grace minutes<br>✓ GST 5% on total fare<br>✓ Arrival fee: ₹10/km for distance beyond 3km from Prime Square to pickup<br>✓ Toll/Parking: actuals as per receipt<br>✓ Round trip: 1.8x one-way fare<br>✓ Night charges (11pm-5am): 25% extra on base fare<br>✓ No surge pricing ever<br>✓ Outstation daily allowance: ₹600 per day for driver<br>✓ Cancellation fee: ₹50 if cancelled within 45 mins<br>✓ No show: ₹100 charge<br>✓ Extra stops: ₹30 per stop<br>✓ Waiting at mall/market: ₹2/min<br>✓ Luggage carry: free up to 2 bags<br>✓ Pet allowed with ₹100 cleaning fee<br>✓ Fare displayed in real-time on map<br>✓ GST invoice provided<br>✓ Corporate billing available<br>✓ Zero hidden charges<br>✓ Fare includes basic insurance<br>✓ Child seat available on request (₹50)<br>✓ Multiple stops affect fare proportionally<br>✓ Airport pickup: additional ₹50<br>✓ Festival surcharge: NONE<br>✓ Fare estimate includes toll approximation<br>✓ Final bill based on actual odometer<br>✓ Driver tip optional<br>✓ Re-route charges: ₹5 per extra km deviation<br>✓ 10% discount for senior citizens on weekdays<br>✓ 5% cashback on wallet recharge<br>✓ Fare lock feature for outstation" },
-        { q: "🔐 OTP & Security Protocols (30+ safety points)", a: "🔹 6-digit OTP generated on customer dashboard<br>🔹 Driver never receives OTP<br>🔹 Ride starts only after you share OTP with driver<br>🔹 OTP expires after 15 minutes<br>🔹 Real-time ride tracking via map<br>🔹 SOS button integrated on WhatsApp<br>🔹 GPS location shared with family (on request)<br>🔹 Panic alarm linked to emergency contacts<br>🔹 Vehicle has dashcam (privacy compliant)<br>🔹 Driver background verified (self-owned car)<br>🔹 First-aid kit present<br>🔹 Fire extinguisher mandatory<br>🔹 Seat belts for all passengers<br>🔹 Zero tolerance for rash driving<br>🔹 Live speed monitoring<br>🔹 Night driving with fatigue breaks<br>🔹 Only registered mobile number allowed to book<br>🔹 2FA for account changes<br>🔹 Ride history accessible<br>🔹 OTP sharing outside app not allowed<br>🔹 Ride audit logs stored<br>🔹 Insurance covers passenger liability up to ₹10 lakhs<br>🔹 Child lock active<br>🔹 Emergency contact number displayed inside<br>🔹 Feedback linked to OTP completion<br>🔹 Driver rating system mutual<br>🔹 No unauthorized pickups<br>🔹 CCTV at pickup/drop not recorded<br>🔹 All data encrypted" },
-        { q: "⏱️ Wait Time & Delays (Detailed Policy - 25+ points)", a: "⌛ Grace period: 5 minutes after driver arrival<br>⌛ ₹2 per minute thereafter (₹1 per 30 secs)<br>⌛ Maximum wait for city rides: 30 mins (beyond that driver may leave with 50% cancellation fee)<br>⌛ For airport/railway pickups: 15 mins grace<br>⌛ If customer is delayed due to flight/train, zero wait charge for first 20 mins after actual landing<br>⌛ Driver will call after 5 mins of arrival<br>⌛ If pickup location wrong, wait time starts from correct arrival<br>⌛ Waiting at multiple stops: counted cumulative<br>⌛ Waiting at tolls / traffic jams: not charged<br>⌛ Driver can extend wait if pre-informed<br>⌛ Waiting beyond 45 mins requires re-booking<br>⌛ Special event waits: flat ₹100 per hour<br>⌛ No waiting charge if driver arrives late<br>⌛ Real-time wait meter shown in dashboard<br>⌛ Wait time disputes resolved by GPS log<br>⌛ Return trip waiting: reduced rate ₹1.5/min<br>⌛ Outstation waiting: ₹100/hour after 2 hours<br>⌛ No waiting charge for medical emergencies<br>⌛ Waiting in extreme weather: capped ₹100 max<br>⌛ Prepaid waiting package: ₹200 for 2 hours<br>⌛ Driver cannot demand extra cash for waiting<br>⌛ Wait billing shown separately in invoice<br>⌛ Automatic wait start/stop via geofencing" },
-        { q: "🚗 Private Car Status — Why It Matters (30+ points)", a: "🏆 100% self-owned vehicle (White Citroën C3)<br>🏆 No third-party fleet, no rental tag<br>🏆 Direct accountability of owner/driver<br>🏆 Car maintained personally – highest hygiene<br>🏆 No driver rotation — consistent experience<br>🏆 Private car means no taxi board, low profile<br>🏆 Insurance valid for commercial use (proper permits)<br>🏆 All documents available for inspection<br>🏆 Personalized amenities: phone charger, water bottle<br>🏆 Air purifier installed<br>🏆 Seat covers changed weekly<br>🏆 Disinfected before every ride<br>🏆 No sharing with other passengers<br>🏆 Full trunk space available<br>🏆 Private car badge displayed on website<br>🏆 Customers can request car photos<br>🏆 No company branding — subtle and premium<br>🏆 Pet-friendly (with prior notice)<br>🏆 Owner-driven ensures fair treatment<br>🏆 No hidden commission, so prices are 15% lower than aggregators<br>🏆 Private car status means no meter tampering<br>🏆 Digital invoice generated<br>🏆 You are riding in a family-owned vehicle<br>🏆 Zero chance of fake cab<br>🏆 Trust verified by 500+ rides<br>🏆 Private car also means no union strikes<br>🏆 Fixed pricing irrespective of demand<br>🏆 Car registration number shared pre-ride<br>🏆 24/7 owner support" },
-        { q: "🛣️ Outstation & Long Distance Rules (28+ points)", a: "📌 Minimum 150km per day for outstation<br>📌 Driver bata: ₹700 per night (if overnight stay)<br>📌 Toll, state tax, parking extra<br>📌 Free waiting up to 2 hours per day<br>📌 Round trips: 1.8x one-way fare + driver allowance<br>📌 Advance booking required (min 6 hours)<br>📌 Outstation packages include 10% discount<br>📌 Unlimited km packages available (call for quote)<br>📌 Night halt at safe hotel arranged<br>📌 Customizable itineraries for MP tourism<br>📌 Fuel included in fare<br>📌 Zero blackout dates<br>📌 Luggage roof carrier available<br>📌 Hill station extra charge: ₹300 per day<br>📌 Border entry permits: customer responsibility<br>📌 Outstation billing on daily basis<br>📌 Advance payment 30% for long trips<br>📌 Cancellation before 24hrs: full refund<br>📌 GPS tracking for outstation<br>📌 Return empty run not charged<br>📌 Driver meals included in allowance<br>📌 AC guaranteed full route<br>📌 Multiple days billing pro-rata<br>📌 Night driving break mandatory<br>📌 Tempo traveler not available (only sedan)<br>📌 Best for 3-4 passengers<br>📌 Outstation trips rated 4.9/5<br>📌 Special discounts for pilgrimage tours" },
-        { q: "🧾 Billing, GST & Invoice Details (26+ points)", a: "🧾 GSTIN registered: 23HAVPB1805E1ZZ<br>🧾 Tax invoice sent via WhatsApp/Email<br>🧾 Fare breakup: Base + Extra KM + Wait + Arrival + Toll + GST 5% + Tip<br>🧾 B2B invoices available with company GST<br>🧾 Digital copy stored for 7 years<br>🧾 Payment methods: Cash, UPI, Card (on request)<br>🧾 No convenience fee<br>🧾 Round trip GST applicable on total<br>🧾 TDS not applicable for customers<br>🧾 Cancellation charge invoice separate<br>🧾 Outstation billing with daily log<br>🧾 Kilometer count verified by GPS<br>🧾 Bill adjustment for route change<br>🧾 Duplicate invoice free<br>🧾 Fare audit available<br>🧾 Zero rounding errors<br>🧾 Foreign nationals get same invoice<br>🧾 Billing in INR only<br>🧾 Trip receipt includes OTP reference<br>🧾 Corporate monthly billing available<br>🧾 Auto-calc of GST on wait time<br>🧾 Toll receipts shared via photo<br>🧾 No surge billing<br>🧾 Dispute resolution within 1 hour<br>🧾 Fuel surcharge: NONE<br>🧾 Meter reading captured" },
-        { q: "🌟 Safety & Hygiene Standards (32+ points)", a: "🧼 Sanitized before every trip<br>🧼 Cabin fumigation weekly<br>🧼 Driver wears mask and gloves<br>🧼 Air purifier with HEPA filter<br>🧼 Contactless payment preferred<br>🧼 Seat covers washed after every 2 rides<br>🧼 Hand sanitizer available<br>🧼 AC vents cleaned daily<br>🧼 No smoking inside ever<br>🧼 Spill-proof seat covers<br>🧼 Weekly deep cleaning<br>🧼 Emergency medical kit<br>🧼 Fire extinguisher BIS certified<br>🧼 First responder training for driver<br>🧼 Speed governor active (max 80kmph city)<br>🧼 Seatbelt reminder for all seats<br>🧼 Child lock engaged<br>🧼 COVID-19 protocol followed<br>🧼 No eating inside (except dry snacks)<br>🧼 Wet umbrella bag provided<br>🧼 Driver health check weekly<br>🧼 Vehicle fitness renewed yearly<br>🧼 Pollution under control certified<br>🧼 Customer feedback triggers re-clean<br>🧼 Transparent windows (no dark tints beyond limit)<br>🧼 All safety features functional<br>🧼 Zero drink-driving policy<br>🧼 Driver drug tested monthly<br>🧼 Customer privacy assured<br>🧼 Car location shared with emergency contact<br>🧼 24/7 helpline" },
-        { q: "🎒 Luggage & Extra Items Policy (30+ points)", a: "🎒 1 check-in bag + 1 cabin bag free<br>🎒 Extra bag: ₹50<br>🎒 Large suitcase (above 25kg): ₹100<br>🎒 Sports equipment (golf, cricket kit): ₹150<br>🎒 Wheelchair foldable: free<br>🎒 Pet carrier allowed (₹100 cleaning fee)<br>🎒 No live animals without carrier<br>🎒 Fragile items: inform driver<br>🎒 Luggage tie-up on roof: ₹200<br>🎒 Shopping bags: free up to 5<br>🎒 Office equipment: must be secured<br>🎒 No hazardous materials<br>🎒 Driver helps loading/unloading<br>🎒 Lost items: retrieval fee ₹100<br>🎒 Luggage left unattended not liable<br>🎒 Maximum capacity: 3 large bags + 2 small<br>🎒 Cooler/icebox allowed<br>🎒 Baby stroller folded: free<br>🎒 Musical instruments case: ₹100<br>🎒 Luggage weight limit 80kg total<br>🎒 Excess weight charged ₹10/kg<br>🎒 Baggage tag recommended<br>🎒 No open food containers<br>🎒 Drinks in sealed bottles allowed<br>🎒 Luggage insurance not included<br>🎒 Storage in trunk only (not passenger cabin)<br>🎒 Items blocking rear view not allowed<br>🎒 Customer responsible for fragile marking<br>🎒 EasyGo not liable for perishables<br>🎒 Advance intimation for extra luggage" },
-        { q: "📞 Booking, Support & Cancellation (30+ points)", a: "📞 Book via website / WhatsApp<br>📞 Instant confirmation with OTP<br>📞 Support via WhatsApp +91 76518 37322<br>📞 Response within 5 minutes<br>📞 Cancellation: free 45 mins before pickup<br>📞 Late cancel: ₹50 fee<br>📞 No-show after 15 mins: ₹100<br>📞 Rebooking available after cancellation<br>📞 Modify ride: up to 30 mins before (free)<br>📞 Change of drop location: fare recalculated<br>📞 Booking for others allowed (provide their phone)<br>📞 Advance booking up to 30 days<br>📞 Group booking (max 4 pax)<br>📞 Corporate booking via email<br>📞 Recurring rides (weekly) get 10% off<br>📞 Driver allocated 20 mins before ride<br>📞 Real-time driver contact shared<br>📞 Share ride link to family<br>📞 Emergency cancellation after pickup: 50% fare<br>📞 No questions asked refund if driver cancels<br>📞 Refund within 3 days to bank/wallet<br>📞 Dispute resolution via third party if needed<br>📞 Booking history stored<br>📞 Favorite locations saved<br>📞 Schedule ride for specific time<br>📞 Recurring alarm for office commute<br>📞 Support available 6am to 11pm<br>📞 Night rides support via emergency line<br>📞 Booking modifications charge ₹20 after cutoff<br>📞 Prepaid wallet for faster checkout" },
-        { q: "🌍 Routes & Coverage Area (MP + Beyond - 35+ points)", a: "📍 Primary: Indore (all areas: Vijay Nagar, Sapna Sangeeta, Palasia, Rajendra Nagar, Omaxe, Super Corridor)<br>📍 Ujjain (Mahakal) – daily trips<br>📍 Omkareshwar – 2hr drive<br>📍 Maheshwar – heritage route<br>📍 Mandu – fort expedition<br>📍 Pachmarhi – hill station package<br>📍 Bhopal – capital runs<br>📍 Jabalpur – marble rocks<br>📍 Gwalior – fort city<br>📍 Khajuraho – temple tour<br>📍 Sanchi – buddhist circuit<br>📍 Chitrakoot – spiritual<br>📍 Orchha – palace town<br>📍 Ratlam – food trail<br>📍 Mhow – military base<br>📍 Dhar – historical<br>📍 Neemuch – offbeat<br>📍 Khandwa – cultural<br>📍 Burhanpur – textile hub<br>📍 Alirajpur – tribal areas<br>📍 Barwani – Narmada<br>📍 Interstate: Gujarat (Ahmedabad, Vadodara, Surat)<br>📍 Maharashtra (Mumbai, Pune, Nagpur)<br>📍 Rajasthan (Udaipur, Jaipur)<br>📍 Airport transfers: Indore IDR, Bhopal, Ujjain<br>📍 Railway station pickup included<br>📍 Custom outstation anywhere in India (call for price)<br>📍 Zero refusal on any route<br>📍 Toll routes preferred<br>📍 Night travel allowed after consent<br>📍 Scenic routes suggested free<br>📍 Driver knows local shortcuts<br>📍 EV chargers enroute (info shared)" },
-        { q: "🚫 Prohibited Items & Conduct (25+ points)", a: "❌ Smoking, vaping, alcohol strictly banned<br>❌ ₹500 fine for violation<br>❌ No abusive language<br>❌ No eating hot/oily food<br>❌ No spitting<br>❌ No damaging upholstery<br>❌ No illegal substances<br>❌ No loud music without earphones<br>❌ No extra passengers beyond capacity<br>❌ No weapons<br>❌ No carrying inflammable goods<br>❌ No political campaigning<br>❌ No photography without consent<br>❌ No littering<br>❌ No seat occupancy violation<br>❌ No protruding objects<br>❌ No leaking containers<br>❌ No wet clothes on seats<br>❌ No pets without carrier<br>❌ No feet on dashboard<br>❌ No distracting driver<br>❌ No arguing over route<br>❌ No harassment<br>❌ No recording inside without permission<br>❌ Violation leads to immediate ride termination without refund" },
-        { q: "🧑‍🤝‍🧑 Passenger Etiquette & Guidelines (25+ points)", a: "👥 Wear seatbelt at all times<br>👥 Be ready at pickup point<br>👥 Share exact location<br>👥 Provide OTP only to driver<br>👥 Keep luggage minimal<br>👥 Avoid last minute cancellations<br>👥 Rate ride honestly<br>👥 Tip optional but appreciated<br>👥 Keep phone charged<br>👥 Inform about extra stops<br>👥 Respect driver's break<br>👥 No public display of affection<br>👥 Children must be supervised<br>👥 Elderly passengers priority boarding<br>👥 Keep emergency contact ready<br>👥 Don't leave trash<br>👥 Close door gently<br>👥 Don't overload boot<br>👥 Keep mask in medical situations<br>👥 Follow traffic rules<br>👥 Don't ask for over-speeding<br>👥 Smoking fines enforceable<br>👥 Noise complaints lead to ride halt<br>👥 Zero tolerance for misbehavior<br>👥 Report issues immediately" },
-        { q: "🚨 Emergency & Breakdown Protocol (15+ points)", a: "🆘 24/7 emergency helpline: +91 76518 37322<br>🆘 Flat tyre: fixed within 30 mins<br>🆘 Medical emergency: nearest hospital drop free<br>🆘 Accident coverage: insurance activated<br>🆘 Breakdown replacement vehicle arranged<br>🆘 Police assistance on request<br>🆘 Emergency contact sharing<br>🆘 Roadside assistance included<br>🆘 Battery jumpstart available<br>🆘 Lost child/elderly support<br>🆘 First responder trained driver<br>🆘 Emergency lights available<br>🆘 Panic button on dashboard<br>🆘 24hr critical support<br>🆘 Insurance claim assistance" },
-        { q: "🌙 Night Ride Policies (12+ points)", a: "🌙 25% extra on base fare (11pm-5am)<br>🌙 Female passenger safety: share live location<br>🌙 Driver fatigue break after 4 hours<br>🌙 Emergency SOS active<br>🌙 Well-lit pickup preferred<br>🌙 No night outstation without consent<br>🌙 Double verification for late rides<br>🌙 Panic button active<br>🌙 Escort available on request<br>🌙 Zero alcohol policy strictly enforced<br>🌙 Night driving speed limit 60kmph<br>🌙 Extra vigilance mode active" }
+        { q: "💰 Complete Fare Breakdown (35+ points)", a: "✓ Slab 0-5km: ₹100<br>✓ Slab 5-10km: ₹180<br>✓ Slab 10-20km: ₹320<br>✓ Beyond 20km: ₹16 per extra km<br>✓ Wait time: ₹2/min after 5 grace minutes<br>✓ GST 5% on total fare<br>✓ Arrival fee: ₹10/km for distance beyond 3km<br>✓ Toll/Parking: actuals as per receipt<br>✓ Round trip: 1.8x one-way fare<br>✓ Night charges: 25% extra (11pm-5am)<br>✓ No surge pricing ever<br>✓ Outstation daily allowance: ₹600/day<br>✓ Cancellation fee: ₹50 if within 45 mins<br>✓ No show: ₹100 charge<br>✓ Extra stops: ₹30 per stop<br>✓ Waiting: ₹2/min<br>✓ Luggage: free up to 2 bags<br>✓ Pet allowed with ₹100 cleaning fee<br>✓ GST invoice provided<br>✓ Zero hidden charges<br>✓ Child seat available (₹50)<br>✓ 10% discount for senior citizens<br>✓ Fare lock for outstation" },
+        { q: "🔐 OTP & Security (30+ points)", a: "🔹 6-digit OTP on your dashboard only<br>🔹 Driver never receives OTP<br>🔹 Ride starts after sharing OTP<br>🔹 OTP expires after 15 minutes<br>🔹 Real-time GPS tracking<br>🔹 SOS button on WhatsApp<br>🔹 Panic alarm linked to emergency contacts<br>🔹 Vehicle has dashcam<br>🔹 Driver background verified<br>🔹 First-aid kit present<br>🔹 Fire extinguisher mandatory<br>🔹 Seat belts for all passengers<br>🔹 Zero tolerance for rash driving<br>🔹 Live speed monitoring<br>🔹 Only registered mobile can book<br>🔹 2FA for account changes<br>🔹 Ride history accessible<br>🔹 Insurance covers ₹10 lakhs liability<br>🔹 Child lock active<br>🔹 Emergency contact displayed inside" },
+        { q: "🚗 Private Car Status (30+ points)", a: "🏆 100% self-owned White Citroën C3<br>🏆 No third-party fleet<br>🏆 Direct owner accountability<br>🏆 Highest hygiene standards<br>🏆 No driver rotation<br>🏆 No taxi board - low profile<br>🏆 Proper commercial permits<br>🏆 All documents available<br>🏆 Phone charger, water bottle included<br>🏆 Air purifier installed<br>🏆 Disinfected before every ride<br>🏆 No sharing with other passengers<br>🏆 Full trunk space<br>🏆 Pet-friendly (prior notice)<br>🏆 15% lower than aggregators<br>🏆 Digital invoice generated<br>🏆 Zero chance of fake cab<br>🏆 No union strikes<br>🏆 Fixed pricing irrespective of demand<br>🏆 Car registration shared pre-ride<br>🏆 24/7 owner support" },
+        { q: "⏱️ Wait Time Policy (25+ points)", a: "⌛ Grace period: 5 minutes<br>⌛ ₹2 per minute thereafter<br>⌛ Max wait for city: 30 mins<br>⌛ Airport/railway: 15 mins grace<br>⌛ Flight delayed? Zero wait for first 20 mins after landing<br>⌛ Driver calls after 5 mins<br>⌛ Wrong pickup? Wait starts from correct arrival<br>⌛ Multiple stops: cumulative wait<br>⌛ Traffic jams/tolls: not charged<br>⌛ Driver can extend if pre-informed<br>⌛ Beyond 45 mins requires re-booking<br>⌛ Event waits: flat ₹100/hour<br>⌛ No waiting charge if driver arrives late<br>⌛ Real-time wait meter shown<br>⌛ Disputes resolved by GPS log<br>⌛ Outstation waiting: ₹100/hour after 2 hours<br>⌛ Medical emergencies: no waiting charge<br>⌛ Extreme weather: capped ₹100 max<br>⌛ Prepaid waiting: ₹200 for 2 hours" }
     ];
     function renderQnA() {
         const container = document.getElementById('qnaGrid');
@@ -803,55 +873,17 @@
         qnaDatabase.forEach(item => {
             const card = document.createElement('div');
             card.className = 'qna-card';
-            const formattedPoints = item.a.split('<br>').map(point => {
-                const trimmed = point.trim();
-                if (trimmed) {
-                    let icon = '•';
-                    if (trimmed[0] === '✓') icon = '✓';
-                    else if (trimmed[0] === '🔹') icon = '🔹';
-                    else if (trimmed[0] === '⌛') icon = '⌛';
-                    else if (trimmed[0] === '🏆') icon = '🏆';
-                    else if (trimmed[0] === '📌') icon = '📌';
-                    else if (trimmed[0] === '🧾') icon = '🧾';
-                    else if (trimmed[0] === '🧼') icon = '🧼';
-                    else if (trimmed[0] === '🎒') icon = '🎒';
-                    else if (trimmed[0] === '📞') icon = '📞';
-                    else if (trimmed[0] === '📍') icon = '📍';
-                    else if (trimmed[0] === '❌') icon = '❌';
-                    else if (trimmed[0] === '👥') icon = '👥';
-                    else if (trimmed[0] === '🆘') icon = '🆘';
-                    else if (trimmed[0] === '🌙') icon = '🌙';
-                    return `<div class="flex items-start gap-2 py-0.5"><span class="text-blue-500 w-5">${icon}</span><span class="text-gray-700">${trimmed.substring(1)}</span></div>`;
-                }
-                return '';
-            }).join('');
-            card.innerHTML = `
-                <div class="flex justify-between items-center font-bold text-lg" onclick="this.closest('.qna-card').classList.toggle('open')">
-                    <span><i class="fas fa-question-circle text-blue-500 mr-2"></i> ${item.q}</span>
-                    <i class="fas fa-chevron-down transition-transform duration-200"></i>
-                </div>
-                <div class="qna-answer text-sm">${formattedPoints}</div>
-            `;
+            const formattedPoints = item.a.split('<br>').map(p => { let t = p.trim(); if(t) return `<div class="flex items-start gap-2 py-0.5"><span class="text-blue-500 w-5">${t[0]}</span><span class="text-gray-700">${t.substring(1)}</span></div>`; return ''; }).join('');
+            card.innerHTML = `<div class="flex justify-between items-center font-bold text-lg" onclick="this.closest('.qna-card').classList.toggle('open')"><span><i class="fas fa-question-circle text-blue-500 mr-2"></i> ${item.q}</span><i class="fas fa-chevron-down transition-transform duration-200"></i></div><div class="qna-answer text-sm">${formattedPoints}</div>`;
             container.appendChild(card);
         });
     }
     function loadFAQ() {
-        const faqs = [
-            { q: "💰 How is fare calculated?", a: "Slab rates: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320, beyond ₹16/km + ₹2/min wait + 5% GST." },
-            { q: "🔐 How does OTP work?", a: "6-digit OTP appears only on your dashboard. Driver never gets OTP." },
-            { q: "🚗 Is this a private car?", a: "YES! 100% self-owned White Citroën C3. No third-party fleet." },
-            { q: "⏱️ What are waiting charges?", a: "5 minutes grace, then ₹2 per minute." }
-        ];
-        const container = document.getElementById('faqContainer');
-        container.innerHTML = faqs.map((f, i) => `
-            <div class="faq-item" onclick="this.classList.toggle('active')">
-                <div class="faq-question"><span>${i+1}. ${f.q}</span><i class="fas fa-chevron-down"></i></div>
-                <div class="faq-answer text-gray-600">${f.a}</div>
-            </div>
-        `).join('');
+        const faqs = [{ q: "💰 How is fare calculated?", a: "Slab rates: 0-5km ₹100, 5-10km ₹180, 10-20km ₹320, beyond ₹16/km + ₹2/min wait + 5% GST." }, { q: "🔐 How does OTP work?", a: "6-digit OTP appears only on your dashboard. Driver never gets OTP." }, { q: "🚗 Is this a private car?", a: "YES! 100% self-owned White Citroën C3. No third-party fleet." }, { q: "⏱️ What are waiting charges?", a: "5 minutes grace, then ₹2 per minute." }];
+        document.getElementById('faqContainer').innerHTML = faqs.map((f, i) => `<div class="faq-item" onclick="this.classList.toggle('active')"><div class="flex justify-between items-center"><span class="font-bold">${i+1}. ${f.q}</span><i class="fas fa-chevron-down faq-icon transition-transform"></i></div><div class="faq-answer text-gray-600">${f.a}</div></div>`).join('');
     }
 
-    // ======================== INITIALIZE ========================
+    // ======================== INITIALIZE EVERYTHING ========================
     window.addEventListener('DOMContentLoaded', () => {
         initMap();
         loadDynamicTours();
@@ -859,12 +891,53 @@
         renderQnA();
         loadFAQ();
         checkActiveRide();
-        if (localStorage.getItem('easygo_user')) {
-            let mob = localStorage.getItem('easygo_user');
-            let name = localStorage.getItem('easygo_name');
-            loginUI(mob, name);
-        }
+        if (localStorage.getItem('easygo_user')) loginUI(localStorage.getItem('easygo_user'), localStorage.getItem('easygo_name'));
     });
+
+    // Mobile Menu Functions
+        function openMobileMenu() {
+            document.getElementById('mobileMenu').classList.add('open');
+            document.getElementById('menuOverlay').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('menuOverlay').style.opacity = '1';
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').classList.remove('open');
+            document.getElementById('menuOverlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('menuOverlay').style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
+        
+        // Event listeners for mobile menu
+        document.getElementById('menuBtn')?.addEventListener('click', openMobileMenu);
+        document.getElementById('closeMenuBtn')?.addEventListener('click', closeMobileMenu);
+        document.getElementById('menuOverlay')?.addEventListener('click', closeMobileMenu);
+        
+        // Update mobile user menu when logged in
+        function updateMobileUserUI() {
+            const isLoggedIn = localStorage.getItem('easygo_user');
+            const userName = localStorage.getItem('easygo_name');
+            if (isLoggedIn && userName) {
+                document.getElementById('mobileUserMenu')?.classList.remove('hidden');
+                document.getElementById('mobileLoginBtn')?.classList.add('hidden');
+                document.getElementById('mobileDisplayUserName').innerHTML = userName.toUpperCase();
+            } else {
+                document.getElementById('mobileUserMenu')?.classList.add('hidden');
+                document.getElementById('mobileLoginBtn')?.classList.remove('hidden');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            updateMobileUserUI();
+        });
+
+
+        
     </script>
 </body>
 </html>
