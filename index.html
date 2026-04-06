@@ -253,6 +253,17 @@
                 <h1 class="text-5xl font-black mb-4 uppercase bg-gradient-to-r from-green-700 to-blue-700 bg-clip-text text-transparent"><i class="fas fa-mountain mr-3"></i> Explore MP with EasyGo</h1>
                 <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-8 border-yellow-400 p-5 rounded-2xl shadow-lg"><p class="font-bold text-lg">✨ Discover Majestic Destinations. <span class="text-red-600">*Final fare includes Dynamic Tolls & Round Trips if required.</span></p></div>
             </div>
+             <!-- 🔍 SEARCH BAR - NEW -->
+            <div class="mb-8">
+                <div class="relative max-w-2xl mx-auto">
+                    <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
+                    <input type="text" id="tourSearchInput" onkeyup="searchTours()" placeholder="🔍 Search by destination, season (Monsoon/Winter/Summer), or category (Nature/Religious/Adventure/Heritage)..." class="w-full pl-14 pr-5 py-4 text-lg border-2 border-blue-200 rounded-2xl focus:border-blue-600 focus:outline-none shadow-lg bg-white/90 backdrop-blur">
+                </div>
+                <div class="text-center mt-2 text-sm text-gray-500">
+                    <span id="searchResultCount">0</span> packages found
+                    <button onclick="clearSearch()" class="ml-3 text-blue-600 hover:underline text-xs">✖ Clear search</button>
+                </div>
+            </div>
             <div class="flex flex-wrap justify-center gap-4 mb-8">
                 <button onclick="filterTours(event, 'All')" class="filter-btn active"><i class="fas fa-globe-asia mr-1"></i> All Seasons</button>
                 <button onclick="filterTours(event, 'Monsoon')" class="filter-btn"><i class="fas fa-cloud-rain mr-1"></i> Monsoon</button>
@@ -762,6 +773,72 @@
             .then(d => { if (d.result === 'success' && d.tours) { allToursData = d.tours; renderTours(allToursData); } })
             .catch(() => showToast("Tours loading failed", "error"));
     }
+
+    // Search variable
+    let currentSearchQuery = '';
+    
+    // Search function
+    function searchTours() {
+        let query = document.getElementById('tourSearchInput').value.toLowerCase().trim();
+        currentSearchQuery = query;
+        
+        if (!allToursData.length) return;
+        
+        let filtered = allToursData.filter(tour => {
+            // Season filter
+            let seasonMatch = (currentSeason === 'All' || (tour.Season || '').toLowerCase().includes(currentSeason.toLowerCase()));
+            
+            // Category filter
+            let desc = (tour.Description || '').toLowerCase();
+            let categoryMatch = currentCategory === 'All' || 
+                (currentCategory === 'Nature' && (desc.includes('fall') || desc.includes('water') || desc.includes('lake') || desc.includes('hill'))) ||
+                (currentCategory === 'Religious' && (desc.includes('temple') || desc.includes('mandir') || desc.includes('church'))) ||
+                (currentCategory === 'Adventure' && (desc.includes('trek') || desc.includes('adventure') || desc.includes('jungle'))) ||
+                (currentCategory === 'Heritage' && (desc.includes('fort') || desc.includes('palace') || desc.includes('museum')));
+            
+            // Search query match (destination, season, description, category)
+            let searchMatch = query === '' || 
+                (tour.Destination || '').toLowerCase().includes(query) ||
+                (tour.Season || '').toLowerCase().includes(query) ||
+                (tour.Description || '').toLowerCase().includes(query) ||
+                (desc.includes('nature') && query.includes('nature')) ||
+                (desc.includes('religious') && query.includes('religious')) ||
+                (desc.includes('adventure') && query.includes('adventure')) ||
+                (desc.includes('heritage') && query.includes('heritage'));
+            
+            return seasonMatch && categoryMatch && searchMatch;
+        });
+        
+        document.getElementById('searchResultCount').innerHTML = filtered.length;
+        renderTours(filtered);
+    }
+    
+    // Clear search
+    function clearSearch() {
+        document.getElementById('tourSearchInput').value = '';
+        currentSearchQuery = '';
+        document.getElementById('searchResultCount').innerHTML = allToursData.length;
+        applyDualFilter(); // Re-apply season + category filter
+    }
+    
+    // Update existing filterTours function
+    function filterTours(ev, season) { 
+        currentSeason = season; 
+        updateFilterButtons(ev, 'filter-btn'); 
+        searchTours(); // Call search instead of applyDualFilter
+    }
+    
+    // Update existing filterByCategory function
+    function filterByCategory(ev, cat) { 
+        currentCategory = cat; 
+        updateFilterButtons(ev, 'cat-btn'); 
+        searchTours(); // Call search instead of applyDualFilter
+    }
+    
+    // Update applyDualFilter (keep for compatibility)
+    function applyDualFilter() {
+        searchTours();
+    }    
     function loadDynamicReviews() {
         fetch(scriptURL + "?action=getReviews&t=" + Date.now())
             .then(r => r.json())
