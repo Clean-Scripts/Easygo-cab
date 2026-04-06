@@ -217,8 +217,8 @@
                 </div>
                 <div id="menuOverlay" class="fixed inset-0 bg-black/50 z-[9998] hidden"></div>
                                    
-    <main class="flex-grow w-full overflow-x-hidden flex flex-col">
-    <div id="activeRideBanner" class="hidden bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white shadow-2xl border-b-4 border-yellow-400">
+    <main class="flex-grow w-full overflow-x-hidden">
+    <div id="activeRideBanner" class="hidden w-full bg-slate-900 text-white border-b-4 border-yellow-400">
         <div class="max-w-7xl mx-auto px-5 py-5 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-4">
                 <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center text-blue-900 text-2xl animate-bounce"><i class="fas fa-car-side"></i></div>
@@ -235,140 +235,104 @@
         </div>
     </div>
 
-    <section id="home" class="page-section active w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-            <div class="lg:col-span-7 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 relative card-hover w-full">
-                <div class="p-4 bg-gradient-to-r from-slate-800 to-slate-900 flex justify-between items-center text-white">
-                    <span class="font-black text-xl"><i class="fas fa-map-marked-alt mr-3 floating-icon"></i>🗺️ Live GPS Route</span>
-                    <button onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-full text-sm font-bold shadow-lg flex gap-2 transition-all hover:scale-105"><i class="fas fa-crosshairs"></i> GPS Locate</button>
-                </div>
-                <div id="map" class="w-full h-[400px] md:h-[580px] z-0"></div>
-                <div class="absolute bottom-6 left-6 bg-white/95 backdrop-blur p-3 rounded-2xl shadow-xl border border-blue-200 flex gap-3 z-10 animate-pulse">
-                    <div><p class="text-xs font-bold text-gray-500">📏 TOTAL DISTANCE</p><p class="text-2xl font-black text-blue-900" id="mapDistanceDisplay">0.0 km</p></div>
-                    <i class="fas fa-route text-3xl text-blue-300"></i>
-                </div>
-            </div>
-
-            <div class="lg:col-span-5 w-full">
-                <div class="bg-white/95 backdrop-blur-sm p-7 rounded-3xl shadow-2xl border border-blue-100 card-hover">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl md:text-3xl font-black bg-gradient-to-r from-slate-900 to-blue-800 bg-clip-text text-transparent uppercase"><i class="fas fa-calendar-check mr-2"></i> Book EasyGo</h2>
-                        <button onclick="showPage('tours')" class="bg-amber-400 text-amber-900 px-4 py-2 rounded-xl font-black text-xs md:text-sm shadow-md hover:bg-amber-500 transition-all hover:scale-105"><i class="fas fa-gift mr-1"></i> Packages</button>
+    <section id="home" class="page-section active w-full py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                <div class="lg:col-span-7 bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 relative w-full h-full">
+                    <div class="p-4 bg-gradient-to-r from-slate-800 to-slate-900 flex justify-between items-center text-white">
+                        <span class="font-black text-xl"><i class="fas fa-map-marked-alt mr-3"></i>🗺️ Live GPS Route</span>
+                        <button onclick="locateMeOnMap()" class="bg-blue-500 hover:bg-blue-400 px-5 py-2 rounded-full text-sm font-bold shadow-lg transition-all hover:scale-105">GPS Locate</button>
                     </div>
-                    <form id="bookingForm" onsubmit="handleBooking(event)">
-                        <input type="hidden" id="customerPhone" name="Phone">
-                        <input type="hidden" id="customerNameField" name="Name">
-                        <input type="hidden" id="bookingOTP" name="OTP">
-                        <input type="hidden" id="pickupLink" name="Pickup_Link">
-                        <input type="hidden" id="dropLink" name="Drop_Link">
-                        <div class="space-y-5">
-                            <div class="relative">
-                                <label class="block text-sm font-black"><i class="fas fa-circle text-green-500 mr-1"></i> Pickup Location</label>
-                                <div class="flex">
-                                    <div class="relative flex-1">
-                                        <input type="text" id="pickup" name="Pickup" required autocomplete="off" onkeyup="debouncedSearchPickup(this.value)" placeholder="Enter pickup location" class="w-full pl-4 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
-                                        <div id="pickup-suggestions" class="suggestions-box"></div>
-                                    </div>
-                                    <button type="button" onclick="useCurrentLocation('pickup')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700 transition-all"><i class="fas fa-location-arrow"></i></button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-black mb-2"><i class="fas fa-layer-group mr-1"></i> Multiple Stops (Optional)</label>
-                                <div id="stopsContainer"></div>
-                                <button type="button" onclick="addStop()" class="text-sm bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-bold hover:bg-blue-200 transition-all mt-2 hover:scale-105"><i class="fas fa-plus-circle"></i> Add Stop Location</button>
-                            </div>
-                            <div class="relative">
-                                <label class="block text-sm font-black"><i class="fas fa-square text-red-500 mr-1"></i> Drop Location</label>
-                                <div class="flex">
-                                    <div class="relative flex-1">
-                                        <input type="text" id="drop" name="Drop" required autocomplete="off" onkeyup="debouncedSearchDrop(this.value)" placeholder="Enter drop location" class="w-full pl-4 pr-4 py-4 bg-slate-50 border-2 rounded-l-xl focus:border-blue-600 font-bold text-lg">
-                                        <div id="drop-suggestions" class="suggestions-box"></div>
-                                    </div>
-                                    <button type="button" onclick="useCurrentLocation('drop')" class="bg-slate-800 text-white px-6 rounded-r-xl hover:bg-blue-700 transition-all"><i class="fas fa-location-arrow"></i></button>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-5">
-                                <div><label class="block text-sm font-black"><i class="fas fa-calendar mr-1"></i> Pickup Date</label><input type="date" id="date" name="Date" required class="w-full px-4 py-4 bg-slate-50 border-2 rounded-xl font-bold"></div>
-                                <div><label class="block text-sm font-black"><i class="fas fa-clock mr-1"></i> Pickup Time</label><input type="time" id="time" name="Time" required class="w-full px-4 py-4 bg-slate-50 border-2 rounded-xl font-bold"></div>
-                            </div>
-                            <div class="flex gap-3 items-center bg-gradient-to-r from-slate-100 to-blue-50 p-3 rounded-xl">
-                                <label class="font-bold text-sm"><i class="fas fa-exchange-alt"></i> Round Trip?</label>
-                                <input type="checkbox" id="roundTripCheck" onchange="updateLiveEstimate()" class="w-5 h-5 rounded">
-                                <span class="text-xs text-gray-600"> (Round trip fare = 1.8x one-way)</span>
-                            </div>
-                            <div id="liveEstimateBox" class="hidden"></div>
-                            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white font-black py-5 rounded-2xl shadow-xl text-xl md:text-2xl transition-all flex justify-center gap-3 items-center group">
-                                <i class="fas fa-rocket group-hover:animate-bounce"></i> BOOK NOW <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                            </button>
+                    <div id="map" class="w-full h-[400px] md:h-[580px] z-0"></div>
+                    <div class="absolute bottom-6 left-6 bg-white/95 backdrop-blur p-3 rounded-2xl shadow-xl border border-blue-200 flex gap-3 z-10">
+                        <div><p class="text-xs font-bold text-gray-500">📏 TOTAL DISTANCE</p><p class="text-2xl font-black text-blue-900" id="mapDistanceDisplay">0.0 km</p></div>
+                        <i class="fas fa-route text-3xl text-blue-300"></i>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 w-full">
+                    <div class="bg-white/95 backdrop-blur-sm p-7 rounded-3xl shadow-2xl border border-blue-100">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-3xl font-black bg-gradient-to-r from-slate-900 to-blue-800 bg-clip-text text-transparent uppercase">Book EasyGo</h2>
+                            <button onclick="showPage('tours')" class="bg-amber-400 text-amber-900 px-5 py-2 rounded-xl font-black text-sm shadow-md transition-all hover:scale-105">Packages</button>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                        <form id="bookingForm" onsubmit="handleBooking(event)" class="space-y-5">
+                            <input type="hidden" id="customerPhone" name="Phone">
+                            <input type="hidden" id="customerNameField" name="Name">
+                            <input type="hidden" id="bookingOTP" name="OTP">
+                            <input type="hidden" id="pickupLink" name="Pickup_Link">
+                            <input type="hidden" id="dropLink" name="Drop_Link">
+                            
+                            <div class="relative">
+                                <label class="block text-sm font-black mb-1">Pickup Location</label>
+                                <input type="text" id="pickup" name="Pickup" required class="w-full p-4 bg-slate-50 border-2 rounded-xl font-bold text-lg focus:border-blue-600">
+                            </div>
 
-        <div class="mt-24 w-full">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-black uppercase bg-gradient-to-r from-slate-800 to-blue-800 bg-clip-text text-transparent"><i class="fas fa-star text-yellow-500 mr-2"></i> 100% Verified Reviews</h2>
-                <p class="text-gray-600 font-bold border-b-4 border-yellow-400 inline-block pb-2">Live Updated !! ✨</p>
-            </div>
-            <div id="dynamic-reviews-container" class="auto-grid"></div>
-        </div>
-    </section>
+                            <div class="relative">
+                                <label class="block text-sm font-black mb-1">Drop Location</label>
+                                <input type="text" id="drop" name="Drop" required class="w-full p-4 bg-slate-50 border-2 rounded-xl font-bold text-lg focus:border-blue-600">
+                            </div>
 
-    <section id="tours" class="page-section w-full max-w-7xl mx-auto px-5 py-16">
-        <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-black mb-4 uppercase bg-gradient-to-r from-green-700 to-blue-700 bg-clip-text text-transparent"><i class="fas fa-mountain mr-3"></i> Explore MP with EasyGo</h1>
-            <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-8 border-yellow-400 p-5 rounded-2xl shadow-lg"><p class="font-bold text-lg">✨ Discover Majestic Destinations. <span class="text-red-600">*Final fare includes Dynamic Tolls & Round Trips if required.</span></p></div>
-        </div>
-         <div class="mb-8">
-            <div class="relative max-w-2xl mx-auto">
-                <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
-                <input type="text" id="tourSearchInput" onkeyup="searchTours()" placeholder="🔍 Search destination..." class="w-full pl-14 pr-5 py-4 text-lg border-2 border-blue-200 rounded-2xl focus:border-blue-600 focus:outline-none shadow-lg bg-white/90">
-            </div>
-            <div class="text-center mt-2 text-sm text-gray-500"><span id="searchResultCount">0</span> packages found</div>
-        </div>
-        <div class="flex flex-wrap justify-center gap-4 mb-8">
-            <button onclick="filterTours(event, 'All')" class="filter-btn active">All Seasons</button>
-            <button onclick="filterTours(event, 'Monsoon')" class="filter-btn">Monsoon</button>
-            <button onclick="filterTours(event, 'Winter')" class="filter-btn">Winter</button>
-            <button onclick="filterTours(event, 'Summer')" class="filter-btn">Summer</button>
-        </div>
-        <div id="dynamic-tours-container" class="auto-grid"></div>
-    </section>
+                            <div class="grid grid-cols-2 gap-5">
+                                <input type="date" id="date" name="Date" required class="w-full p-4 border-2 rounded-xl font-bold">
+                                <input type="time" id="time" name="Time" required class="p-4 border-2 rounded-xl font-bold">
+                            </div>
 
-    <section id="faq" class="page-section w-full max-w-6xl mx-auto px-5 py-16">
-        <div class="text-center mb-12"><h1 class="text-4xl md:text-5xl font-black uppercase border-b-8 border-blue-600 inline-block pb-3"><i class="fas fa-question-circle mr-3"></i> FAQ</h1></div>
-        <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 space-y-4" id="faqContainer"></div>
-        <div id="qnaGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"></div>
-    </section>
-
-    <section id="about" class="page-section w-full max-w-6xl mx-auto px-5 py-16">
-        <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 card-hover">
-            <div class="flex flex-col lg:flex-row gap-8">
-                <div class="lg:w-2/3">
-                    <h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-6 uppercase">The EasyGo Chronicles</h1>
-                    <p class="text-gray-700 leading-relaxed mb-4">Founded by <strong class="text-blue-700">Nishant Jaiswal</strong> in <strong>Omaxe City 1, Indore</strong>...</p>
-                    <div class="mt-6 flex gap-3 flex-wrap">
-                        <span class="bg-slate-100 px-4 py-2 rounded-full text-xs font-bold"><i class="fas fa-check-circle text-green-600"></i> Transparent Fare</span>
-                        <span class="bg-slate-100 px-4 py-2 rounded-full text-xs font-bold"><i class="fas fa-car-side text-red-500"></i> Citroën C3 X 1.2L Petrol</span>
-                    </div>
-                </div>
-                <div class="lg:w-1/3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 shadow-inner">
-                    <h3 class="font-black text-xl mb-4 uppercase">Milestones</h3>
-                    <div class="space-y-4">
-                        <div class="flex gap-3 items-center"><strong>2024:</strong> Journey Began</div>
-                        <div class="flex gap-3 items-center"><strong>2026:</strong> Food Service Started</div>
+                            <div id="liveEstimateBox" class="hidden"></div>
+                            
+                            <button type="submit" class="w-full bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl text-2xl transition-all hover:bg-blue-800">
+                                BOOK NOW
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
+
+            <div class="mt-24 w-full">
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl font-black uppercase text-slate-800"><i class="fas fa-star text-yellow-500 mr-2"></i> 100% Verified Reviews</h2>
+                    <p class="text-gray-600 font-bold border-b-4 border-yellow-400 inline-block pb-2">Live Updated !! ✨</p>
+                </div>
+                <div id="dynamic-reviews-container" class="auto-grid"></div>
+            </div>
         </div>
     </section>
 
-    <section id="privacy" class="page-section w-full max-w-6xl mx-auto px-5 py-16">
-        <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10"><h1 class="text-3xl font-black text-blue-900 mb-6">Privacy Policy</h1></div>
+    <section id="tours" class="page-section w-full py-16">
+        <div class="max-w-7xl mx-auto px-5 text-center">
+            <h1 class="text-5xl font-black mb-8 uppercase text-blue-900">Explore MP with EasyGo</h1>
+            <div id="dynamic-tours-container" class="auto-grid"></div>
+        </div>
     </section>
-    <section id="terms" class="page-section w-full max-w-6xl mx-auto px-5 py-16">
-        <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-10"><h1 class="text-3xl font-black text-blue-900 mb-6">Terms</h1></div>
+
+    <section id="about" class="page-section w-full py-16">
+        <div class="max-w-6xl mx-auto px-5">
+            <div class="bg-white p-10 rounded-3xl shadow-2xl card-hover">
+                <h1 class="text-4xl font-black text-slate-900 mb-6 uppercase">The EasyGo Chronicles</h1>
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="lg:w-2/3">
+                        <p class="text-gray-700 leading-relaxed mb-4">Founded by <strong class="text-blue-700">Nishant Jaiswal</strong> in Indore, EasyGo Cabs was built for predictability and comfort.</p>
+                        <p class="text-gray-700 leading-relaxed mb-4">Unlike Aggregators, EasyGo is a 100% Self-Owned service using a White Citroën C3.</p>
+                    </div>
+                    <div class="lg:w-1/3 bg-slate-50 p-6 rounded-2xl">
+                        <h3 class="font-black text-xl mb-4">Milestones</h3>
+                        <div class="space-y-4 text-sm font-bold">
+                            <p>📅 2024 (April): Journey Began</p>
+                            <p>📅 2024 (June): 20+ 5-Star Reviews</p>
+                            <p>📅 2025: Launched Explorer Packages</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="page-section w-full py-16">
+        <div class="max-w-6xl mx-auto px-5 text-center">
+            <h1 class="text-5xl font-black uppercase mb-10 border-b-8 border-blue-600 inline-block pb-3">FAQ</h1>
+            <div id="faqContainer" class="text-left space-y-4 bg-white p-8 rounded-3xl shadow-xl"></div>
+            <div id="qnaGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12"></div>
+        </div>
     </section>
 </main>
     <!-- Footer -->
