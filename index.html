@@ -93,7 +93,7 @@
                     <img src="easy go.jpg" alt="EasyGo Logo" class="h-16 w-16 object-cover rounded-full border-2 border-blue-600 shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
                     <div class="ml-4">
                         <span class="block font-black text-3xl bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent tracking-tight">EasyGo</span>
-                        <span class="block text-sm font-extrabold text-blue-600 tracking-widest uppercase mt-1">✦ Premium Cabs ✦</span>
+                        <span class="inline-block text-xs font-black text-blue-900 tracking-widest uppercase mt-1 bg-blue-100/60 px-2 py-0.5 rounded-md backdrop-blur-sm border border-blue-200/50">✦ Premium Cabs ✦</span>
                     </div>
                 </div>
                     <!-- Desktop Menu -->
@@ -126,7 +126,7 @@
                         <div class="p-5">
                             <div class="flex justify-between items-center mb-8">
                                 <span class="font-black text-xl text-blue-800">Menu</span>
-                                <button id="closeMenuBtn" class="text-2xl text-gray-600 hover:text-red-500">&times;</button>
+                                <button id="closeMenuBtn" onclick="closeMobileMenu()" class="text-3xl font-black text-gray-600 hover:text-red-600 hover:scale-110 transition-transform">×</button>
                             </div>
                             <div class="flex flex-col space-y-4">
                                 <button onclick="showPage('home'); closeMobileMenu();" class="nav-btn font-black text-lg text-left py-2 px-3 hover:bg-blue-50 rounded-xl transition-all"><i class="fas fa-home mr-3 w-6"></i> Home</button>
@@ -752,7 +752,7 @@
         let container = document.getElementById('dynamic-tours-container');
         container.innerHTML = list.length ? list.map(t => `
             <div class="bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-500 hover:-translate-y-4 hover:shadow-2xl">
-                <img src="${t.ImageURL}" class="h-56 w-full object-cover transition-transform duration-700 hover:scale-110">
+                <img src="${t.ImageURL}" loading="lazy" decoding="async" class="h-56 w-full object-cover transition-transform duration-700 hover:scale-110 bg-slate-100">
                 <div class="p-6">
                     <h3 class="text-2xl font-black">${t.Destination}</h3>
                     <p class="text-gray-600 my-2">${t.Description}</p>
